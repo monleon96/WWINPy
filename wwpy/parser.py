@@ -1,5 +1,4 @@
 from typing import List, Iterator
-import re
 import itertools
 import sys
 
@@ -8,9 +7,9 @@ from wwpy.exceptions import WWINPFormatError, WWINPParsingError
 from wwpy.models import (
     WWINPData,
     Header,
-    CoarseMeshSegment,
     GeometryAxis,
     GeometryData,
+    Mesh,
     ParticleBlock,
     WeightWindowValues    
 )
@@ -30,7 +29,7 @@ def _tokenize_file(file_path: str) -> Iterator[str]:
 
 def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
     """
-    Optimized parser function for WWINP files with enhanced verbosity for w_values.
+    Optimized parser function for WWINP files with enhanced verbosity for ww_values.
     """
     token_gen = _tokenize_file(file_path)
 
@@ -173,40 +172,40 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
     if verbose:
         print(f"Mesh dimensions: ncx={ncx}, ncy={ncy}, ncz={ncz}")
 
-    # Function to parse axis data
-    def parse_axis(axis_name: str, n_segments: int, verbose: bool):
+    # Function to parse axis data using GeometryAxis with NumPy arrays
+    def parse_axis(axis_name: str, n_segments: int, verbose: bool) -> GeometryAxis:
+        axis = GeometryAxis(origin=0.0)  # Initialize with default origin
         try:
             origin = float(next(token_gen))
+            axis.origin = origin
             if verbose:
                 print(f"{axis_name}-axis origin: {origin}")
         except StopIteration:
             raise WWINPFormatError(f"File ended while reading {axis_name}-axis origin.")
         
-        segments = []
         for i in range(n_segments):
             try:
                 q, p, s = map(float, itertools.islice(token_gen, 3))
-                if len([q, p, s]) < 3:
-                    raise WWINPFormatError(f"Not enough tokens for {axis_name}-segment[{i}].")
-                segments.append(CoarseMeshSegment(q=q, p=p, s=s))
+                axis.add_segment(q, p, s)
                 if verbose:
                     print(f"  {axis_name}-segment[{i}]: q={q}, p={p}, s={s}")
             except StopIteration:
                 raise WWINPFormatError(f"File ended while reading {axis_name}_segments.")
-        return GeometryAxis(origin=origin, segments=segments)
+        return axis
 
     x_axis = parse_axis("X", ncx, verbose)
     y_axis = parse_axis("Y", ncy, verbose)
     z_axis = parse_axis("Z", ncz, verbose)
 
     geometry = GeometryData(
+        header=header,
         x_axis=x_axis,
         y_axis=y_axis,
         z_axis=z_axis
     )
 
     # ---------------------------
-    # Block 3: Values (Times, Energies, W-Values)
+    # Block 3: Values (Times, Energies, WW-Values)
     # ---------------------------
     if verbose:
         print("\n=== Parsing Values Block ===")
@@ -218,8 +217,12 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
         time_bins_all = []
         for i in range(header.ni):
             try:
-                t_bins = list(map(float, itertools.islice(token_gen, header.nt[i])))
-                if len(t_bins) < header.nt[i]:
+                t_bins = np.fromiter(
+                    (float(token) for token in itertools.islice(token_gen, header.nt[i])), 
+                    dtype=np.float32, 
+                    count=header.nt[i]
+                )
+                if t_bins.size < header.nt[i]:
                     raise WWINPFormatError(f"File ended while reading time bins for particle {i}.")
                 time_bins_all.append(t_bins)
                 if verbose:
@@ -228,8 +231,8 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
             except StopIteration:
                 raise WWINPFormatError(f"File ended while reading time bins for particle {i}.")
     else:
-        # No time dependency; assign an empty list or a default single-element list for each particle
-        time_bins_all = [[] for _ in range(header.ni)]
+        # No time dependency; assign a default single-element array for each particle
+        time_bins_all = [np.array([], dtype=np.float32) for _ in range(header.ni)]
         if verbose:
             for i in range(header.ni):
                 print(f"  t[{i}] = []")
@@ -240,8 +243,12 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
     energy_bins_all = []
     for i in range(header.ni):
         try:
-            e_bins = list(map(float, itertools.islice(token_gen, header.ne[i])))
-            if len(e_bins) < header.ne[i]:
+            e_bins = np.fromiter(
+                (float(token) for token in itertools.islice(token_gen, header.ne[i])), 
+                dtype=np.float32, 
+                count=header.ne[i]
+            )
+            if e_bins.size < header.ne[i]:
                 raise WWINPFormatError(f"File ended while reading energy bins for particle {i}.")
             energy_bins_all.append(e_bins)
             if verbose:
@@ -250,91 +257,83 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
         except StopIteration:
             raise WWINPFormatError(f"File ended while reading energy bins for particle {i}.")
 
-    # 3) Read w-values with enhanced verbosity
+    # 3) Read ww-values with enhanced verbosity
     if verbose:
-        print("Reading w-values...")
+        print("Reading ww-values...")
 
     # Precompute number of geometry cells
-    total_x_fine = sum(seg.s for seg in x_axis.segments)
-    total_y_fine = sum(seg.s for seg in y_axis.segments)
-    total_z_fine = sum(seg.s for seg in z_axis.segments)
-
-    if any(val <= 0 for val in [total_x_fine, total_y_fine, total_z_fine]):
-        raise WWINPFormatError(f"Invalid mesh dimensions: x={total_x_fine}, y={total_y_fine}, z={total_z_fine}")
-
-    num_geom_cells = int(total_x_fine * total_y_fine * total_z_fine)
-
+    num_geom_cells = int(header.nfx * header.nfy * header.nfz)  # Assuming ncx, ncy, ncz are integers
+    
     if verbose:
         print(f"Total geometry cells: {num_geom_cells}")
 
-    # Initialize counters for verbose logging
-    total_expected_w_values = 0
-    for i in range(header.ni):
-        time_max_range = header.nt[i] if iv == 2 else 1
-        total_expected_w_values += time_max_range * header.ne[i] * num_geom_cells
+        # Initialize counters for verbose logging
+        total_expected_ww_values = 0
+        for i in range(header.ni):
+            time_max_range = header.nt[i] if iv == 2 else 1
+            total_expected_ww_values += time_max_range * header.ne[i] * num_geom_cells
 
-    if verbose:
-        print(f"Total expected w-values: {total_expected_w_values}")
+        print(f"Total expected ww-values: {total_expected_ww_values}")
+    
 
-    # Initialize storage for w_values
-    w_all = []
-    w_values_read = 0  # Counter for w-values read
-
+    particle_data = []
+    time_mesh_dict = {}
+    energy_mesh_dict = {}
     try:
         for i in range(header.ni):
-            w_for_i = []
-            time_max_range = header.nt[i] if iv == 2 else 1
-            for time_index in range(time_max_range):
-                w_for_time = []
-                for energy_index in range(header.ne[i]):
-                    # Read w_geom for each geometry cell
-                    try:
-                        w_geom = list(itertools.islice(token_gen, num_geom_cells))
-                        if len(w_geom) < num_geom_cells:
-                            raise WWINPFormatError(
-                                f"Not enough w-values for particle {i}, time {time_index}, energy {energy_index}. "
-                                f"Expected {num_geom_cells}, got {len(w_geom)}."
-                            )
-                        # Convert to float
-                        w_geom = list(map(float, w_geom))
-                        w_for_time.append(w_geom)
-                        w_values_read += num_geom_cells
+            time_range = header.nt[i] if iv == 2 else 1
+            
+            # Create time and energy meshes for the current particle type
+            time_mesh_array = np.linspace(0, time_range - 1, num=time_range, dtype=np.float32)
+            energy_mesh_array = np.linspace(0, header.ne[i] - 1, num=header.ne[i], dtype=np.float32)
+            
+            time_mesh_dict[i] = time_mesh_array
+            energy_mesh_dict[i] = energy_mesh_array
 
-                        # Verbose logging every 1,000,000 w-values
-                        if verbose and w_values_read % 1_000_000 == 0:
-                            print(f"  Progress: {w_values_read}/{total_expected_w_values} w-values read ({(w_values_read/total_expected_w_values)*100:.2f}%)")
+            ww_all = np.empty((time_range, header.ne[i], num_geom_cells), dtype=np.float32)
 
-                    except StopIteration:
-                        raise WWINPFormatError(
-                            f"File ended while reading w_values for particle {i}, time {time_index}, energy {energy_index}."
-                        )
-                w_for_i.append(w_for_time)
-            w_all.append(w_for_i)
-    except WWINPFormatError as e:
-        print(f"\nError parsing w-values: {e}", file=sys.stderr)
-        raise e
+            for t in range(time_range):
+                for e in range(header.ne[i]):
+                    ww_all[t, e, :] = np.fromiter(
+                        (float(token) for token in itertools.islice(token_gen, num_geom_cells)), 
+                        dtype=np.float32, 
+                        count=num_geom_cells
+                    )
+            particle_data.append(ww_all)
+    except StopIteration:
+        raise WWINPFormatError("File ended unexpectedly while reading ww-values.")
 
     if verbose:
-        print(f"Total w-values read: {w_values_read}")
-        if w_values_read < total_expected_w_values:
-            print(f"Warning: Expected {total_expected_w_values} w-values, but only {w_values_read} were read.")
+        total_ww_values_read = sum(p.size for p in particle_data)
+        print(f"Total ww-values read: {total_ww_values_read}")
+        if total_ww_values_read < total_expected_ww_values:
+            print(f"Warning: Expected {total_expected_ww_values} ww-values, but only {total_ww_values_read} were read.")
 
-    # Construct ParticleBlock objects
+    # Construct ParticleBlock objects with views to the large w_all array
     particle_blocks = []
+    mesh_data = []
     for i in range(header.ni):
-        block = ParticleBlock(
-            time_bins=np.array(time_bins_all[i], dtype=np.float32) if time_bins_all[i] else None,
-            energy_bins=np.array(energy_bins_all[i], dtype=np.float32),
-            w_values=np.array(w_all[i], dtype=np.float32)
+        mesh = Mesh(
+            header=header,
+            geometry=geometry,
+            time_mesh=time_mesh_dict,
+            energy_mesh=energy_mesh_dict,
         )
+        mesh_data.append(mesh)
+
+        block = ParticleBlock(ww_values=particle_data[i])
         particle_blocks.append(block)
         
-    values = WeightWindowValues(particles=particle_blocks)
+    values = WeightWindowValues(
+        particles=particle_blocks,
+        header=header,
+        mesh=mesh  
+    )
 
     # Finally construct the WWINPData
     wwinp_data = WWINPData(
         header=header,
-        geometry=geometry,
+        mesh=mesh,
         values=values
     )
 

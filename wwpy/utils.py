@@ -1,6 +1,7 @@
 # utils.py
 
 from typing import List, Optional, Tuple
+import numpy as np
 
 def safe_int(value, default=None):
     """
@@ -135,3 +136,19 @@ def verify_and_correct(
     else:
         print("Header verification complete. No changes made.")
         return ni, nt, ne
+    
+
+def get_closest_indices(grid, value):
+    """Helper function to find closest lower and upper indices for a value."""
+    idx = np.searchsorted(grid, value, side="left")
+    lower_idx = max(0, idx - 1)
+    upper_idx = min(len(grid) - 1, idx)
+    if grid[lower_idx] == value:
+        return [lower_idx]
+    return [lower_idx, upper_idx]
+
+def get_range_indices(grid, range_tuple):
+    """Helper function to find range indices for a tuple."""
+    start_idx = np.searchsorted(grid, range_tuple[0], side="left")
+    end_idx = np.searchsorted(grid, range_tuple[1], side="right") - 1
+    return np.arange(max(0, start_idx), min(len(grid), end_idx + 1))
