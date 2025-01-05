@@ -2,6 +2,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Union, Tuple
 import pandas as pd
+import numpy as np
  
 @dataclass
 class Header:
@@ -126,11 +127,10 @@ class ParticleBlock:
     """
     Time/Energy/Weight data for one particle.
     """
-    time_bins: List[float] = field(default_factory=list)
-    energy_bins: List[float] = field(default_factory=list)
-    # w_values[time_index][energy_index][geom_index] = lower weight-window bound
-    w_values: List[List[List[float]]] = field(default_factory=list)
-
+    time_bins: Optional[np.ndarray] = None  # Shape: (nt,)
+    energy_bins: Optional[np.ndarray] = None  # Shape: (ne,)
+    # w_values: shape (nt, ne, geom_cells)
+    w_values: Optional[np.ndarray] = None  # dtype: float32 or float64
 
 @dataclass
 class WeightWindowValues:
