@@ -218,8 +218,8 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
         for i in range(header.ni):
             try:
                 t_bins = np.fromiter(
-                    (float(token) for token in itertools.islice(token_gen, header.nt[i])), 
-                    dtype=np.float32, 
+                    (float(token) for token in itertools.islice(token_gen, header.nt[i])),
+                    dtype=np.float64,
                     count=header.nt[i]
                 )
                 if t_bins.size < header.nt[i]:
@@ -232,7 +232,8 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
                 raise WWINPFormatError(f"File ended while reading time bins for particle {i}.")
     else:
         # No time dependency; assign a default single-element array for each particle
-        time_bins_all = [np.array([], dtype=np.float32) for _ in range(header.ni)]
+        default_time = 0.0
+        time_bins_all = [np.array([default_time]) for _ in range(header.ni)]
         if verbose:
             for i in range(header.ni):
                 print(f"  t[{i}] = []")
@@ -244,8 +245,8 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
     for i in range(header.ni):
         try:
             e_bins = np.fromiter(
-                (float(token) for token in itertools.islice(token_gen, header.ne[i])), 
-                dtype=np.float32, 
+                (float(token) for token in itertools.islice(token_gen, header.ne[i])),
+                dtype=np.float64,
                 count=header.ne[i]
             )
             if e_bins.size < header.ne[i]:
@@ -276,27 +277,29 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
         print(f"Total expected ww-values: {total_expected_ww_values}")
     
 
-    particle_data = []
+    # Create dictionaries for time and energy bins
     time_mesh_dict = {}
     energy_mesh_dict = {}
+
+    for i in range(header.ni):
+        time_mesh_dict[i] = time_bins_all[i]
+        energy_mesh_dict[i] = energy_bins_all[i]
+
+    # Create ParticleBlock and Mesh objects
+    particle_data = []
+
     try:
         for i in range(header.ni):
-            time_range = header.nt[i] if iv == 2 else 1
-            
-            # Create time and energy meshes for the current particle type
-            time_mesh_array = np.linspace(0, time_range - 1, num=time_range, dtype=np.float32)
-            energy_mesh_array = np.linspace(0, header.ne[i] - 1, num=header.ne[i], dtype=np.float32)
-            
-            time_mesh_dict[i] = time_mesh_array
-            energy_mesh_dict[i] = energy_mesh_array
+            time_bins = time_bins_all[i]
+            energy_bins = energy_bins_all[i]
 
-            ww_all = np.empty((time_range, header.ne[i], num_geom_cells), dtype=np.float32)
+            ww_all = np.empty((len(time_bins), len(energy_bins), num_geom_cells))
 
-            for t in range(time_range):
-                for e in range(header.ne[i]):
+            for t in range(len(time_bins)):
+                for e in range(len(energy_bins)):
                     ww_all[t, e, :] = np.fromiter(
-                        (float(token) for token in itertools.islice(token_gen, num_geom_cells)), 
-                        dtype=np.float32, 
+                        (float(token) for token in itertools.islice(token_gen, num_geom_cells)),
+                        dtype=np.float64,
                         count=num_geom_cells
                     )
             particle_data.append(ww_all)
@@ -316,8 +319,8 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
         mesh = Mesh(
             header=header,
             geometry=geometry,
-            time_mesh=time_mesh_dict,
-            energy_mesh=energy_mesh_dict,
+            time_mesh={i: time_mesh_dict[i]},
+            energy_mesh={i: energy_mesh_dict[i]},
         )
         mesh_data.append(mesh)
 

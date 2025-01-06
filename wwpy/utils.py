@@ -138,17 +138,126 @@ def verify_and_correct(
         return ni, nt, ne
     
 
-def get_closest_indices(grid, value):
-    """Helper function to find closest lower and upper indices for a value."""
-    idx = np.searchsorted(grid, value, side="left")
-    lower_idx = max(0, idx - 1)
-    upper_idx = min(len(grid) - 1, idx)
-    if grid[lower_idx] == value:
-        return [lower_idx]
-    return [lower_idx, upper_idx]
+def get_closest_indices(grid: np.ndarray, value: float, atol: float = 1e-9) -> np.ndarray:
+    """Return the indices bounding 'value' in 'grid'.
 
-def get_range_indices(grid, range_tuple):
-    """Helper function to find range indices for a tuple."""
-    start_idx = np.searchsorted(grid, range_tuple[0], side="left")
-    end_idx = np.searchsorted(grid, range_tuple[1], side="right") - 1
-    return np.arange(max(0, start_idx), min(len(grid), end_idx + 1))
+    If 'value' is near an exact grid point (within 'atol'), return the 
+    bounding pair with that grid point in the middle.
+    """
+    if len(grid) == 1:
+        return np.array([0, np.inf])
+    
+    if value < grid[0]:
+        return np.array([0, 1])
+    if value > grid[-1]:
+        return np.array([len(grid) - 2, len(grid) - 1])
+    
+    idx = np.searchsorted(grid, value)
+    
+    if idx == 0:
+        return np.array([0, 1])
+    if idx == len(grid):
+        return np.array([len(grid) - 2, len(grid) - 1])
+
+    if np.isclose(grid[idx], value, atol=atol):
+        if idx == 0:
+            return np.array([0, 1])
+        elif idx == len(grid) - 1:
+            return np.array([len(grid) - 2, len(grid) - 1])
+        else:
+            return np.array([idx - 1, idx + 1])
+        
+    return np.array([idx - 1, idx])
+
+
+def get_range_indices(grid: np.ndarray, range_tuple: Tuple[float, float]) -> np.ndarray:
+    """
+    Helper function to find range indices for a tuple.
+
+    The range includes all grid points within the interval, extending to the closest grid points
+    in the negative direction from the lower bound and in the positive direction from the upper bound.
+
+    Handles out-of-bounds by assigning the closest interval and issuing warnings.
+
+    Args:
+        grid (np.ndarray): Sorted array of grid points.
+        range_tuple (Tuple[float, float]): (min, max) range.
+
+    Returns:
+        np.ndarray: Array of indices within the specified range.
+    """
+    v_min, v_max = range_tuple
+
+    # Handle grids with 0 or 1 elements
+    if grid.size <= 1:
+        return np.array([0, np.inf])
+
+    if v_min > v_max:
+        raise ValueError(f"Invalid range: min {v_min} is greater than max {v_max}.")
+
+    # Initialize lower and upper indices
+    lower_idx = None
+    upper_idx = None
+
+    # Check if v_min is exactly on the grid
+    exact_min = np.isclose(grid, v_min, atol=1e-9)
+    if exact_min.any():
+        lower_idx = np.argmax(exact_min)
+    elif v_min < grid[0]:
+        print(f"Warning: Lower bound {v_min} is below the grid range. Using first grid point {grid[0]:.4e} as the lower limit.")
+        lower_idx = 0
+    else:
+        # Find the closest lower grid point
+        lower_idx = np.searchsorted(grid, v_min, side='right') - 1
+        lower_idx = max(lower_idx, 0)  # Ensure non-negative
+
+    # Check if v_max is exactly on the grid
+    exact_max = np.isclose(grid, v_max, atol=1e-9)
+    if exact_max.any():
+        upper_idx = np.argmax(exact_max)
+    elif v_max > grid[-1]:
+        print(f"Warning: Upper bound {v_max} is above the grid range. Using last grid point {grid[-1]:.4e} as the upper limit.")
+        upper_idx = grid.size - 1
+    else:
+        # Find the closest higher grid point
+        upper_idx = np.searchsorted(grid, v_max, side='left')
+        if upper_idx >= grid.size:
+            upper_idx = grid.size - 1  # Ensure within bounds
+
+    # Ensure upper_idx is not less than lower_idx
+    upper_idx = max(upper_idx, lower_idx)
+
+    # Collect all indices within [lower_idx, upper_idx]
+    indices = np.arange(lower_idx, upper_idx + 1)
+
+    return indices
+
+
+def get_bin_intervals_from_indices(bins: np.ndarray, indices: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Given a bins array and two indices, return all starts and ends corresponding to the range of indices.
+
+    Args:
+        bins (np.ndarray): Array of bin edges or centers.
+        indices (np.ndarray): Array with two indices [start_index, end_index].
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: Arrays of bin starts and bin ends.
+    """
+    if len(indices) != 2 or bins is None:
+        raise ValueError("Indices must have exactly two values.")
+                         
+    if bins is None:
+        raise ValueError("Bins must have at least one value.")
+    
+    if indices[0] == 0 and indices[1] == np.inf:
+        return 0.0, float('inf')
+    
+    start_idx, end_idx = indices
+    if start_idx >= end_idx or start_idx < 0 or end_idx > len(bins):
+        raise ValueError("Indices must define a valid range within the bins.")
+
+    bin_starts = bins[start_idx:end_idx]
+    bin_ends = bins[start_idx + 1:end_idx + 1]
+
+    return bin_starts, bin_ends
