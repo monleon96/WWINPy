@@ -3,25 +3,16 @@
 from typing import List, Optional, Tuple
 import numpy as np
 
-def safe_int(value, default=None):
-    """
-    Attempt to convert `value` to int, return `default` if conversion fails.
-    """
-    try:
-        return int(value)
-    except (ValueError, TypeError):
-        return default
+def flat_to_xyz(geom_index, nfx, nfy):
+    z = geom_index // (nfx * nfy)
+    remainder = geom_index % (nfx * nfy)
+    y = remainder // nfx
+    x = remainder % nfx
+    return x, y, z
 
+def xyz_to_flat(x, y, z, nfx, nfy):
+    return z * nfx * nfy + y * nfx + x
 
-def safe_float(value, default=None):
-    """
-    Attempt to convert `value` to float, return `default` if conversion fails.
-    """
-    try:
-        return float(value)
-    except (ValueError, TypeError):
-        return default
-    
 
 def verify_and_correct(
     ni: int,
@@ -244,17 +235,16 @@ def get_bin_intervals_from_indices(bins: np.ndarray, indices: np.ndarray) -> Tup
     Returns:
         Tuple[np.ndarray, np.ndarray]: Arrays of bin starts and bin ends.
     """
-    if len(indices) != 2 or bins is None:
-        raise ValueError("Indices must have exactly two values.")
                          
     if bins is None:
         raise ValueError("Bins must have at least one value.")
     
-    if indices[0] == 0 and indices[1] == np.inf:
+    if indices[0] == 0 and (indices[1] == np.inf or indices[1] == 0):
         return 0.0, float('inf')
     
-    start_idx, end_idx = indices
-    if start_idx >= end_idx or start_idx < 0 or end_idx > len(bins):
+    start_idx = indices[0]
+    end_idx = indices[-1]
+    if start_idx > end_idx or start_idx < 0 or end_idx > len(bins):
         raise ValueError("Indices must define a valid range within the bins.")
 
     bin_starts = bins[start_idx:end_idx]

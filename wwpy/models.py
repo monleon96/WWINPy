@@ -1,6 +1,9 @@
 # wwpy/models.py
 
-from wwpy.utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
+from wwpy.utils import (
+    get_closest_indices, get_range_indices, get_bin_intervals_from_indices, 
+    xyz_to_flat
+    )
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Union, Tuple
 import pandas as pd
@@ -8,7 +11,6 @@ import numpy as np
 
 @dataclass
 class Header:
-    # Example fields derived from the specification in Table A.1
     if_: int            # File type. Only 1 is supported.
     iv: int             # Time-dependent windows flag (1 / 2 = no / yes)
     ni: int             # Number of particle types   
@@ -282,47 +284,58 @@ class ParticleBlock:
 
 @dataclass
 class QueryResult:
-    """
-    Encapsulates the result of a weight window query and provides methods to manipulate it.
-    """
-    particle_types: np.ndarray
-    time_bin_start: np.ndarray
-    time_bin_end: np.ndarray
-    energy_bin_start: np.ndarray
-    energy_bin_end: np.ndarray
-    x_start: np.ndarray
-    x_end: np.ndarray
-    y_start: np.ndarray
-    y_end: np.ndarray
-    z_start: np.ndarray
-    z_end: np.ndarray
-    geom_index: np.ndarray
-    ww_value: np.ndarray
-
+    """Stores the results of a weight window query."""
+    header: Header
+    particle_types: List[int]
+    ww_values: List[np.ndarray]
+    energy_intervals: List[Tuple[np.ndarray, np.ndarray]]
+    time_intervals: List[Tuple[np.ndarray, np.ndarray]]
+    x_intervals: Tuple[np.ndarray, np.ndarray]
+    y_intervals: Tuple[np.ndarray, np.ndarray]
+    z_intervals: Tuple[np.ndarray, np.ndarray]
 
     def to_dataframe(self) -> pd.DataFrame:
         """
-        Convert the query result to a pandas DataFrame.
-
-        Returns:
-            pd.DataFrame: DataFrame with the specified columns.
+        Convert query results to a pandas DataFrame.
         """
-        data = {
-            "particle_type": self.particle_types,
-            "time_bin_start": self.time_bin_start,
-            "time_bin_end": self.time_bin_end,
-            "energy_bin_start": self.energy_bin_start,
-            "energy_bin_end": self.energy_bin_end,
-            "x_start": self.x_start,
-            "x_end": self.x_end,
-            "y_start": self.y_start,
-            "y_end": self.y_end,
-            "z_start": self.z_start,
-            "z_end": self.z_end,
-            "geom_index": self.geom_index,
-            "ww_value": self.ww_value
-        }
-        return pd.DataFrame(data)
+        data_rows = []
+        
+        for p_idx, p_type in enumerate(self.particle_types):
+            e_starts, e_ends = self.energy_intervals[p_idx]
+            t_starts, t_ends = self.time_intervals[p_idx]
+            x_starts, x_ends = self.x_intervals
+            y_starts, y_ends = self.y_intervals
+            z_starts, z_ends = self.z_intervals
+            ww_vals = self.ww_values[p_idx]
+            
+            if len(t_starts) == 0 and len(t_ends) == 0:
+                t_starts = np.array([0.0])
+                t_ends = np.array([np.inf])
+                
+            # Get array shape
+            time_dim = len(t_starts)
+            for t_idx, (t_start, t_end) in enumerate(zip(t_starts, t_ends)):
+                for e_idx, (e_start, e_end) in enumerate(zip(e_starts, e_ends)):
+                    for z_idx, (z_start, z_end) in enumerate(zip(z_starts, z_ends)):
+                        for y_idx, (y_start, y_end) in enumerate(zip(y_starts, y_ends)):
+                            for x_idx, (x_start, x_end) in enumerate(zip(x_starts, x_ends)):
+                                t_index = t_idx if time_dim > 1 else 0
+                                data_rows.append({
+                                    'particle_type': p_type,
+                                    'time_start': t_start,
+                                    'time_end': t_end,
+                                    'energy_start': e_start,
+                                    'energy_end': e_end,
+                                    'x_start': x_start,
+                                    'x_end': x_end,
+                                    'y_start': y_start,
+                                    'y_end': y_end,
+                                    'z_start': z_start,
+                                    'z_end': z_end,
+                                    'ww_value': float(ww_vals[t_index, e_idx, z_idx, y_idx, x_idx])
+                                })
+        
+        return pd.DataFrame(data_rows)
 
 
 @dataclass
@@ -345,207 +358,144 @@ class WeightWindowValues:
         geom_idx: Optional[Union[int, Tuple[int, int]]] = None,
     ) -> QueryResult:
         """
-        Efficiently query ww_values and return a QueryResult object.
-
-        Args:
-            particle_type (Optional[int]): Specific particle type to query.
-            time (Optional[Union[float, Tuple[float, float]]]): Time value or range.
-            energy (Optional[Union[float, Tuple[float, float]]]): Energy value or range.
-            x (Optional[Union[float, Tuple[float, float]]]): X coordinate or range.
-            y (Optional[Union[float, Tuple[float, float]]]): Y coordinate or range.
-            z (Optional[Union[float, Tuple[float, float]]]): Z coordinate or range.
-            geom_idx (Optional[Union[int, Tuple[int, int]]]): Geometry index or range.
-
-        Returns:
-            QueryResult: An object containing the query results.
+        Query weight window values based on specified criteria.
         """
-        # Enforce mutual exclusivity between spatial queries and geom_idx
-        spatial_queries = any(param is not None for param in [x, y, z])
-        if spatial_queries and geom_idx is not None:
-            raise ValueError("Cannot query with x, y, or z simultaneously with geom_idx.")
-
-        if self.header is None or self.mesh is None:
-            raise ValueError("Header and Mesh must be provided for querying.")
-
-        # Handle particle_type filtering
+        # Handle particle type selection
         if particle_type is not None:
-            if particle_type < 0 or particle_type >= len(self.particles):
-                raise IndexError(f"particle_type {particle_type} is out of range.")
-            particles = [self.particles[particle_type]]
-            particle_indices = [particle_type]
+            if not 0 <= particle_type < self.header.ni:
+                raise ValueError(f"Invalid particle type {particle_type}")
+            particle_types = [particle_type]
         else:
-            particles = self.particles
-            particle_indices = list(range(len(self.particles)))
+            particle_types = list(range(self.header.ni))
 
-        # Initialize lists to collect query results
-        particle_types, time_bin_start, time_bin_end = [], [], []
-        energy_bin_start, energy_bin_end = [], []
-        x_start, x_end, y_start, y_end, z_start, z_end = [], [], [], [], [], []
-        geom_index, ww_values = [], []
+        results = []
+        energy_intervals = []
+        time_intervals = []
 
-        # Precompute allowed geom_indices if spatial queries are used
-        if spatial_queries and geom_idx is None:
-            # Determine x indices
-            if x is not None:
-                if isinstance(x, tuple):
-                    x_bounds = get_range_indices(self.mesh.x_grid, x)
-                else:
-                    x_bounds = get_closest_indices(self.mesh.x_grid, x)
-                x_start_val, x_end_val = get_bin_intervals_from_indices(self.mesh.x_grid, x_bounds)
-                x_indices = np.arange(x_bounds[0], x_bounds[1] + 1)
+        # Get spatial meshes
+        spatial_mesh = self.mesh.fine_geometry_mesh
+        
+        # Handle spatial coordinates
+        x_grid = spatial_mesh['x']
+        y_grid = spatial_mesh['y']
+        z_grid = spatial_mesh['z']
+
+        # Process x coordinate
+        if x is not None:
+            if isinstance(x, tuple):
+                x_indices = get_range_indices(x_grid, x)
             else:
-                x_start_val, x_end_val = self.mesh.x_grid[0], self.mesh.x_grid[-1]
-                x_indices = np.arange(len(self.mesh.x_grid))
-
-            # Determine y indices
-            if y is not None:
-                if isinstance(y, tuple):
-                    y_bounds = get_range_indices(self.mesh.y_grid, y)
-                else:
-                    y_bounds = get_closest_indices(self.mesh.y_grid, y)
-                y_start_val, y_end_val = get_bin_intervals_from_indices(self.mesh.y_grid, y_bounds)
-                y_indices = np.arange(y_bounds[0], y_bounds[1] + 1)
-            else:
-                y_start_val, y_end_val = self.mesh.y_grid[0], self.mesh.y_grid[-1]
-                y_indices = np.arange(len(self.mesh.y_grid))
-
-            # Determine z indices
-            if z is not None:
-                if isinstance(z, tuple):
-                    z_bounds = get_range_indices(self.mesh.z_grid, z)
-                else:
-                    z_bounds = get_closest_indices(self.mesh.z_grid, z)
-                z_start_val, z_end_val = get_bin_intervals_from_indices(self.mesh.z_grid, z_bounds)
-                z_indices = np.arange(z_bounds[0], z_bounds[1] + 1)
-            else:
-                z_start_val, z_end_val = self.mesh.z_grid[0], self.mesh.z_grid[-1]
-                z_indices = np.arange(len(self.mesh.z_grid))
-
-            # Compute all possible geom_indices from the specified x, y, z ranges
-            # Using meshgrid to create all combinations
-            zz, yy, xx = np.meshgrid(z_indices, y_indices, x_indices, indexing='ij')
-            allowed_geom_indices = (zz * (self.header.nfx * self.header.nfy) + yy * self.header.nfx + xx).flatten()
-            allowed_geom_indices_set = set(allowed_geom_indices)
+                x_indices = get_closest_indices(x_grid, x)
+            x_starts, x_ends = get_bin_intervals_from_indices(x_grid, x_indices)
         else:
-            # If geom_idx is specified or no spatial queries, we don't precompute allowed_geom_indices
-            allowed_geom_indices = None
+            x_indices = np.arange(len(x_grid)-1)
+            x_starts, x_ends = x_grid[:-1], x_grid[1:]
 
-        for p_idx, particle in zip(particle_indices, particles):
-            # Determine geom_indices based on geom_idx or spatial queries
-            if geom_idx is not None:
-                # Query based on geom_idx
-                if isinstance(geom_idx, int):
-                    geom_mask = (particle.geom_indices == geom_idx)
-                else:
-                    start_idx, end_idx = geom_idx
-                    geom_mask = (particle.geom_indices >= start_idx) & (particle.geom_indices <= end_idx)
-            elif spatial_queries:
-                # Query based on spatial coordinates
-                # Use the precomputed allowed_geom_indices to filter
-                geom_mask = np.isin(particle.geom_indices, allowed_geom_indices)
+        # Process y coordinate
+        if y is not None:
+            if isinstance(y, tuple):
+                y_indices = get_range_indices(y_grid, y)
             else:
-                # No geom filtering
-                geom_mask = np.ones_like(particle.geom_indices, dtype=bool)
+                y_indices = get_closest_indices(y_grid, y)
+            y_starts, y_ends = get_bin_intervals_from_indices(y_grid, y_indices)
+        else:
+            y_indices = np.arange(len(y_grid)-1)
+            y_starts, y_ends = y_grid[:-1], y_grid[1:]
 
-            # Apply geom_mask to filter geom_indices and ww_values
-            filtered_indices = np.where(geom_mask)[0]
-            if filtered_indices.size == 0:
-                continue  # No matching entries for this particle
-
-            selected_geom_indices = particle.geom_indices[filtered_indices]
-            selected_ww_values = particle.ww_values[filtered_indices]
-
-            # Handle time filtering
-            if time is not None:
-                if isinstance(time, tuple):
-                    time_bounds = get_range_indices(self.header.time_grid, time)
-                else:
-                    time_bounds = get_closest_indices(self.header.time_grid, time)
-                time_start, time_end = get_bin_intervals_from_indices(self.header.time_grid, time_bounds)
+        # Process z coordinate
+        if z is not None:
+            if isinstance(z, tuple):
+                z_indices = get_range_indices(z_grid, z)
             else:
-                time_start, time_end = self.header.time_grid[0], self.header.time_grid[-1]
+                z_indices = get_closest_indices(z_grid, z)
+            z_starts, z_ends = get_bin_intervals_from_indices(z_grid, z_indices)
+        else:
+            z_indices = np.arange(len(z_grid)-1)
+            z_starts, z_ends = z_grid[:-1], z_grid[1:]
 
-            # Handle energy filtering
+        # Process each particle type
+        for p_type in particle_types:
+            # Get original energy grid and create extended version with 0.0
+            orig_energy_grid = self.mesh.energy_mesh[p_type]
+            energy_grid = np.insert(orig_energy_grid, 0, 0.0)
+
+            # Handle energy query
             if energy is not None:
                 if isinstance(energy, tuple):
-                    energy_bounds = get_range_indices(self.header.energy_grid, energy)
+                    # Range query
+                    e_indices = get_range_indices(energy_grid, energy)
+                    # Get the actual energy intervals
+                    e_starts, e_ends = get_bin_intervals_from_indices(energy_grid, e_indices)
+                    energy_intervals.append((e_starts, e_ends))
+                    # Adjust indices for ww_values access (shift left by 1 and remove if negative)
+                    e_indices = e_indices - 1
+                    e_indices = e_indices[e_indices >= 0]
                 else:
-                    energy_bounds = get_closest_indices(self.header.energy_grid, energy)
-                energy_start, energy_end = get_bin_intervals_from_indices(self.header.energy_grid, energy_bounds)
+                    # Single value query
+                    e_indices = get_closest_indices(energy_grid, energy)
+                    # Get the actual energy intervals
+                    e_starts, e_ends = get_bin_intervals_from_indices(energy_grid, e_indices)
+                    energy_intervals.append((e_starts, e_ends))
+                    # Adjust indices for ww_values access
+                    e_indices = e_indices - 1
+                    e_indices = e_indices[e_indices >= 0]
             else:
-                energy_start, energy_end = self.header.energy_grid[0], self.header.energy_grid[-1]
+                # If no energy query, use all indices but account for the added 0.0
+                e_indices = np.arange(len(orig_energy_grid))  # Indices for original grid
+                energy_intervals.append((energy_grid[:-1], energy_grid[1:]))  # Use extended grid for intervals
 
-            # If querying based on geom_idx, set spatial bin starts/ends to entire range
-            if geom_idx is not None or not spatial_queries:
-                current_x_start, current_x_end = self.mesh.x_grid[0], self.mesh.x_grid[-1]
-                current_y_start, current_y_end = self.mesh.y_grid[0], self.mesh.y_grid[-1]
-                current_z_start, current_z_end = self.mesh.z_grid[0], self.mesh.z_grid[-1]
+            # Handle time query
+            if self.header.has_time_dependency:
+                time_grid = self.mesh.time_mesh[p_type]
+                if time is not None:
+                    if isinstance(time, tuple):
+                        # Range query for time
+                        t_indices = get_range_indices(time_grid, time)
+                    else:
+                        # Single value query for time
+                        t_indices = get_closest_indices(time_grid, time)
+                    # Get the actual time intervals
+                    t_starts, t_ends = get_bin_intervals_from_indices(time_grid, t_indices)
+                else:
+                    # If no time query, use all indices
+                    t_indices = np.arange(len(time_grid))
+                    t_starts, t_ends = time_grid[:-1], time_grid[1:]
+                time_intervals.append((t_starts, t_ends))
             else:
-                # Spatial queries are used; use the computed bin starts/ends
-                current_x_start, current_x_end = x_start_val, x_end_val
-                current_y_start, current_y_end = y_start_val, y_end_val
-                current_z_start, current_z_end = z_start_val, z_end_val
+                t_indices = [0]
+                time_intervals.append((np.array([]), np.array([])))
 
-            # Append data to result lists
-            particle_types.append(np.full(selected_ww_values.shape, p_idx, dtype=int))
-            time_bin_start.append(np.full(selected_ww_values.shape, time_start, dtype=float))
-            time_bin_end.append(np.full(selected_ww_values.shape, time_end, dtype=float))
-            energy_bin_start.append(np.full(selected_ww_values.shape, energy_start, dtype=float))
-            energy_bin_end.append(np.full(selected_ww_values.shape, energy_end, dtype=float))
-            x_start.append(np.full(selected_ww_values.shape, current_x_start, dtype=float))
-            x_end.append(np.full(selected_ww_values.shape, current_x_end, dtype=float))
-            y_start.append(np.full(selected_ww_values.shape, current_y_start, dtype=float))
-            y_end.append(np.full(selected_ww_values.shape, current_y_end, dtype=float))
-            z_start.append(np.full(selected_ww_values.shape, current_z_start, dtype=float))
-            z_end.append(np.full(selected_ww_values.shape, current_z_end, dtype=float))
-            geom_index.append(selected_geom_indices)
-            ww_values.append(selected_ww_values)
+            # Get the ww values for this particle type
+            particle_ww = self.particles[p_type].ww_values
 
-        # Finalize results
-        if ww_values:
-            particle_types = np.concatenate(particle_types)
-            time_bin_start = np.concatenate(time_bin_start)
-            time_bin_end = np.concatenate(time_bin_end)
-            energy_bin_start = np.concatenate(energy_bin_start)
-            energy_bin_end = np.concatenate(energy_bin_end)
-            x_start = np.concatenate(x_start)
-            x_end = np.concatenate(x_end)
-            y_start = np.concatenate(y_start)
-            y_end = np.concatenate(y_end)
-            z_start = np.concatenate(z_start)
-            z_end = np.concatenate(z_end)
-            geom_index = np.concatenate(geom_index)
-            ww_value = np.concatenate(ww_values)
-        else:
-            # Initialize empty arrays with correct dtype
-            particle_types = np.array([], dtype=int)
-            time_bin_start = np.array([], dtype=float)
-            time_bin_end = np.array([], dtype=float)
-            energy_bin_start = np.array([], dtype=float)
-            energy_bin_end = np.array([], dtype=float)
-            x_start = np.array([], dtype=float)
-            x_end = np.array([], dtype=float)
-            y_start = np.array([], dtype=float)
-            y_end = np.array([], dtype=float)
-            z_start = np.array([], dtype=float)
-            z_end = np.array([], dtype=float)
-            geom_index = np.array([], dtype=int)
-            ww_value = np.array([], dtype=float)
+            # Select the values using both time and energy indices
+            if self.header.has_time_dependency:
+                selected_ww = particle_ww[t_indices][:, e_indices]
+            else:
+                selected_ww = particle_ww[0:1, e_indices]  # Always use single time index for non-time-dependent
+
+            # Reshape the ww values to match the spatial dimensions
+            selected_ww = selected_ww.reshape(*selected_ww.shape[:-1], 
+                                            int(self.header.nfz),
+                                            int(self.header.nfy),
+                                            int(self.header.nfx))
+            
+            # Create a view of the selected indices
+            selected_ww = selected_ww[..., z_indices, :, :]
+            selected_ww = selected_ww[..., :, y_indices, :]
+            selected_ww = selected_ww[..., :, :, x_indices]
+
+            results.append(selected_ww)
 
         return QueryResult(
+            header=self.header,
             particle_types=particle_types,
-            time_bin_start=time_bin_start,
-            time_bin_end=time_bin_end,
-            energy_bin_start=energy_bin_start,
-            energy_bin_end=energy_bin_end,
-            x_start=x_start,
-            x_end=x_end,
-            y_start=y_start,
-            y_end=y_end,
-            z_start=z_start,
-            z_end=z_end,
-            geom_index=geom_index,
-            ww_value=ww_value
+            ww_values=results,
+            energy_intervals=energy_intervals,
+            time_intervals=time_intervals,
+            x_intervals=(x_starts, x_ends),
+            y_intervals=(y_starts, y_ends),
+            z_intervals=(z_starts, z_ends)
         )
 
 
