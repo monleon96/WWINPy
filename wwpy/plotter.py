@@ -1,177 +1,221 @@
 # plotter.py
 # Functions and classes for visualization
 
-
-# Template for a possible plotter idea.
-
-
-import plotly.graph_objects as go
 import numpy as np
+import pyvista as pv
+from typing import Optional, Tuple, List
+from .models import WWINPData
 
-def create_mesh_grid(x_range, y_range, z_range, step=1):
-    """
-    Creates grid lines along each axis within the specified ranges.
+class WWINPPlotter:
+    def __init__(self, wwinp: WWINPData):
+        """
+        Initialize the plotter with WWINPData.
+        
+        Parameters:
+            wwinp (WWINPData): The weight window data to visualize
+        """
+        self.wwinp = wwinp
+        self.plotter = pv.Plotter()
+        self._current_grid = None
+        self._energy_idx = 0
+        self.mesh_opacity = 0.7
 
-    Parameters:
-        x_range (tuple): (min, max) range for x-axis
-        y_range (tuple): (min, max) range for y-axis
-        z_range (tuple): (min, max) range for z-axis
-        step (int): spacing between grid lines
+    def _create_mesh_grid(self, particle_type: int, time_idx: int = 0) -> pv.RectilinearGrid:
+        """
+        Create a PyVista RectilinearGrid from the mesh data.
+        
+        Parameters:
+            particle_type (int): Particle type index
+            time_idx (int): Time index (default=0)
+            
+        Returns:
+            pv.RectilinearGrid: PyVista grid object
+        """
+        mesh = self.wwinp.mesh.fine_geometry_mesh
+        
+        # Get coordinate arrays
+        x = mesh['x']
+        y = mesh['y']
+        z = mesh['z']
+        
+        # Create the grid
+        grid = pv.RectilinearGrid(x, y, z)
+        
+        # Get the weight window values for all energies
+        values = self.wwinp.values.particles[particle_type].ww_values
+        if self.wwinp.header.has_time_dependency:
+            values = values[time_idx]
+        else:
+            values = values[0]
+            
+        # Reshape the values for each energy level
+        ne = values.shape[0]
+        nz, ny, nx = len(z)-1, len(y)-1, len(x)-1
+        shaped_values = values.reshape(ne, nz, ny, nx)
+        
+        # Add each energy level as a separate array
+        for e in range(ne):
+            grid.cell_data[f'energy_{e}'] = shaped_values[e].flatten(order='F')
+            
+        return grid
 
-    Returns:
-        x_mesh, y_mesh, z_mesh: Lists of Scatter3d traces for each axis
-    """
-    x_mesh = []
-    y_mesh = []
-    z_mesh = []
-
-    # X Mesh: Lines parallel to X-axis (constant Y and Z)
-    for y in np.arange(y_range[0], y_range[1] + step, step):
-        for z in np.arange(z_range[0], z_range[1] + step, step):
-            x_line = np.linspace(x_range[0], x_range[1], 2)
-            y_line = [y, y]
-            z_line = [z, z]
-            x_mesh.append(go.Scatter3d(
-                x=x_line,
-                y=y_line,
-                z=z_line,
-                mode='lines',
-                line=dict(color='red', width=2),
-                name='X Mesh',
-                legendgroup='X Mesh',
-                showlegend=False  # Hide individual lines from legend
-            ))
-
-    # Y Mesh: Lines parallel to Y-axis (constant X and Z)
-    for x in np.arange(x_range[0], x_range[1] + step, step):
-        for z in np.arange(z_range[0], z_range[1] + step, step):
-            y_line = np.linspace(y_range[0], y_range[1], 2)
-            x_line = [x, x]
-            z_line = [z, z]
-            y_mesh.append(go.Scatter3d(
-                x=x_line,
-                y=y_line,
-                z=z_line,
-                mode='lines',
-                line=dict(color='green', width=2),
-                name='Y Mesh',
-                legendgroup='Y Mesh',
-                showlegend=False  # Hide individual lines from legend
-            ))
-
-    # Z Mesh: Lines parallel to Z-axis (constant X and Y)
-    for x in np.arange(x_range[0], x_range[1] + step, step):
-        for y in np.arange(y_range[0], y_range[1] + step, step):
-            z_line = np.linspace(z_range[0], z_range[1], 2)
-            x_line = [x, x]
-            y_line = [y, y]
-            z_mesh.append(go.Scatter3d(
-                x=x_line,
-                y=y_line,
-                z=z_line,
-                mode='lines',
-                line=dict(color='blue', width=2),
-                name='Z Mesh',
-                legendgroup='Z Mesh',
-                showlegend=False  # Hide individual lines from legend
-            ))
-
-    return x_mesh, y_mesh, z_mesh
-
-def add_legend_traces(fig):
-    """
-    Adds dummy traces to the figure for legend entries.
-
-    Parameters:
-        fig (go.Figure): The Plotly figure object to which legend traces are added.
-    """
-    # X Mesh Legend Trace
-    fig.add_trace(go.Scatter3d(
-        x=[None],
-        y=[None],
-        z=[None],
-        mode='lines',
-        line=dict(color='red', width=2),
-        name='X Mesh',
-        legendgroup='X Mesh',
-        showlegend=True
-    ))
-
-    # Y Mesh Legend Trace
-    fig.add_trace(go.Scatter3d(
-        x=[None],
-        y=[None],
-        z=[None],
-        mode='lines',
-        line=dict(color='green', width=2),
-        name='Y Mesh',
-        legendgroup='Y Mesh',
-        showlegend=True
-    ))
-
-    # Z Mesh Legend Trace
-    fig.add_trace(go.Scatter3d(
-        x=[None],
-        y=[None],
-        z=[None],
-        mode='lines',
-        line=dict(color='blue', width=2),
-        name='Z Mesh',
-        legendgroup='Z Mesh',
-        showlegend=True
-    ))
-
-def generate_mesh_grid_html(output_file='mesh_grid.html'):
-    """
-    Generates an interactive 3D mesh grid plot and saves it as an HTML file.
-
-    Parameters:
-        output_file (str): The filename for the output HTML file.
-    """
-    # Define the range for each axis
-    x_range = (0, 10)
-    y_range = (0, 10)
-    z_range = (0, 10)
-    step = 2  # spacing between grid lines
-
-    # Create mesh grids
-    x_mesh, y_mesh, z_mesh = create_mesh_grid(x_range, y_range, z_range, step)
-
-    # Create the figure
-    fig = go.Figure()
-
-    # Add X Mesh lines to the figure
-    for trace in x_mesh:
-        fig.add_trace(trace)
-
-    # Add Y Mesh lines to the figure
-    for trace in y_mesh:
-        fig.add_trace(trace)
-
-    # Add Z Mesh lines to the figure
-    for trace in z_mesh:
-        fig.add_trace(trace)
-
-    # Add legend traces
-    add_legend_traces(fig)
-
-    # Update layout for better visualization
-    fig.update_layout(
-        scene=dict(
-            xaxis=dict(range=x_range, title='X Axis'),
-            yaxis=dict(range=y_range, title='Y Axis'),
-            zaxis=dict(range=z_range, title='Z Axis'),
-            aspectmode='cube'
-        ),
-        title='3D Mesh Grid with Interactive Legend',
-        legend=dict(
-            itemsizing='constant'
+    def _update_energy(self, energy_idx: int) -> None:
+        """Callback for energy slider updates."""
+        if self._current_grid is None:
+            return
+            
+        self.plotter.remove_actor('mesh')
+        active_arr = f'energy_{energy_idx}'
+        mesh_actor = self.plotter.add_mesh(
+            self._current_grid,
+            scalars=active_arr,
+            opacity=self.mesh_opacity,
+            name='mesh',
+            show_edges=True,
+            cmap='viridis',
+            clim=self._get_value_range()
         )
-    )
+        self._energy_idx = energy_idx
+        self.plotter.render()
 
-    # Save the figure to an HTML file
-    fig.write_html('examples/'+output_file)
-    print(f"Interactive 3D mesh grid has been saved to {output_file}")
+    def _get_value_range(self) -> Tuple[float, float]:
+        """Get the global min/max range for all energy levels."""
+        values = self._current_grid.cell_data.values()
+        all_values = np.concatenate([arr.flatten() for arr in values])
+        return float(np.min(all_values)), float(np.max(all_values))
 
-if __name__ == "__main__":
-    generate_mesh_grid_html()
+    def _get_energy_values(self, particle_type: int) -> List[float]:
+        """Get the energy values for slider labels."""
+        return [f"{e:.2e}" for e in self.wwinp.mesh.energy_mesh[particle_type]]
+
+    def plot_3d(self, particle_type: int, time_idx: int = 0) -> None:
+        """
+        Create an interactive 3D visualization with energy slider.
+        
+        Parameters:
+            particle_type (int): Particle type to visualize
+            time_idx (int): Time index for time-dependent data
+        """
+        self._current_grid = self._create_mesh_grid(particle_type, time_idx)
+        
+        # Set up the plotter
+        self.plotter = pv.Plotter()
+        self.plotter.add_mesh(
+            self._current_grid,
+            scalars=f'energy_0',
+            opacity=self.mesh_opacity,
+            name='mesh',
+            show_edges=True,
+            cmap='viridis',
+            clim=self._get_value_range()
+        )
+        
+        # Add energy slider
+        energy_values = self._get_energy_values(particle_type)
+        self.plotter.add_slider_widget(
+            callback=self._update_energy,
+            rng=[0, len(energy_values)-1],
+            value=0,
+            title=f'Energy (MeV)',
+            pointa=(0.025, 0.1),
+            pointb=(0.31, 0.1),
+            style='modern'
+        )
+        
+        # Add text for current energy value
+        self.plotter.add_text(
+            f"Particle Type: {particle_type}\nEnergy: {energy_values[0]} MeV",
+            position='upper_left'
+        )
+        
+        self.plotter.show()
+
+    def plot_slices(self, particle_type: int, time_idx: int = 0) -> None:
+        """
+        Create an interactive visualization with orthogonal slices.
+        
+        Parameters:
+            particle_type (int): Particle type to visualize
+            time_idx (int): Time index for time-dependent data
+        """
+        self._current_grid = self._create_mesh_grid(particle_type, time_idx)
+        
+        # Set up the plotter
+        self.plotter = pv.Plotter()
+        
+        # Add slice planes
+        mesh_bounds = self._current_grid.bounds
+        center = [(mesh_bounds[i+1] + mesh_bounds[i])/2 for i in (0,2,4)]
+        
+        # Add slices along each axis
+        self.plotter.add_mesh_slice_orthogonal(
+            self._current_grid,
+            scalars=f'energy_0',
+            cmap='viridis',
+            clim=self._get_value_range()
+        )
+        
+        # Add energy slider
+        energy_values = self._get_energy_values(particle_type)
+        self.plotter.add_slider_widget(
+            callback=self._update_energy,
+            rng=[0, len(energy_values)-1],
+            value=0,
+            title=f'Energy (MeV)',
+            pointa=(0.025, 0.1),
+            pointb=(0.31, 0.1),
+            style='modern'
+        )
+        
+        # Add text for current energy value
+        self.plotter.add_text(
+            f"Particle Type: {particle_type}\nEnergy: {energy_values[0]} MeV",
+            position='upper_left'
+        )
+        
+        self.plotter.show()
+
+    def plot_volume(self, particle_type: int, time_idx: int = 0) -> None:
+        """
+        Create a volume rendering visualization.
+        
+        Parameters:
+            particle_type (int): Particle type to visualize
+            time_idx (int): Time index for time-dependent data
+        """
+        self._current_grid = self._create_mesh_grid(particle_type, time_idx)
+        
+        # Set up the plotter
+        self.plotter = pv.Plotter()
+        
+        # Add volume rendering
+        self.plotter.add_volume(
+            self._current_grid,
+            scalars=f'energy_0',
+            cmap='viridis',
+            opacity='linear',
+            clim=self._get_value_range()
+        )
+        
+        # Add energy slider
+        energy_values = self._get_energy_values(particle_type)
+        self.plotter.add_slider_widget(
+            callback=self._update_energy,
+            rng=[0, len(energy_values)-1],
+            value=0,
+            title=f'Energy (MeV)',
+            pointa=(0.025, 0.1),
+            pointb=(0.31, 0.1),
+            style='modern'
+        )
+        
+        # Add text for current energy value
+        self.plotter.add_text(
+            f"Particle Type: {particle_type}\nEnergy: {energy_values[0]} MeV",
+            position='upper_left'
+        )
+        
+        self.plotter.show()
+
+
+
