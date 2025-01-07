@@ -1,15 +1,16 @@
+# wwpy/ratios.py
+
 """
 Includes some numba functions for improved performance of the ratios calculation.
 """
 
 import numpy as np
-from numba import njit, prange
 
 
 @njit(cache=True)
 def calculate_max_ratio_array(array: np.ndarray) -> np.ndarray:
     """
-    Calculate the maximum ratio of each value to its neighbours in a 3D array.
+    Calculate the maximum ratio between each cell and its neighbors in a 3D array.
 
     Parameters
     ----------
@@ -22,56 +23,21 @@ def calculate_max_ratio_array(array: np.ndarray) -> np.ndarray:
         A 3D array of the same shape as the input, where each value is the maximum
         ratio of the corresponding value in the input array to its neighbours.
     """
+    # Initialize the ratios array with ones
     ratios = np.ones_like(array)
-    for k in prange(array.shape[0]):
-        for j in prange(array.shape[1]):
-            for i in prange(array.shape[2]):
-                value = array[k, j, i]
-                neighbour_values = _find_neighbour_values(array, k, j, i)
-                ratios[k, j, i] = _calculate_max_ratio_from_neighbours(
-                    value, neighbour_values
-                )
+    
+    # Iterate over the array to calculate ratios
+    for z in range(1, array.shape[0] - 1):
+        for y in range(1, array.shape[1] - 1):
+            for x in range(1, array.shape[2] - 1):
+                center_value = array[z, y, x]
+                neighbors = [
+                    array[z-1, y, x], array[z+1, y, x],
+                    array[z, y-1, x], array[z, y+1, x],
+                    array[z, y, x-1], array[z, y, x+1]
+                ]
+                max_neighbor = max(neighbors)
+                if center_value != 0:
+                    ratios[z, y, x] = max_neighbor / center_value
+    
     return ratios
-
-
-@njit(cache=True)
-def _find_neighbour_values(array: np.ndarray, k: int, j: int, i: int) -> np.ndarray:
-    neighbour_values = np.zeros(6, dtype=float)
-    neighbouring_indices = [
-        [k, j, i + 1],
-        [k, j, i - 1],
-        [k, j + 1, i],
-        [k, j - 1, i],
-        [k + 1, j, i],
-        [k - 1, j, i],
-    ]
-    for i, index in enumerate(neighbouring_indices):
-        index_is_valid = True
-
-        for index_i, dimension_i in zip(index, array.shape):
-            if index_i < 0 or index_i >= dimension_i:
-                index_is_valid = False
-                break
-
-        if index_is_valid:
-            neighbour_values[i] = array[index[0], index[1], index[2]]
-
-    return neighbour_values
-
-
-@njit(cache=True)
-def _calculate_max_ratio_from_neighbours(
-    value: float, neighbour_values: np.ndarray
-) -> float:
-    ratios = np.divide(value, neighbour_values)
-
-    # Invert the values that are less than 1
-    ratios = np.where(ratios < 1, 1 / ratios, ratios)
-
-    # Remove the infinities
-    ratios = ratios[np.isfinite(ratios)]
-
-    if ratios.size > 0:
-        return np.max(ratios)
-    else:
-        return 1

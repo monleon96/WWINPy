@@ -1,18 +1,13 @@
-from typing import List, Iterator
+from typing import Iterator
 import itertools
-import sys
 
 from wwpy.utils import verify_and_correct
 from wwpy.exceptions import WWINPFormatError, WWINPParsingError
-from wwpy.models import (
-    WWINPData,
-    Header,
-    GeometryAxis,
-    GeometryData,
-    Mesh,
-    ParticleBlock,
-    WeightWindowValues    
-)
+from wwpy.header import Header
+from wwpy.models import WWINPData
+from wwpy.mesh import Mesh, ParticleBlock
+from wwpy.geometry import GeometryData, GeometryAxis
+from wwpy.weight_windows import WeightWindowValues
 import numpy as np
 
 def _tokenize_file(file_path: str) -> Iterator[str]:

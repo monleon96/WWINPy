@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
-from wwpy.models import Header
+from wwpy.header import Header
 from typing import List, Optional, Dict
-import pandas as pd
 import numpy as np
 
 

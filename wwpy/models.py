@@ -3,128 +3,10 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict
 import numpy as np
-from wwpy.geometry import GeometryData, GeometryAxis
+from wwpy.header import Header
+from wwpy.geometry import GeometryAxis
+from wwpy.mesh import Mesh
 from wwpy.weight_windows import WeightWindowValues
-
-@dataclass
-class Header:
-    if_: int            # File type. Only 1 is supported.
-    iv: int             # Time-dependent windows flag (1 / 2 = no / yes)
-    ni: int             # Number of particle types   
-    nr: int             # = 10 / 16 / 16 - rectangular / cylindrical / spherical
-    probid: str = ""    # Made optional with default empty string
-
-    # Optional arrays that might appear depending on 'iv' or 'nr'
-    nt: List[int] = field(default_factory=list)
-    ne: List[int] = field(default_factory=list)
-
-    # Additional geometry specs
-    nfx: Optional[float] = None
-    nfy: Optional[float] = None
-    nfz: Optional[float] = None
-    x0: Optional[float] = None
-    y0: Optional[float] = None
-    z0: Optional[float] = None
-
-    ncx: Optional[float] = None
-    ncy: Optional[float] = None
-    ncz: Optional[float] = None
-    nwg: Optional[float] = None
-
-    # Optional for nr = 16
-    x1: Optional[float] = None
-    y1: Optional[float] = None
-    z1: Optional[float] = None
-    x2: Optional[float] = None
-    y2: Optional[float] = None
-    z2: Optional[float] = None
-
-    @property
-    def has_time_dependency(self) -> bool:
-        """
-        Returns True if 'iv' equals 2, indicating a time dependency.
-        """
-        return self.iv == 2
-
-    @property
-    def type_of_mesh(self) -> Optional[str]:
-        """
-        Returns the type of mesh based on the 'nwg' value.
-        - 1: Cartesian
-        - 2: Cylindrical
-        - 3: Spherical
-        Returns None if 'nwg' is not set or has an unexpected value.
-        """
-        mesh_types = {
-            1: "cartesian",
-            2: "cylindrical",
-            3: "spherical"
-        }
-        if self.nwg is None:
-            return None
-        try:
-            nwg_int = int(self.nwg)
-            return mesh_types.get(nwg_int, "unknown")
-        except ValueError:
-            return "unknown"
-
-    @property
-    def number_of_time_bins(self) -> int:
-        """
-        Returns the number of time bins in a list. One element per particle type.
-        """
-        return self.nt
-
-    @property
-    def number_of_energy_bins(self) -> int:
-        """
-        Returns the number of energy bins in a list. One element per particle type.
-        """
-        return self.ne
-
-    @property
-    def number_of_particle_types(self) -> int:
-        """
-        Returns the number of particles.
-        """
-        return self.ni
-
-@dataclass
-class Mesh:
-    """
-    Encapsulates geometry mesh, time mesh, and energy mesh.
-    """
-    header: Header
-    geometry: GeometryData
-    time_mesh: dict[int, np.ndarray] = field(default_factory=lambda: np.array([]))    # Shape: (nt,)
-    energy_mesh: dict[int, np.ndarray] = field(default_factory=lambda: np.array([]))  # Shape: (ne,)
-
-    @property
-    def coarse_geometry_mesh(self) -> Dict[str, np.ndarray]:
-        return self.geometry.coarse_mesh
-
-    @property
-    def fine_geometry_mesh(self) -> Dict[str, np.ndarray]:
-        return self.geometry.fine_mesh
-
-    @property
-    def geometry_indices(self) -> np.ndarray:
-        return self.geometry.indices
-
-    @property
-    def type_of_geometry_mesh(self) -> Optional[str]:
-        """
-        Returns the type of geometry mesh using the type_of_mesh property from the Header class.
-        """
-        return self.header.type_of_mesh
-
-
-@dataclass
-class ParticleBlock:
-    """
-    Represents a block of particles with weight window values.
-    """
-    ww_values: np.ndarray = field(default_factory=lambda: np.array([]))  # Shape: (nt, ne, geom_cells)
 
 
 @dataclass
@@ -136,7 +18,7 @@ class WWINPData:
     mesh: Mesh
     values: WeightWindowValues
 
-    def multiply(self, factor: float) -> None:
+    def multiply(self, factor: float = 2.0) -> None:
         """
         Multiply all weight window values by a given factor.
 
@@ -146,7 +28,7 @@ class WWINPData:
         for particle in self.values.particles:
             particle.ww_values *= factor
 
-    def soften(self, power: float) -> None:
+    def soften(self, power: float = 0.7) -> None:
         """
         Raise all weight window values to a given power.
         This can be used to "soften" or "harden" the weight window boundaries.
