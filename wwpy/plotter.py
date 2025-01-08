@@ -3,16 +3,16 @@
 
 import numpy as np
 import pyvista as pv
-from typing import Optional, Tuple, List
-from .models import WWINPData
+from typing import Tuple, List
+from .ww_data import WWData
 
-class WWINPPlotter:
-    def __init__(self, wwinp: WWINPData):
+class WWPlotter:
+    def __init__(self, wwinp: WWData):
         """
-        Initialize the plotter with WWINPData.
+        Initialize the plotter with WWData.
         
         Parameters:
-            wwinp (WWINPData): The weight window data to visualize
+            wwinp (WWData): The weight window data to visualize
         """
         self.wwinp = wwinp
         self.plotter = pv.Plotter()

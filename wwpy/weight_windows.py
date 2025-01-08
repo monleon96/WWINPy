@@ -1,9 +1,14 @@
+"""
+Weight window operations module.
+Handles storage and manipulation of weight window values through the WeightWindowValues class.
+"""
+
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict
 import numpy as np
 import pandas as pd
 from wwpy.header import Header
-from wwpy.mesh import Mesh, ParticleBlock
+from wwpy.mesh import Mesh
 from wwpy.query import QueryResult
 from wwpy.utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
 from wwpy.ratios import calculate_max_ratio_array
@@ -11,25 +16,212 @@ from wwpy.ratios import calculate_max_ratio_array
 
 @dataclass
 class WeightWindowValues:
-    """
-    Stores the weight window values for all particles.
+    """Weight window values container class.
+
+    Internal container class for managing weight window values and operations.
+
+    :ivar header: WWINP file header information
+    :vartype header: Header
+    :ivar mesh: Mesh geometry and binning information
+    :vartype mesh: Mesh
+    :ivar ww_values: Dictionary mapping particle types to weight window arrays
+    :vartype ww_values: Dict[int, np.ndarray]
     """
     header: Header
     mesh: Mesh
-    particles: List[ParticleBlock] = field(default_factory=list)
+    ww_values: Dict[int, np.ndarray] = field(default_factory=dict)
 
-    def query_ww(
-        self,
-        particle_type: Optional[int] = None,
-        time: Optional[Union[float, Tuple[float, float]]] = None,
-        energy: Optional[Union[float, Tuple[float, float]]] = None,
-        x: Optional[Union[float, Tuple[float, float]]] = None,
-        y: Optional[Union[float, Tuple[float, float]]] = None,
-        z: Optional[Union[float, Tuple[int, int]]] = None,
-        geom_idx: Optional[Union[int, Tuple[int, int]]] = None,
-    ) -> QueryResult:
+    def multiply(self, factor: float = 2.0) -> None:
+        """Multiply all weight window values by a factor.
+
+        :param factor: Multiplication factor to apply
+        :type factor: float
         """
-        Query weight window values based on specified criteria.
+        for particle_idx in self.ww_values:
+            self.ww_values[particle_idx] *= factor
+
+    def soften(self, power: float = 0.6) -> None:
+        """Modify weight window boundaries by raising values to a power.
+
+        :param power: Exponent to apply to values (< 1 softens, > 1 hardens)
+        :type power: float
+        """
+        for particle_idx in self.ww_values:
+            self.ww_values[particle_idx] = np.power(self.ww_values[particle_idx], power)
+
+    def apply_ratio_threshold(self, threshold: float = 10.0,
+            particle_types: Union[int, List[int]] = 0,
+            verbose: bool = False) -> None:
+        """Apply a ratio threshold to identify and modify extreme weight window differences.
+
+        :param threshold: Maximum allowed ratio between neighboring cells
+        :type threshold: float
+        :param particle_types: Particle types to process (-1 for all)
+        :type particle_types: Union[int, List[int]]
+        :param verbose: Whether to print detailed modification info
+        :type verbose: bool
+        :raises ValueError: If an invalid particle type is specified
+
+        :Example:
+
+            >>> ww = WeightWindowValues(header, mesh)
+            >>> ww.apply_ratio_threshold(
+            ...     threshold=10.0,
+            ...     particle_types=[0, 1],
+            ...     verbose=True
+            ... )
+
+        :note: When verbose=True, outputs include:
+               - Time and energy bin information
+               - Modified voxel positions and values
+               - Summary statistics of changes
+        """
+        # Handle particle type selection
+        if isinstance(particle_types, int):
+            if particle_types == -1:
+                particle_types = list(range(self.header.ni))
+            else:
+                particle_types = [particle_types]
+        
+        # Validate particle types
+        for p_type in particle_types:
+            if not 0 <= p_type < self.header.ni:
+                raise ValueError(f"Invalid particle type {p_type}. Must be between 0 and {self.header.ni-1}")
+
+        # Get spatial mesh coordinates
+        x_grid = self.mesh.fine_geometry_mesh['x']
+        y_grid = self.mesh.fine_geometry_mesh['y']
+        z_grid = self.mesh.fine_geometry_mesh['z']
+
+        total_changes = 0
+        total_cells = 0
+        
+        for p_idx in particle_types:
+            ww = self.ww_values[p_idx]
+            
+            if verbose:
+                print(f"\nProcessing particle type {p_idx}:")
+            
+            # Get energy bins (add 0.0 as lower bound for first bin)
+            energy_mesh = self.mesh.energy_mesh[p_idx]
+            energy_bins = np.insert(energy_mesh, 0, 0.0)
+            
+            # Get time bins (if time-dependent)
+            if self.header.has_time_dependency:
+                time_bins = self.mesh.time_mesh[p_idx]
+            else:
+                time_bins = np.array([0, float('inf')])
+            
+            # Process each time bin
+            for t in range(ww.shape[0]):
+                time_slice = ww[t]
+                time_changes = 0
+                time_cells = 0
+                
+                # Store changes per energy bin
+                energy_changes = {}
+                
+                for e in range(time_slice.shape[0]):
+                    spatial_view = time_slice[e].reshape(
+                        int(self.header.nfz),
+                        int(self.header.nfy),
+                        int(self.header.nfx)
+                    )
+                    total_in_bin = spatial_view.size
+                    ratios = calculate_max_ratio_array(spatial_view)
+                    mask = ratios > threshold
+                    
+                    changes = np.sum(mask)
+                    if changes > 0:
+                        energy_changes[e] = (changes, total_in_bin)
+                        time_changes += changes
+                        
+                        if verbose:
+                            positions = np.where(mask)
+                            energy_start = energy_bins[e]
+                            energy_end = energy_bins[e + 1]
+                            time_start = time_bins[t]
+                            time_end = time_bins[t + 1] if t + 1 < len(time_bins) else float('inf')
+                            
+                            print(f"\nTime bin: [{time_start:.2e}, {time_end:.2e}]")
+                            print(f"Energy bin: [{energy_start:.2e}, {energy_end:.2e}] MeV")
+                            
+                            # Create DataFrame with modified voxels information
+                            data = []
+                            for z, y, x in zip(*positions):
+                                data.append({
+                                    'Position': f"({z},{y},{x})",
+                                    'X Range': f"[{x_grid[x]:.1f}, {x_grid[x+1]:.1f}]",
+                                    'Y Range': f"[{y_grid[y]:.1f}, {y_grid[y+1]:.1f}]",
+                                    'Z Range': f"[{z_grid[z]:.1f}, {z_grid[z+1]:.1f}]",
+                                    'Ratio': f"{ratios[z,y,x]:.2f}",
+                                    'Value': f"{spatial_view[z,y,x]:.2e}"
+                                })
+                            
+                            if data:
+                                df = pd.DataFrame(data)
+                                print("\nModified voxels:")
+                                # Set display options for better visualization
+                                with pd.option_context('display.max_rows', None,
+                                                     'display.max_columns', None,
+                                                     'display.width', None):
+                                    print(df.to_string(index=False))
+                            
+                        spatial_view[mask] = 0.0
+                    
+                    time_cells += total_in_bin  # Move this outside the if changes > 0 block
+                
+                total_changes += time_changes
+                total_cells += time_cells  # This now has the correct count
+
+        # Summary statistics
+        if total_changes > 0:
+            summary_data = {
+                'Total Cells': [total_cells],
+                'Modified Cells': [total_changes],
+                'Percentage': [f"{total_changes/total_cells*100:.2f}%"]
+            }
+            summary_df = pd.DataFrame(summary_data)
+            print("\nSummary:")
+            print(summary_df.to_string(index=False))
+        else:
+            print("\nNo modifications were needed - all ratios are within threshold")
+
+
+    def query_ww(self, particle_type: Optional[int] = None,
+            time: Optional[Union[float, Tuple[float, float]]] = None,
+            energy: Optional[Union[float, Tuple[float, float]]] = None,
+            x: Optional[Union[float, Tuple[float, float]]] = None,
+            y: Optional[Union[float, Tuple[float, float]]] = None,
+            z: Optional[Union[float, Tuple[int, int]]] = None) -> QueryResult:
+        """Query weight window values based on specified criteria.
+
+        :param particle_type: Specific particle type to query
+        :type particle_type: Optional[int]
+        :param time: Time value or (min, max) range
+        :type time: Optional[Union[float, Tuple[float, float]]]
+        :param energy: Energy value or (min, max) range in MeV
+        :type energy: Optional[Union[float, Tuple[float, float]]]
+        :param x: X coordinate value or (min, max) range
+        :type x: Optional[Union[float, Tuple[float, float]]]
+        :param y: Y coordinate value or (min, max) range
+        :type y: Optional[Union[float, Tuple[float, float]]]
+        :param z: Z coordinate value or (min, max) range
+        :type z: Optional[Union[float, Tuple[int, int]]]
+        :return: Object containing queried values and metadata
+        :rtype: QueryResult
+        :raises ValueError: If an invalid particle type is specified
+
+        :Example:
+
+            >>> ww = WeightWindowValues(header, mesh)
+            >>> result = ww.query_ww(
+            ...     particle_type=0,
+            ...     energy=(1.0, 10.0),
+            ...     x=(0, 10),
+            ...     y=(0, 10),
+            ...     z=(0, 10)
+            ... )
         """
         # Handle particle type selection
         if particle_type is not None:
@@ -137,7 +329,7 @@ class WeightWindowValues:
                 time_intervals.append((np.array([]), np.array([])))
 
             # Get the ww values for this particle type
-            particle_ww = self.particles[p_type].ww_values
+            particle_ww = self.ww_values[p_type]
 
             # Select the values using both time and energy indices
             if self.header.has_time_dependency:
@@ -168,133 +360,4 @@ class WeightWindowValues:
             y_intervals=(y_starts, y_ends),
             z_intervals=(z_starts, z_ends)
         )
-    
-    def apply_ratio_threshold(
-        self, 
-        threshold: float = 10.0, 
-        particle_types: Union[int, List[int]] = 0,
-        verbose: bool = False
-    ) -> None:
-        """
-        Modify weight window values based on their ratio to neighboring cells.
-        Sets values to 0.0 where ratio exceeds threshold.
-        
-        Args:
-            threshold: Maximum allowed ratio between neighboring cells
-            particle_types: Particle type(s) to process. Can be:
-                          - Single integer (default=0)
-                          - List of integers for multiple types
-                          - -1 to process all particle types
-            verbose: If True, print information about changes made
-        """
-        # Handle particle type selection
-        if isinstance(particle_types, int):
-            if particle_types == -1:
-                particle_types = list(range(self.header.ni))
-            else:
-                particle_types = [particle_types]
-        
-        # Validate particle types
-        for p_type in particle_types:
-            if not 0 <= p_type < self.header.ni:
-                raise ValueError(f"Invalid particle type {p_type}. Must be between 0 and {self.header.ni-1}")
 
-        # Get spatial mesh coordinates
-        x_grid = self.mesh.fine_geometry_mesh['x']
-        y_grid = self.mesh.fine_geometry_mesh['y']
-        z_grid = self.mesh.fine_geometry_mesh['z']
-
-        total_changes = 0
-        total_cells = 0
-        
-        for p_idx in particle_types:
-            particle = self.particles[p_idx]
-            ww = particle.ww_values
-            
-            if verbose:
-                print(f"\nProcessing particle type {p_idx}:")
-            
-            # Get energy bins (add 0.0 as lower bound for first bin)
-            energy_mesh = self.mesh.energy_mesh[p_idx]
-            energy_bins = np.insert(energy_mesh, 0, 0.0)
-            
-            # Get time bins (if time-dependent)
-            if self.header.has_time_dependency:
-                time_bins = self.mesh.time_mesh[p_idx]
-            else:
-                time_bins = np.array([0, float('inf')])
-            
-            # Process each time bin
-            for t in range(ww.shape[0]):
-                time_slice = ww[t]
-                time_changes = 0
-                time_cells = 0
-                
-                # Store changes per energy bin
-                energy_changes = {}
-                
-                for e in range(time_slice.shape[0]):
-                    spatial_view = time_slice[e].reshape(
-                        int(self.header.nfz),
-                        int(self.header.nfy),
-                        int(self.header.nfx)
-                    )
-                    total_in_bin = spatial_view.size
-                    ratios = calculate_max_ratio_array(spatial_view)
-                    mask = ratios > threshold
-                    
-                    changes = np.sum(mask)
-                    if changes > 0:
-                        energy_changes[e] = (changes, total_in_bin)
-                        time_changes += changes
-                        
-                        if verbose:
-                            positions = np.where(mask)
-                            energy_start = energy_bins[e]
-                            energy_end = energy_bins[e + 1]
-                            time_start = time_bins[t]
-                            time_end = time_bins[t + 1] if t + 1 < len(time_bins) else float('inf')
-                            
-                            print(f"\nTime bin: [{time_start:.2e}, {time_end:.2e}]")
-                            print(f"Energy bin: [{energy_start:.2e}, {energy_end:.2e}] MeV")
-                            
-                            # Create DataFrame with modified voxels information
-                            data = []
-                            for z, y, x in zip(*positions):
-                                data.append({
-                                    'Position': f"({z},{y},{x})",
-                                    'X Range': f"[{x_grid[x]:.1f}, {x_grid[x+1]:.1f}]",
-                                    'Y Range': f"[{y_grid[y]:.1f}, {y_grid[y+1]:.1f}]",
-                                    'Z Range': f"[{z_grid[z]:.1f}, {z_grid[z+1]:.1f}]",
-                                    'Ratio': f"{ratios[z,y,x]:.2f}",
-                                    'Value': f"{spatial_view[z,y,x]:.2e}"
-                                })
-                            
-                            if data:
-                                df = pd.DataFrame(data)
-                                print("\nModified voxels:")
-                                # Set display options for better visualization
-                                with pd.option_context('display.max_rows', None,
-                                                     'display.max_columns', None,
-                                                     'display.width', None):
-                                    print(df.to_string(index=False))
-                            
-                        spatial_view[mask] = 0.0
-                    
-                    time_cells += total_in_bin  # Move this outside the if changes > 0 block
-                
-                total_changes += time_changes
-                total_cells += time_cells  # This now has the correct count
-
-        # Summary statistics
-        if total_changes > 0:
-            summary_data = {
-                'Total Cells': [total_cells],
-                'Modified Cells': [total_changes],
-                'Percentage': [f"{total_changes/total_cells*100:.2f}%"]
-            }
-            summary_df = pd.DataFrame(summary_data)
-            print("\nSummary:")
-            print(summary_df.to_string(index=False))
-        else:
-            print("\nNo modifications were needed - all ratios are within threshold")

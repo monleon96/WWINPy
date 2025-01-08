@@ -1,3 +1,8 @@
+"""
+This module handles geometric data structures and operations for Cartesian, Cylindrical, and Spherical coordinate systems.
+Provides classes for managing geometry axes and mesh generation in various coordinate systems.
+"""
+
 from dataclasses import dataclass, field
 from wwpy.header import Header
 from typing import List, Optional, Dict
@@ -6,6 +11,22 @@ import numpy as np
 
 @dataclass
 class GeometryAxis:
+    """
+    A class representing a geometric axis with coarse and fine mesh information.
+
+    This class stores the origin point and arrays for mesh ratios (q), coordinates (p),
+    and number of fine meshes (s) that define the geometric discretization along an axis.
+
+    :param origin: The starting coordinate of the axis
+    :type origin: float
+    :param q: Array of fine mesh ratios for each segment
+    :type q: np.ndarray
+    :param p: Array of coarse mesh coordinates
+    :type p: np.ndarray
+    :param s: Array of number of fine meshes per segment
+    :type s: np.ndarray
+    """
+
     origin: float
     q: np.ndarray = field(default_factory=lambda: np.array([]))
     p: np.ndarray = field(default_factory=lambda: np.array([]))
@@ -13,12 +34,14 @@ class GeometryAxis:
 
     def add_segment(self, q: float, p: float, s: float):
         """
-        Adds a coarse mesh segment to the axis.
+        Add a new coarse mesh segment to the axis.
 
-        Parameters:
-            q (float): Fine mesh ratio.
-            p (float): Coarse mesh coordinate.
-            s (float): Number of fine meshes in this segment.
+        :param q: Fine mesh ratio for the segment
+        :type q: float
+        :param p: Coarse mesh coordinate endpoint
+        :type p: float
+        :param s: Number of fine meshes in the segment
+        :type s: float
         """
         self.q = np.append(self.q, np.float32(q))  # Explicitly cast to float32
         self.p = np.append(self.p, np.float32(p))  # Explicitly cast to float32
@@ -27,6 +50,29 @@ class GeometryAxis:
 
 @dataclass
 class GeometryData:
+    """
+    A class managing geometric mesh data for different coordinate systems.
+
+    Handles the creation and management of mesh data for Cartesian, Cylindrical,
+    and Spherical coordinate systems. Provides methods to generate both coarse
+    and fine meshes for each coordinate system.
+
+    :param header: Configuration header containing mesh type and dimensions
+    :type header: Header
+    :param x_axis: X-axis data for Cartesian coordinates, defaults to None
+    :type x_axis: Optional[GeometryAxis]
+    :param y_axis: Y-axis data for Cartesian coordinates, defaults to None
+    :type y_axis: Optional[GeometryAxis]
+    :param z_axis: Z-axis data for Cartesian/Cylindrical coordinates, defaults to None
+    :type z_axis: Optional[GeometryAxis]
+    :param r_axis: Radial axis data for Cylindrical/Spherical coordinates, defaults to None
+    :type r_axis: Optional[GeometryAxis]
+    :param theta_axis: Angular axis data for Cylindrical/Spherical coordinates, defaults to None
+    :type theta_axis: Optional[GeometryAxis]
+    :param phi_axis: Azimuthal axis data for Spherical coordinates, defaults to None
+    :type phi_axis: Optional[GeometryAxis]
+    """
+
     header: Header
     # Cartesian axes
     x_axis: Optional[GeometryAxis] = None
@@ -42,13 +88,12 @@ class GeometryData:
 
     def _generate_coarse_axis_mesh(self, axis: GeometryAxis) -> List[float]:
         """
-        Generates the coarse mesh for a given GeometryAxis.
+        Generate coarse mesh points for a given axis.
 
-        Parameters:
-            axis (GeometryAxis): The geometry axis to generate coarse mesh for.
-
-        Returns:
-            List[float]: The coarse mesh as a list of Python floats.
+        :param axis: The geometry axis to generate coarse mesh for
+        :type axis: GeometryAxis
+        :return: List of coarse mesh coordinates
+        :rtype: List[float]
         """
         mesh = [float(axis.origin)]  # Ensure origin is a Python float
         for p in axis.p:
@@ -57,13 +102,12 @@ class GeometryData:
 
     def _generate_fine_axis_mesh(self, axis: GeometryAxis) -> List[float]:
         """
-        Generates the fine mesh for a given GeometryAxis.
+        Generate fine mesh points for a given axis.
 
-        Parameters:
-            axis (GeometryAxis): The geometry axis to generate fine mesh for.
-
-        Returns:
-            List[float]: The fine mesh as a list of Python floats.
+        :param axis: The geometry axis to generate fine mesh for
+        :type axis: GeometryAxis
+        :return: List of fine mesh coordinates
+        :rtype: List[float]
         """
         fine_mesh = [float(axis.origin)]  # Ensure origin is a Python float
         current = axis.origin
@@ -76,6 +120,13 @@ class GeometryData:
 
     @property
     def coarse_mesh(self) -> Dict[str, np.ndarray]:
+        """
+        Get the coarse mesh for the current geometry type.
+
+        :return: Dictionary containing mesh coordinates for each dimension
+        :rtype: Dict[str, np.ndarray]
+        :raises ValueError: If required axes for the geometry type are not defined
+        """
         mesh_type = self.header.type_of_mesh 
         if mesh_type == "cartesian":
             if not all([self.x_axis, self.y_axis, self.z_axis]):
@@ -106,6 +157,13 @@ class GeometryData:
 
     @property
     def fine_mesh(self) -> Dict[str, np.ndarray]:
+        """
+        Get the fine mesh for the current geometry type.
+
+        :return: Dictionary containing mesh coordinates for each dimension
+        :rtype: Dict[str, np.ndarray]
+        :raises ValueError: If required axes for the geometry type are not defined
+        """
         mesh_type = self.header.type_of_mesh
         if mesh_type == "cartesian":
             if not all([self.x_axis, self.y_axis, self.z_axis]):
@@ -137,12 +195,13 @@ class GeometryData:
     @property
     def indices(self) -> np.ndarray:
         """
-        Generates a 3D array of geometry indices based on the dimensions
-        (nfx, nfy, nfz) defined in the header.
+        Generate a 3D array of geometry indices.
 
-        Returns:
-            np.ndarray: A 3D array where each element corresponds to the geometry index
-            calculated as z * (nfx * nfy) + y * nfx + x.
+        Creates indices based on the dimensions (nfx, nfy, nfz) defined in the header.
+        The index at position (x,y,z) is calculated as z*(nfx*nfy) + y*nfx + x.
+
+        :return: 3D array of geometry indices
+        :rtype: np.ndarray
         """
         # Convert dimensions to integers to avoid TypeError
         nfx = int(self.header.nfx)

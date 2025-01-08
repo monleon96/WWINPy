@@ -1,10 +1,10 @@
 # test_parser.py
 
 import pytest
-from wwpy.parser import parse_wwinp_file
+from wwpy.parser import from_file
 from wwpy.exceptions import WWINPFormatError
 
-def test_parse_wwinp_file_minimal(tmp_path):
+def test_from_file_minimal(tmp_path):
     """
     Test parsing a very small or minimal WWINP file.
     """
@@ -25,7 +25,7 @@ def test_parse_wwinp_file_minimal(tmp_path):
 
     # Now parse it
     try:
-        data = parse_wwinp_file(str(test_file))
+        data = from_file(str(test_file))
     except WWINPFormatError as e:
         pytest.fail(f"Parsing raised an unexpected WWINPFormatError: {e}")
 
@@ -35,7 +35,7 @@ def test_parse_wwinp_file_minimal(tmp_path):
     assert data.header.probid == "PROBID123"
     # etc.
 
-def test_parse_wwinp_file_error(tmp_path):
+def test_from_file_error(tmp_path):
     """
     Test that the parser raises an error on bad input.
     """
@@ -45,4 +45,4 @@ def test_parse_wwinp_file_error(tmp_path):
     test_file.write_text(content)
 
     with pytest.raises(WWINPFormatError):
-        _ = parse_wwinp_file(str(test_file))
+        _ = from_file(str(test_file))

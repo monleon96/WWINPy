@@ -1,18 +1,31 @@
+"""
+WWINP file parser module.
+
+This module provides functionality for reading and parsing MCNP weight window input (WWINP) files.
+Contains optimized parsing functions for handling large data files efficiently.
+"""
+
 from typing import Iterator
 import itertools
 
 from wwpy.utils import verify_and_correct
-from wwpy.exceptions import WWINPFormatError, WWINPParsingError
+from wwpy.exceptions import WWINPFormatError
 from wwpy.header import Header
-from wwpy.models import WWINPData
-from wwpy.mesh import Mesh, ParticleBlock
+from wwpy.ww_data import WWData
+from wwpy.mesh import Mesh
 from wwpy.geometry import GeometryData, GeometryAxis
 from wwpy.weight_windows import WeightWindowValues
 import numpy as np
 
 def _tokenize_file(file_path: str) -> Iterator[str]:
     """
-    Efficient generator that yields tokens from the file line by line.
+    Generate tokens from a WWINP file line by line.
+
+    :param file_path: Path to the WWINP file
+    :type file_path: str
+    :return: Iterator yielding tokens from the file
+    :rtype: Iterator[str]
+    :raises WWINPFormatError: If an empty line is encountered
     """
     with open(file_path, "r") as f:
         for line_number, line in enumerate(f, start=1):
@@ -22,9 +35,23 @@ def _tokenize_file(file_path: str) -> Iterator[str]:
             for token in line.split():
                 yield token
 
-def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
+def from_file(file_path: str, verbose: bool = False) -> WWData:
     """
-    Optimized parser function for WWINP files with enhanced verbosity for ww_values.
+    Parse a WWINP file and return a WWData object containing all the parsed information.
+
+    Reads and parses the WWINP file in three main blocks:
+    1. Header block - containing basic configuration
+    2. Geometry block - containing mesh specifications
+    3. Values block - containing time bins, energy bins, and weight window values
+
+    :param file_path: Path to the WWINP file to parse
+    :type file_path: str
+    :param verbose: If True, print detailed parsing information
+    :type verbose: bool
+    :return: Object containing all parsed WWINP data
+    :rtype: WWData
+    :raises WWINPFormatError: If the file format is invalid or incomplete
+    :raises WWINPParsingError: If there are errors during parsing
     """
     token_gen = _tokenize_file(file_path)
 
@@ -275,13 +302,11 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
     # Create dictionaries for time and energy bins
     time_mesh_dict = {}
     energy_mesh_dict = {}
+    ww_values_dict = {}
 
     for i in range(header.ni):
         time_mesh_dict[i] = time_bins_all[i]
         energy_mesh_dict[i] = energy_bins_all[i]
-
-    # Create ParticleBlock and Mesh objects
-    particle_data = []
 
     try:
         for i in range(header.ni):
@@ -297,39 +322,32 @@ def parse_wwinp_file(file_path: str, verbose: bool = False) -> WWINPData:
                         dtype=np.float64,
                         count=num_geom_cells
                     )
-            particle_data.append(ww_all)
+            ww_values_dict[i] = ww_all
     except StopIteration:
         raise WWINPFormatError("File ended unexpectedly while reading ww-values.")
 
     if verbose:
-        total_ww_values_read = sum(p.size for p in particle_data)
+        total_ww_values_read = sum(p.size for p in ww_values_dict.values())
         print(f"Total ww-values read: {total_ww_values_read}")
         if total_ww_values_read < total_expected_ww_values:
             print(f"Warning: Expected {total_expected_ww_values} ww-values, but only {total_ww_values_read} were read.")
 
-    # Construct ParticleBlock objects with views to the large w_all array
-    particle_blocks = []
-    mesh_data = []
-    for i in range(header.ni):
-        mesh = Mesh(
-            header=header,
-            geometry=geometry,
-            time_mesh={i: time_mesh_dict[i]},
-            energy_mesh={i: energy_mesh_dict[i]},
-        )
-        mesh_data.append(mesh)
-
-        block = ParticleBlock(ww_values=particle_data[i])
-        particle_blocks.append(block)
-        
-    values = WeightWindowValues(
-        particles=particle_blocks,
+    # Create the mesh with time and energy data
+    mesh = Mesh(
         header=header,
-        mesh=mesh  
+        geometry=geometry,
+        time_mesh=time_mesh_dict,
+        energy_mesh=energy_mesh_dict,
+    )
+    
+    values = WeightWindowValues(
+        header=header,
+        mesh=mesh,
+        ww_values=ww_values_dict
     )
 
-    # Finally construct the WWINPData
-    wwinp_data = WWINPData(
+    # Finally construct the WWData
+    wwinp_data = WWData(
         header=header,
         mesh=mesh,
         values=values

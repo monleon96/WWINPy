@@ -1,18 +1,18 @@
 from wwpy.plotter import WWINPPlotter
-from wwpy.models import WWINPData
-from wwpy.parser import parse_wwinp_file
+from wwpy.ww_data import WWData
+from wwpy.parser import from_file
 import sys
 
 
 ww_file_path = '/home/MONLEON-JUAN/WWPy/examples/wwinp_ueki'
 
 try:
-    wwinp: WWINPData = parse_wwinp_file(ww_file_path)
+    wwinp: WWData = from_file(ww_file_path)
 except Exception as e:
     print(f"Error parsing file: {e}")
     sys.exit(1)
 
-# Assuming you have a WWINPData object called 'wwinp'
+# Assuming you have a WWData object called 'wwinp'
 plotter = WWINPPlotter(wwinp)
 
 # Create a 3D visualization for particle type 0

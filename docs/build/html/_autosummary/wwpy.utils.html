@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wwpy.utils &mdash; WWPy Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=38b66d78"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            WWPy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../wwpy.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../wwpy.html#core-modules">Core Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.header">header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.mesh">mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.ww_data">ww_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#weight-windows">weight_windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.parser">parser</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../wwpy.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.geometry">geometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.query">query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.ratios">ratios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.utils">utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#module-wwpy.plotter">plotter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wwpy.html#exceptions">exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">WWPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">wwpy.utils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/wwpy.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-wwpy.utils">
+<span id="wwpy-utils"></span><h1>wwpy.utils<a class="headerlink" href="#module-wwpy.utils" title="Link to this heading"></a></h1>
+<p>Utility functions for WWINP file processing.
+Provides helper functions for data verification, grid operations, and index calculations.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../wwpy.html#wwpy.utils.get_bin_intervals_from_indices" title="wwpy.utils.get_bin_intervals_from_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bin_intervals_from_indices</span></code></a>(bins, indices)</p></td>
+<td><p>Extract bin interval boundaries from a bins array using specified indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../wwpy.html#wwpy.utils.get_closest_indices" title="wwpy.utils.get_closest_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_closest_indices</span></code></a>(grid, value[, atol])</p></td>
+<td><p>Return the indices bounding a value in a grid array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../wwpy.html#wwpy.utils.get_range_indices" title="wwpy.utils.get_range_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_range_indices</span></code></a>(grid, range_tuple)</p></td>
+<td><p>Find all grid indices within a specified range.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../wwpy.html#wwpy.utils.verify_and_correct" title="wwpy.utils.verify_and_correct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_and_correct</span></code></a>(ni, nt, ne, iv)</p></td>
+<td><p>Verify and correct the ni, nt, and ne parameters based on specified rules.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="wwpy.utils.verify_and_correct">
+<span class="sig-name descname"><span class="pre">verify_and_correct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ni</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ne</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wwpy/utils.html#verify_and_correct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.utils.verify_and_correct" title="Link to this definition"></a></dt>
+<dd><p>Verify and correct the ni, nt, and ne parameters based on specified rules.</p>
+<p>Performs validation and correction of weight window input parameters to ensure
+consistency between number of particles, time groups, and energy groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ni</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of initial particles</p></li>
+<li><p><strong>nt</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>]</em>) – List of time groups per particle type (only if iv == 2)</p></li>
+<li><p><strong>ne</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – List of energy groups per particle type</p></li>
+<li><p><strong>iv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Indicator if time groups exist (iv=2 means nt exists)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing (updated ni, updated nt, updated ne)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>, Optional[List[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>]], List[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>]]</p>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function performs the following checks:
+1. Verifies lengths of nt and ne match
+2. Ensures lengths match ni
+3. Removes entries with zero energy groups
+4. Removes entries with zero time groups (if iv==2)
+5. Performs final length checks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wwpy.utils.get_closest_indices">
+<span class="sig-name descname"><span class="pre">get_closest_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wwpy/utils.html#get_closest_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.utils.get_closest_indices" title="Link to this definition"></a></dt>
+<dd><p>Return the indices bounding a value in a grid array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>np.ndarray</em>) – Sorted array of grid points</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Value to find bounding indices for</p></li>
+<li><p><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Absolute tolerance for comparing float values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of two indices that bound the given value</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>Special cases:
+- For single-point grids, returns [0, inf]
+- For values below grid minimum, returns [0, 1]
+- For values above grid maximum, returns [n-2, n-1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wwpy.utils.get_range_indices">
+<span class="sig-name descname"><span class="pre">get_range_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wwpy/utils.html#get_range_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.utils.get_range_indices" title="Link to this definition"></a></dt>
+<dd><p>Find all grid indices within a specified range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>np.ndarray</em>) – Sorted array of grid points</p></li>
+<li><p><strong>range_tuple</strong> (<em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – (min, max) range to find indices for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of indices for grid points within the specified range</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the range minimum is greater than the maximum</p>
+</dd>
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Includes all grid points within the interval</p></li>
+<li><p>Extends to nearest grid points outside interval if bounds don’t match exactly</p></li>
+<li><p>Handles out-of-bounds cases by using grid endpoints</p></li>
+<li><p>Issues warnings for out-of-bounds range values</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wwpy.utils.get_bin_intervals_from_indices">
+<span class="sig-name descname"><span class="pre">get_bin_intervals_from_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wwpy/utils.html#get_bin_intervals_from_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.utils.get_bin_intervals_from_indices" title="Link to this definition"></a></dt>
+<dd><p>Extract bin interval boundaries from a bins array using specified indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bins</strong> (<em>np.ndarray</em>) – Array of bin edges or centers</p></li>
+<li><p><strong>indices</strong> (<em>np.ndarray</em>) – Array with two indices [start_index, end_index]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing (bin_starts, bin_ends) arrays</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[np.ndarray, np.ndarray]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If bins is None or empty</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If indices define an invalid range</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Special case: If indices are [0, inf] or [0, 0], returns (0.0, float(‘inf’))</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Juan Antonio Monleon de la Lluvia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

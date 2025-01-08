@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Python library to parse and work with weight window files"
 authors = ["Juan Antonio Monleon de la Lluvia <juanmonleon96@gmail.com>"]
 license = "GNU General Public License v3.0"
+homepage = "https://github.com/monleon96/WWPy.git"
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -12,6 +13,7 @@ plotly = "^5.24.1"
 pandas = "^2.2.3"
 nbformat = "^5.10.4"
 pyvista = "^0.44.2"
+numba = "^0.60.0"
 
 
 [tool.poetry.group.dev.dependencies]

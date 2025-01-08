@@ -1,27 +1,31 @@
 # wwpy/ratios.py
 
 """
-Includes some numba functions for improved performance of the ratios calculation.
+Performance-optimized functions for ratio calculations in weight window meshes.
+
+This module uses Numba for improved computational performance when calculating
+ratios between neighboring cells in 3D arrays.
 """
 
 import numpy as np
-
+from numba import njit
 
 @njit(cache=True)
 def calculate_max_ratio_array(array: np.ndarray) -> np.ndarray:
     """
     Calculate the maximum ratio between each cell and its neighbors in a 3D array.
 
-    Parameters
-    ----------
-    array : np.ndarray
-        The input 3D array.
+    Uses Numba acceleration to efficiently compute ratios between neighboring cells
+    in a three-dimensional mesh. Only considers the six direct neighbors (faces)
+    of each cell.
 
-    Returns
-    -------
-    np.ndarray
-        A 3D array of the same shape as the input, where each value is the maximum
-        ratio of the corresponding value in the input array to its neighbours.
+    :param array: 3D input array of weight window values
+    :type array: np.ndarray
+    :return: 3D array containing maximum neighbor ratios for each cell
+    :rtype: np.ndarray
+    :note: Border cells are assigned a ratio of 1.0
+    :note: If a cell has value 0, its ratio is set to 1.0
+    :note: Uses @njit for performance optimization
     """
     # Initialize the ratios array with ones
     ratios = np.ones_like(array)

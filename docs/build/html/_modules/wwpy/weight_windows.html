@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wwpy.weight_windows &mdash; WWPy Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            WWPy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../wwpy.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../wwpy.html#core-modules">Core Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.header">header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.mesh">mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ww_data">ww_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#weight-windows">weight_windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.parser">parser</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../wwpy.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.geometry">geometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.query">query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ratios">ratios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.utils">utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.plotter">plotter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#exceptions">exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">WWPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">wwpy.weight_windows</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for wwpy.weight_windows</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Weight window operations module.</span>
+<span class="sd">Handles storage and manipulation of weight window values through the WeightWindowValues class.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">wwpy.header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="kn">from</span> <span class="nn">wwpy.mesh</span> <span class="kn">import</span> <span class="n">Mesh</span>
+<span class="kn">from</span> <span class="nn">wwpy.query</span> <span class="kn">import</span> <span class="n">QueryResult</span>
+<span class="kn">from</span> <span class="nn">wwpy.utils</span> <span class="kn">import</span> <span class="n">get_closest_indices</span><span class="p">,</span> <span class="n">get_range_indices</span><span class="p">,</span> <span class="n">get_bin_intervals_from_indices</span>
+<span class="kn">from</span> <span class="nn">wwpy.ratios</span> <span class="kn">import</span> <span class="n">calculate_max_ratio_array</span>
+
+
+<div class="viewcode-block" id="WeightWindowValues">
+<a class="viewcode-back" href="../../wwpy.html#wwpy.weight_windows.WeightWindowValues">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">WeightWindowValues</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Weight window values container class.</span>
+
+<span class="sd">    Internal container class for managing weight window values and operations.</span>
+
+<span class="sd">    :ivar header: WWINP file header information</span>
+<span class="sd">    :vartype header: Header</span>
+<span class="sd">    :ivar mesh: Mesh geometry and binning information</span>
+<span class="sd">    :vartype mesh: Mesh</span>
+<span class="sd">    :ivar ww_values: Dictionary mapping particle types to weight window arrays</span>
+<span class="sd">    :vartype ww_values: Dict[int, np.ndarray]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">header</span><span class="p">:</span> <span class="n">Header</span>
+    <span class="n">mesh</span><span class="p">:</span> <span class="n">Mesh</span>
+    <span class="n">ww_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WeightWindowValues.multiply">
+<a class="viewcode-back" href="../../wwpy.html#wwpy.weight_windows.WeightWindowValues.multiply">[docs]</a>
+    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Multiply all weight window values by a factor.</span>
+
+<span class="sd">        :param factor: Multiplication factor to apply</span>
+<span class="sd">        :type factor: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">particle_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ww_values</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ww_values</span><span class="p">[</span><span class="n">particle_idx</span><span class="p">]</span> <span class="o">*=</span> <span class="n">factor</span></div>
+
+
+<div class="viewcode-block" id="WeightWindowValues.soften">
+<a class="viewcode-back" href="../../wwpy.html#wwpy.weight_windows.WeightWindowValues.soften">[docs]</a>
+    <span class="k">def</span> <span class="nf">soften</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify weight window boundaries by raising values to a power.</span>
+
+<span class="sd">        :param power: Exponent to apply to values (&lt; 1 softens, &gt; 1 hardens)</span>
+<span class="sd">        :type power: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">particle_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ww_values</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ww_values</span><span class="p">[</span><span class="n">particle_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ww_values</span><span class="p">[</span><span class="n">particle_idx</span><span class="p">],</span> <span class="n">power</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WeightWindowValues.apply_ratio_threshold">
+<a class="viewcode-back" href="../../wwpy.html#wwpy.weight_windows.WeightWindowValues.apply_ratio_threshold">[docs]</a>
+    <span class="k">def</span> <span class="nf">apply_ratio_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+            <span class="n">particle_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a ratio threshold to identify and modify extreme weight window differences.</span>
+
+<span class="sd">        :param threshold: Maximum allowed ratio between neighboring cells</span>
+<span class="sd">        :type threshold: float</span>
+<span class="sd">        :param particle_types: Particle types to process (-1 for all)</span>
+<span class="sd">        :type particle_types: Union[int, List[int]]</span>
+<span class="sd">        :param verbose: Whether to print detailed modification info</span>
+<span class="sd">        :type verbose: bool</span>
+<span class="sd">        :raises ValueError: If an invalid particle type is specified</span>
+
+<span class="sd">        :Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; ww = WeightWindowValues(header, mesh)</span>
+<span class="sd">            &gt;&gt;&gt; ww.apply_ratio_threshold(</span>
+<span class="sd">            ...     threshold=10.0,</span>
+<span class="sd">            ...     particle_types=[0, 1],</span>
+<span class="sd">            ...     verbose=True</span>
+<span class="sd">            ... )</span>
+
+<span class="sd">        :note: When verbose=True, outputs include:</span>
+<span class="sd">               - Time and energy bin information</span>
+<span class="sd">               - Modified voxel positions and values</span>
+<span class="sd">               - Summary statistics of changes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Handle particle type selection</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">particle_types</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">particle_types</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">particle_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">ni</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">particle_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">particle_types</span><span class="p">]</span>
+        
+        <span class="c1"># Validate particle types</span>
+        <span class="k">for</span> <span class="n">p_type</span> <span class="ow">in</span> <span class="n">particle_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">p_type</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">ni</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid particle type </span><span class="si">{</span><span class="n">p_type</span><span class="si">}</span><span class="s2">. Must be between 0 and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">ni</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get spatial mesh coordinates</span>
+        <span class="n">x_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">fine_geometry_mesh</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="n">y_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">fine_geometry_mesh</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="n">z_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">fine_geometry_mesh</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span>
+
+        <span class="n">total_changes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_cells</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="k">for</span> <span class="n">p_idx</span> <span class="ow">in</span> <span class="n">particle_types</span><span class="p">:</span>
+            <span class="n">ww</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ww_values</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Processing particle type </span><span class="si">{</span><span class="n">p_idx</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Get energy bins (add 0.0 as lower bound for first bin)</span>
+            <span class="n">energy_mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">energy_mesh</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+            <span class="n">energy_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">energy_mesh</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            
+            <span class="c1"># Get time bins (if time-dependent)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">has_time_dependency</span><span class="p">:</span>
+                <span class="n">time_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">time_mesh</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)])</span>
+            
+            <span class="c1"># Process each time bin</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ww</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">time_slice</span> <span class="o">=</span> <span class="n">ww</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+                <span class="n">time_changes</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">time_cells</span> <span class="o">=</span> <span class="mi">0</span>
+                
+                <span class="c1"># Store changes per energy bin</span>
+                <span class="n">energy_changes</span> <span class="o">=</span> <span class="p">{}</span>
+                
+                <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">time_slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">spatial_view</span> <span class="o">=</span> <span class="n">time_slice</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nfz</span><span class="p">),</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nfy</span><span class="p">),</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nfx</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">total_in_bin</span> <span class="o">=</span> <span class="n">spatial_view</span><span class="o">.</span><span class="n">size</span>
+                    <span class="n">ratios</span> <span class="o">=</span> <span class="n">calculate_max_ratio_array</span><span class="p">(</span><span class="n">spatial_view</span><span class="p">)</span>
+                    <span class="n">mask</span> <span class="o">=</span> <span class="n">ratios</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+                    
+                    <span class="n">changes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">changes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">energy_changes</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">changes</span><span class="p">,</span> <span class="n">total_in_bin</span><span class="p">)</span>
+                        <span class="n">time_changes</span> <span class="o">+=</span> <span class="n">changes</span>
+                        
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                            <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+                            <span class="n">energy_start</span> <span class="o">=</span> <span class="n">energy_bins</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
+                            <span class="n">energy_end</span> <span class="o">=</span> <span class="n">energy_bins</span><span class="p">[</span><span class="n">e</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                            <span class="n">time_start</span> <span class="o">=</span> <span class="n">time_bins</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+                            <span class="n">time_end</span> <span class="o">=</span> <span class="n">time_bins</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_bins</span><span class="p">)</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+                            
+                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Time bin: [</span><span class="si">{</span><span class="n">time_start</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">time_end</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Energy bin: [</span><span class="si">{</span><span class="n">energy_start</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">energy_end</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">] MeV&quot;</span><span class="p">)</span>
+                            
+                            <span class="c1"># Create DataFrame with modified voxels information</span>
+                            <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="k">for</span> <span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">positions</span><span class="p">):</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                    <span class="s1">&#39;Position&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                                    <span class="s1">&#39;X Range&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">x_grid</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">x_grid</span><span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                                    <span class="s1">&#39;Y Range&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">y_grid</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_grid</span><span class="p">[</span><span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                                    <span class="s1">&#39;Z Range&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">z_grid</span><span class="p">[</span><span class="n">z</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">z_grid</span><span class="p">[</span><span class="n">z</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                                    <span class="s1">&#39;Ratio&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ratios</span><span class="p">[</span><span class="n">z</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                    <span class="s1">&#39;Value&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spatial_view</span><span class="p">[</span><span class="n">z</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="p">})</span>
+                            
+                            <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+                                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Modified voxels:&quot;</span><span class="p">)</span>
+                                <span class="c1"># Set display options for better visualization</span>
+                                <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                                                     <span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                                                     <span class="s1">&#39;display.width&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+                                    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+                            
+                        <span class="n">spatial_view</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    
+                    <span class="n">time_cells</span> <span class="o">+=</span> <span class="n">total_in_bin</span>  <span class="c1"># Move this outside the if changes &gt; 0 block</span>
+                
+                <span class="n">total_changes</span> <span class="o">+=</span> <span class="n">time_changes</span>
+                <span class="n">total_cells</span> <span class="o">+=</span> <span class="n">time_cells</span>  <span class="c1"># This now has the correct count</span>
+
+        <span class="c1"># Summary statistics</span>
+        <span class="k">if</span> <span class="n">total_changes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">summary_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;Total Cells&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">total_cells</span><span class="p">],</span>
+                <span class="s1">&#39;Modified Cells&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">total_changes</span><span class="p">],</span>
+                <span class="s1">&#39;Percentage&#39;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">total_changes</span><span class="o">/</span><span class="n">total_cells</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">]</span>
+            <span class="p">}</span>
+            <span class="n">summary_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary_data</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Summary:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">summary_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">No modifications were needed - all ratios are within threshold&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WeightWindowValues.query_ww">
+<a class="viewcode-back" href="../../wwpy.html#wwpy.weight_windows.WeightWindowValues.query_ww">[docs]</a>
+    <span class="k">def</span> <span class="nf">query_ww</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">particle_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">energy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">z</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query weight window values based on specified criteria.</span>
+
+<span class="sd">        :param particle_type: Specific particle type to query</span>
+<span class="sd">        :type particle_type: Optional[int]</span>
+<span class="sd">        :param time: Time value or (min, max) range</span>
+<span class="sd">        :type time: Optional[Union[float, Tuple[float, float]]]</span>
+<span class="sd">        :param energy: Energy value or (min, max) range in MeV</span>
+<span class="sd">        :type energy: Optional[Union[float, Tuple[float, float]]]</span>
+<span class="sd">        :param x: X coordinate value or (min, max) range</span>
+<span class="sd">        :type x: Optional[Union[float, Tuple[float, float]]]</span>
+<span class="sd">        :param y: Y coordinate value or (min, max) range</span>
+<span class="sd">        :type y: Optional[Union[float, Tuple[float, float]]]</span>
+<span class="sd">        :param z: Z coordinate value or (min, max) range</span>
+<span class="sd">        :type z: Optional[Union[float, Tuple[int, int]]]</span>
+<span class="sd">        :return: Object containing queried values and metadata</span>
+<span class="sd">        :rtype: QueryResult</span>
+<span class="sd">        :raises ValueError: If an invalid particle type is specified</span>
+
+<span class="sd">        :Example:</span>
+
+<span class="sd">            &gt;&gt;&gt; ww = WeightWindowValues(header, mesh)</span>
+<span class="sd">            &gt;&gt;&gt; result = ww.query_ww(</span>
+<span class="sd">            ...     particle_type=0,</span>
+<span class="sd">            ...     energy=(1.0, 10.0),</span>
+<span class="sd">            ...     x=(0, 10),</span>
+<span class="sd">            ...     y=(0, 10),</span>
+<span class="sd">            ...     z=(0, 10)</span>
+<span class="sd">            ... )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Handle particle type selection</span>
+        <span class="k">if</span> <span class="n">particle_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">particle_type</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">ni</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid particle type </span><span class="si">{</span><span class="n">particle_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">particle_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">particle_type</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">particle_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">ni</span><span class="p">))</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">energy_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">time_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Get spatial meshes</span>
+        <span class="n">spatial_mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">fine_geometry_mesh</span>
+        
+        <span class="c1"># Handle spatial coordinates</span>
+        <span class="n">x_grid</span> <span class="o">=</span> <span class="n">spatial_mesh</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="n">y_grid</span> <span class="o">=</span> <span class="n">spatial_mesh</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="n">z_grid</span> <span class="o">=</span> <span class="n">spatial_mesh</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Process x coordinate</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">x_indices</span> <span class="o">=</span> <span class="n">get_range_indices</span><span class="p">(</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x_indices</span> <span class="o">=</span> <span class="n">get_closest_indices</span><span class="p">(</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">x_starts</span><span class="p">,</span> <span class="n">x_ends</span> <span class="o">=</span> <span class="n">get_bin_intervals_from_indices</span><span class="p">(</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">x_indices</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_grid</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">x_starts</span><span class="p">,</span> <span class="n">x_ends</span> <span class="o">=</span> <span class="n">x_grid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="c1"># Process y coordinate</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">y_indices</span> <span class="o">=</span> <span class="n">get_range_indices</span><span class="p">(</span><span class="n">y_grid</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y_indices</span> <span class="o">=</span> <span class="n">get_closest_indices</span><span class="p">(</span><span class="n">y_grid</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">y_starts</span><span class="p">,</span> <span class="n">y_ends</span> <span class="o">=</span> <span class="n">get_bin_intervals_from_indices</span><span class="p">(</span><span class="n">y_grid</span><span class="p">,</span> <span class="n">y_indices</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_grid</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">y_starts</span><span class="p">,</span> <span class="n">y_ends</span> <span class="o">=</span> <span class="n">y_grid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="c1"># Process z coordinate</span>
+        <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">z_indices</span> <span class="o">=</span> <span class="n">get_range_indices</span><span class="p">(</span><span class="n">z_grid</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">z_indices</span> <span class="o">=</span> <span class="n">get_closest_indices</span><span class="p">(</span><span class="n">z_grid</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+            <span class="n">z_starts</span><span class="p">,</span> <span class="n">z_ends</span> <span class="o">=</span> <span class="n">get_bin_intervals_from_indices</span><span class="p">(</span><span class="n">z_grid</span><span class="p">,</span> <span class="n">z_indices</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">z_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z_grid</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">z_starts</span><span class="p">,</span> <span class="n">z_ends</span> <span class="o">=</span> <span class="n">z_grid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">z_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="c1"># Process each particle type</span>
+        <span class="k">for</span> <span class="n">p_type</span> <span class="ow">in</span> <span class="n">particle_types</span><span class="p">:</span>
+            <span class="c1"># Get original energy grid and create extended version with 0.0</span>
+            <span class="n">orig_energy_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">energy_mesh</span><span class="p">[</span><span class="n">p_type</span><span class="p">]</span>
+            <span class="n">energy_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">orig_energy_grid</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="c1"># Handle energy query</span>
+            <span class="k">if</span> <span class="n">energy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="c1"># Range query</span>
+                    <span class="n">e_indices</span> <span class="o">=</span> <span class="n">get_range_indices</span><span class="p">(</span><span class="n">energy_grid</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+                    <span class="c1"># Get the actual energy intervals</span>
+                    <span class="n">e_starts</span><span class="p">,</span> <span class="n">e_ends</span> <span class="o">=</span> <span class="n">get_bin_intervals_from_indices</span><span class="p">(</span><span class="n">energy_grid</span><span class="p">,</span> <span class="n">e_indices</span><span class="p">)</span>
+                    <span class="n">energy_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">e_starts</span><span class="p">,</span> <span class="n">e_ends</span><span class="p">))</span>
+                    <span class="c1"># Adjust indices for ww_values access (shift left by 1 and remove if negative)</span>
+                    <span class="n">e_indices</span> <span class="o">=</span> <span class="n">e_indices</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">e_indices</span> <span class="o">=</span> <span class="n">e_indices</span><span class="p">[</span><span class="n">e_indices</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Single value query</span>
+                    <span class="n">e_indices</span> <span class="o">=</span> <span class="n">get_closest_indices</span><span class="p">(</span><span class="n">energy_grid</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+                    <span class="c1"># Get the actual energy intervals</span>
+                    <span class="n">e_starts</span><span class="p">,</span> <span class="n">e_ends</span> <span class="o">=</span> <span class="n">get_bin_intervals_from_indices</span><span class="p">(</span><span class="n">energy_grid</span><span class="p">,</span> <span class="n">e_indices</span><span class="p">)</span>
+                    <span class="n">energy_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">e_starts</span><span class="p">,</span> <span class="n">e_ends</span><span class="p">))</span>
+                    <span class="c1"># Adjust indices for ww_values access</span>
+                    <span class="n">e_indices</span> <span class="o">=</span> <span class="n">e_indices</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">e_indices</span> <span class="o">=</span> <span class="n">e_indices</span><span class="p">[</span><span class="n">e_indices</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If no energy query, use all indices but account for the added 0.0</span>
+                <span class="n">e_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">orig_energy_grid</span><span class="p">))</span>  <span class="c1"># Indices for original grid</span>
+                <span class="n">energy_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">energy_grid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">energy_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>  <span class="c1"># Use extended grid for intervals</span>
+
+            <span class="c1"># Handle time query</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">has_time_dependency</span><span class="p">:</span>
+                <span class="n">time_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">time_mesh</span><span class="p">[</span><span class="n">p_type</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                        <span class="c1"># Range query for time</span>
+                        <span class="n">t_indices</span> <span class="o">=</span> <span class="n">get_range_indices</span><span class="p">(</span><span class="n">time_grid</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Single value query for time</span>
+                        <span class="n">t_indices</span> <span class="o">=</span> <span class="n">get_closest_indices</span><span class="p">(</span><span class="n">time_grid</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+                    <span class="c1"># Get the actual time intervals</span>
+                    <span class="n">t_starts</span><span class="p">,</span> <span class="n">t_ends</span> <span class="o">=</span> <span class="n">get_bin_intervals_from_indices</span><span class="p">(</span><span class="n">time_grid</span><span class="p">,</span> <span class="n">t_indices</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># If no time query, use all indices</span>
+                    <span class="n">t_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_grid</span><span class="p">))</span>
+                    <span class="n">t_starts</span><span class="p">,</span> <span class="n">t_ends</span> <span class="o">=</span> <span class="n">time_grid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">time_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">time_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t_starts</span><span class="p">,</span> <span class="n">t_ends</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t_indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">time_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])))</span>
+
+            <span class="c1"># Get the ww values for this particle type</span>
+            <span class="n">particle_ww</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ww_values</span><span class="p">[</span><span class="n">p_type</span><span class="p">]</span>
+
+            <span class="c1"># Select the values using both time and energy indices</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">has_time_dependency</span><span class="p">:</span>
+                <span class="n">selected_ww</span> <span class="o">=</span> <span class="n">particle_ww</span><span class="p">[</span><span class="n">t_indices</span><span class="p">][:,</span> <span class="n">e_indices</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">selected_ww</span> <span class="o">=</span> <span class="n">particle_ww</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="n">e_indices</span><span class="p">]</span>  <span class="c1"># Always use single time index for non-time-dependent</span>
+
+            <span class="c1"># Reshape the ww values to match the spatial dimensions</span>
+            <span class="n">selected_ww</span> <span class="o">=</span> <span class="n">selected_ww</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">selected_ww</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> 
+                                            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nfz</span><span class="p">),</span>
+                                            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nfy</span><span class="p">),</span>
+                                            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nfx</span><span class="p">))</span>
+            
+            <span class="c1"># Create a view of the selected indices</span>
+            <span class="n">selected_ww</span> <span class="o">=</span> <span class="n">selected_ww</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">z_indices</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+            <span class="n">selected_ww</span> <span class="o">=</span> <span class="n">selected_ww</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:,</span> <span class="n">y_indices</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">selected_ww</span> <span class="o">=</span> <span class="n">selected_ww</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">x_indices</span><span class="p">]</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected_ww</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">QueryResult</span><span class="p">(</span>
+            <span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span>
+            <span class="n">particle_types</span><span class="o">=</span><span class="n">particle_types</span><span class="p">,</span>
+            <span class="n">ww_values</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+            <span class="n">energy_intervals</span><span class="o">=</span><span class="n">energy_intervals</span><span class="p">,</span>
+            <span class="n">time_intervals</span><span class="o">=</span><span class="n">time_intervals</span><span class="p">,</span>
+            <span class="n">x_intervals</span><span class="o">=</span><span class="p">(</span><span class="n">x_starts</span><span class="p">,</span> <span class="n">x_ends</span><span class="p">),</span>
+            <span class="n">y_intervals</span><span class="o">=</span><span class="p">(</span><span class="n">y_starts</span><span class="p">,</span> <span class="n">y_ends</span><span class="p">),</span>
+            <span class="n">z_intervals</span><span class="o">=</span><span class="p">(</span><span class="n">z_starts</span><span class="p">,</span> <span class="n">z_ends</span><span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Juan Antonio Monleon de la Lluvia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

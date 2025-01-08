@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wwpy.query &mdash; WWPy Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            WWPy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../wwpy.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../wwpy.html#core-modules">Core Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.header">header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.mesh">mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ww_data">ww_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#weight-windows">weight_windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.parser">parser</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../wwpy.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.geometry">geometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.query">query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ratios">ratios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.utils">utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.plotter">plotter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#exceptions">exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">WWPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">wwpy.query</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for wwpy.query</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Query module for weight window data retrieval.</span>
+<span class="sd">Provides the QueryResult class for structured access to weight window query results.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">wwpy.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+<div class="viewcode-block" id="QueryResult">
+<a class="viewcode-back" href="../../wwpy.html#wwpy.query.QueryResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">QueryResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store the results of a weight window query.</span>
+
+<span class="sd">    A data class that holds all relevant information about weight window values and their</span>
+<span class="sd">    corresponding spatial, energy, and time intervals for different particle types.</span>
+
+<span class="sd">    :ivar header: Weight window file header information</span>
+<span class="sd">    :vartype header: Header</span>
+<span class="sd">    :ivar particle_types: List of particle type identifiers</span>
+<span class="sd">    :vartype particle_types: List[int]</span>
+<span class="sd">    :ivar ww_values: List of weight window values arrays, one per particle type</span>
+<span class="sd">    :vartype ww_values: List[np.ndarray]</span>
+<span class="sd">    :ivar energy_intervals: List of energy interval pairs (starts, ends) for each particle type</span>
+<span class="sd">    :vartype energy_intervals: List[Tuple[np.ndarray, np.ndarray]]</span>
+<span class="sd">    :ivar time_intervals: List of time interval pairs (starts, ends) for each particle type</span>
+<span class="sd">    :vartype time_intervals: List[Tuple[np.ndarray, np.ndarray]]</span>
+<span class="sd">    :ivar x_intervals: Spatial interval pairs (starts, ends) for x-direction</span>
+<span class="sd">    :vartype x_intervals: Tuple[np.ndarray, np.ndarray]</span>
+<span class="sd">    :ivar y_intervals: Spatial interval pairs (starts, ends) for y-direction</span>
+<span class="sd">    :vartype y_intervals: Tuple[np.ndarray, np.ndarray]</span>
+<span class="sd">    :ivar z_intervals: Spatial interval pairs (starts, ends) for z-direction</span>
+<span class="sd">    :vartype z_intervals: Tuple[np.ndarray, np.ndarray]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">header</span><span class="p">:</span> <span class="n">Header</span>
+    <span class="n">particle_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">ww_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">energy_intervals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span>
+    <span class="n">time_intervals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span>
+    <span class="n">x_intervals</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">y_intervals</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">z_intervals</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+
+<div class="viewcode-block" id="QueryResult.to_dataframe">
+<a class="viewcode-back" href="../../wwpy.html#wwpy.query.QueryResult.to_dataframe">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert query results to a pandas DataFrame.</span>
+
+<span class="sd">        :return: DataFrame containing all weight window data</span>
+<span class="sd">        :rtype: pd.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_rows</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">p_idx</span><span class="p">,</span> <span class="n">p_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle_types</span><span class="p">):</span>
+            <span class="n">e_starts</span><span class="p">,</span> <span class="n">e_ends</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy_intervals</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+            <span class="n">t_starts</span><span class="p">,</span> <span class="n">t_ends</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_intervals</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+            <span class="n">x_starts</span><span class="p">,</span> <span class="n">x_ends</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_intervals</span>
+            <span class="n">y_starts</span><span class="p">,</span> <span class="n">y_ends</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_intervals</span>
+            <span class="n">z_starts</span><span class="p">,</span> <span class="n">z_ends</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_intervals</span>
+            <span class="n">ww_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ww_values</span><span class="p">[</span><span class="n">p_idx</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_starts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_ends</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">t_starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])</span>
+                <span class="n">t_ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>
+                
+            <span class="c1"># Get array shape</span>
+            <span class="n">time_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_starts</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">t_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">t_start</span><span class="p">,</span> <span class="n">t_end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">t_starts</span><span class="p">,</span> <span class="n">t_ends</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">e_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">e_start</span><span class="p">,</span> <span class="n">e_end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">e_starts</span><span class="p">,</span> <span class="n">e_ends</span><span class="p">)):</span>
+                    <span class="k">for</span> <span class="n">z_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">z_start</span><span class="p">,</span> <span class="n">z_end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">z_starts</span><span class="p">,</span> <span class="n">z_ends</span><span class="p">)):</span>
+                        <span class="k">for</span> <span class="n">y_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">y_start</span><span class="p">,</span> <span class="n">y_end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">y_starts</span><span class="p">,</span> <span class="n">y_ends</span><span class="p">)):</span>
+                            <span class="k">for</span> <span class="n">x_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">x_start</span><span class="p">,</span> <span class="n">x_end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x_starts</span><span class="p">,</span> <span class="n">x_ends</span><span class="p">)):</span>
+                                <span class="n">t_index</span> <span class="o">=</span> <span class="n">t_idx</span> <span class="k">if</span> <span class="n">time_dim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+                                <span class="n">data_rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                    <span class="s1">&#39;particle_type&#39;</span><span class="p">:</span> <span class="n">p_type</span><span class="p">,</span>
+                                    <span class="s1">&#39;time_start&#39;</span><span class="p">:</span> <span class="n">t_start</span><span class="p">,</span>
+                                    <span class="s1">&#39;time_end&#39;</span><span class="p">:</span> <span class="n">t_end</span><span class="p">,</span>
+                                    <span class="s1">&#39;energy_start&#39;</span><span class="p">:</span> <span class="n">e_start</span><span class="p">,</span>
+                                    <span class="s1">&#39;energy_end&#39;</span><span class="p">:</span> <span class="n">e_end</span><span class="p">,</span>
+                                    <span class="s1">&#39;x_start&#39;</span><span class="p">:</span> <span class="n">x_start</span><span class="p">,</span>
+                                    <span class="s1">&#39;x_end&#39;</span><span class="p">:</span> <span class="n">x_end</span><span class="p">,</span>
+                                    <span class="s1">&#39;y_start&#39;</span><span class="p">:</span> <span class="n">y_start</span><span class="p">,</span>
+                                    <span class="s1">&#39;y_end&#39;</span><span class="p">:</span> <span class="n">y_end</span><span class="p">,</span>
+                                    <span class="s1">&#39;z_start&#39;</span><span class="p">:</span> <span class="n">z_start</span><span class="p">,</span>
+                                    <span class="s1">&#39;z_end&#39;</span><span class="p">:</span> <span class="n">z_end</span><span class="p">,</span>
+                                    <span class="s1">&#39;ww_value&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">ww_vals</span><span class="p">[</span><span class="n">t_index</span><span class="p">,</span> <span class="n">e_idx</span><span class="p">,</span> <span class="n">z_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">x_idx</span><span class="p">])</span>
+                                <span class="p">})</span>
+        
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_rows</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Juan Antonio Monleon de la Lluvia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

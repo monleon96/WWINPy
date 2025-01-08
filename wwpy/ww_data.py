@@ -1,52 +1,106 @@
-# wwpy/models.py
+"""
+Main interface module for WWINP file manipulation.
+Provides the WWData class for high-level operations on weight window data.
+"""
 
-from dataclasses import dataclass, field
-from typing import List, Optional, Dict
+# wwpy/ww_data.py
+
+from dataclasses import dataclass
 import numpy as np
 from wwpy.header import Header
 from wwpy.geometry import GeometryAxis
 from wwpy.mesh import Mesh
 from wwpy.weight_windows import WeightWindowValues
+from wwpy.query import QueryResult
 
 
 @dataclass
-class WWINPData:
+class WWData:
+    """Main interface for WWINP file manipulation.
+
+    High-level interface for manipulating weight window data from WWINP files.
+
+    :ivar header: Weight window file header information
+    :vartype header: Header
+    :ivar mesh: Mesh geometry and binning information
+    :vartype mesh: Mesh
+    :ivar values: Weight window values container
+    :vartype values: WeightWindowValues
     """
-    Top-level container combining everything, now with Mesh class.
-    """
-    header: Header
-    mesh: Mesh
-    values: WeightWindowValues
 
     def multiply(self, factor: float = 2.0) -> None:
-        """
-        Multiply all weight window values by a given factor.
+        """Multiply all weight window values by a specified factor.
 
-        Parameters:
-            factor (float): The multiplication factor to apply to all weight window values.
-        """
-        for particle in self.values.particles:
-            particle.ww_values *= factor
+        :param factor: Multiplication factor to apply
+        :type factor: float
 
-    def soften(self, power: float = 0.7) -> None:
-        """
-        Raise all weight window values to a given power.
-        This can be used to "soften" or "harden" the weight window boundaries.
-        
-        Parameters:
-            power (float): The exponent to apply to all weight window values.
-                          Values < 1 will soften the boundaries
-                          Values > 1 will harden the boundaries
-        """
-        for particle in self.values.particles:
-            particle.ww_values = np.power(particle.ww_values, power)
+        :Example:
 
+            >>> from wwpy import parser
+            >>> wwinp = parser.from_file("input.wwinp")
+            >>> wwinp.multiply(2.0)  # Double all weight window values
+        """
+        self.values.multiply(factor)
+
+    def soften(self, power: float = 0.6) -> None:
+        """Adjust weight window values by applying a power transformation.
+
+        :param power: Exponent to apply (< 1 softens, > 1 hardens)
+        :type power: float
+
+        :Example:
+
+            >>> from wwpy import parser
+            >>> wwinp = parser.from_file("input.wwinp")
+            >>> wwinp.soften(0.6)  # Soften weight windows
+        """
+        self.values.soften(power)
+
+    def query_ww(self, **kwargs) -> QueryResult:
+        """Query weight window values based on specified criteria.
+
+        :param kwargs: Query parameters passed to WeightWindowValues.query_ww()
+        :type kwargs: dict
+        :return: Object containing queried values and metadata
+        :rtype: QueryResult
+
+        :Example:
+
+            >>> from wwpy import parser
+            >>> wwinp = parser.from_file("input.wwinp")
+            >>> result = wwinp.query_ww(
+            ...     particle_type=0,
+            ...     energy=(1.0, 10.0),
+            ...     x=(0, 10),
+            ...     y=(0, 10),
+            ...     z=(0, 10)
+            ... )
+        """
+        return self.values.query_ww(**kwargs)
+
+    def apply_ratio_threshold(self, **kwargs) -> None:
+        """Apply a ratio threshold to weight window values.
+
+        :param kwargs: Parameters passed to WeightWindowValues.apply_ratio_threshold()
+        :type kwargs: dict
+
+        :Example:
+
+            >>> from wwpy import parser
+            >>> wwinp = parser.from_file("input.wwinp")
+            >>> wwinp.apply_ratio_threshold(
+            ...     threshold=10.0,
+            ...     particle_types=[0],
+            ...     verbose=True
+            ... )
+        """
+        return self.values.apply_ratio_threshold(**kwargs)
+    
     def write_file(self, filename: str) -> None:
-        """
-        Write the WWINP data to a file using FORTRAN-style formatting.
-        
-        Parameters:
-            filename (str): Path to the output file
+        """Write the WWINP data to a file in FORTRAN-compatible format.
+
+        :param filename: Path where the output file will be written
+        :type filename: str
         """
         with open(filename, 'w') as f:
             # First line: if iv ni nr probid (4i10, 20x, a19)
@@ -104,8 +158,8 @@ class WWINPData:
                 self._write_array(f, self.mesh.energy_mesh[i])
                 
             # Write weight window values (6g13.5)
-            for particle in self.values.particles:
-                ww = particle.ww_values
+            for i in range(self.header.ni):
+                ww = self.values.ww_values[i]
                 if self.header.has_time_dependency:
                     for t in range(ww.shape[0]):  # For each time bin
                         for e in range(ww.shape[1]):  # For each energy bin
@@ -117,14 +171,28 @@ class WWINPData:
                         self._write_ww_block(f, values, e < ww.shape[1]-1)
 
     def _write_ww_block(self, f, values: np.ndarray, add_newline: bool) -> None:
-        """Helper method to write a block of weight window values."""
+        """Write a block of weight window values in FORTRAN-compatible format.
+
+        :param f: File object to write to
+        :type f: TextIO
+        :param values: Array of weight window values to write
+        :type values: np.ndarray
+        :param add_newline: Whether to add a newline after the block
+        :type add_newline: bool
+        """
         for i in range(0, len(values), 6):
             chunk = values[i:i+6]
             line = "".join(f"{value:13.5e}" for value in chunk)
             f.write(line + "\n")
 
     def _write_array(self, f, array: np.ndarray) -> None:
-        """Helper method to write non-WW arrays in 6g13.5 format."""
+        """Write a generic array in FORTRAN 6g13.5 format.
+
+        :param f: File object to write to
+        :type f: TextIO
+        :param array: Array of values to write
+        :type array: np.ndarray
+        """
         values = array.flatten()
         for i in range(0, len(values), 6):
             chunk = values[i:i+6]
@@ -132,7 +200,16 @@ class WWINPData:
             f.write(line + "\n")
 
     def _write_axis_data(self, f, axis: GeometryAxis) -> None:
-        """Helper method to write axis data in 6g13.5 format."""
+        """Write geometry axis data in FORTRAN 6g13.5 format.
+
+        Writes the axis origin followed by triplets of q, p, and s values
+        that define the axis geometry.
+
+        :param f: File object to write to
+        :type f: TextIO
+        :param axis: Geometry axis object containing the data to write
+        :type axis: GeometryAxis
+        """
         values = [axis.origin]  # Start with origin
         
         for q, p, s in zip(axis.q, axis.p, axis.s):

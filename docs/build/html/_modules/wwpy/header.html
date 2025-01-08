@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wwpy.header &mdash; WWPy Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            WWPy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../wwpy.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../wwpy.html#core-modules">Core Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.header">header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.mesh">mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ww_data">ww_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#weight-windows">weight_windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.parser">parser</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../wwpy.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.geometry">geometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.query">query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ratios">ratios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.utils">utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.plotter">plotter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#exceptions">exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">WWPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">wwpy.header</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for wwpy.header</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the Header class for Window Weight (WW) file handling.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<div class="viewcode-block" id="Header">
+<a class="viewcode-back" href="../../wwpy.html#wwpy.header.Header">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Header</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing the header information for a Window Weight (WW) file.</span>
+
+<span class="sd">    This class stores and manages various parameters that define the geometric mesh</span>
+<span class="sd">    and particle properties for radiation transport calculations.</span>
+
+<span class="sd">    :param if_: File type indicator (currently only 1 is supported)</span>
+<span class="sd">    :type if_: int</span>
+<span class="sd">    :param iv: Time-dependent windows flag (1=no, 2=yes)</span>
+<span class="sd">    :type iv: int</span>
+<span class="sd">    :param ni: Number of particle types</span>
+<span class="sd">    :type ni: int</span>
+<span class="sd">    :param nr: Mesh type indicator (10=rectangular, 16=cylindrical/spherical)</span>
+<span class="sd">    :type nr: int</span>
+<span class="sd">    :param probid: Problem identification string, defaults to &quot;&quot;</span>
+<span class="sd">    :type probid: str</span>
+<span class="sd">    :param nt: Number of time bins per particle type</span>
+<span class="sd">    :type nt: List[int]</span>
+<span class="sd">    :param ne: Number of energy bins per particle type</span>
+<span class="sd">    :type ne: List[int]</span>
+<span class="sd">    :param nfx: Total number of fine mesh bins in x/r direction</span>
+<span class="sd">    :type nfx: Optional[float]</span>
+<span class="sd">    :param nfy: Total number of fine mesh bins in y/z/theta direction</span>
+<span class="sd">    :type nfy: Optional[float]</span>
+<span class="sd">    :param nfz: Total number of fine mesh bins in z/theta/phi direction</span>
+<span class="sd">    :type nfz: Optional[float]</span>
+<span class="sd">    :param x0: Origin x-coordinate or radial reference point</span>
+<span class="sd">    :type x0: Optional[float]</span>
+<span class="sd">    :param y0: Origin y-coordinate or axial reference point</span>
+<span class="sd">    :type y0: Optional[float]</span>
+<span class="sd">    :param z0: Origin z-coordinate or angular reference point</span>
+<span class="sd">    :type z0: Optional[float]</span>
+<span class="sd">    :param ncx: Number of coarse mesh bins in x/r direction</span>
+<span class="sd">    :type ncx: Optional[float]</span>
+<span class="sd">    :param ncy: Number of coarse mesh bins in y/z/theta direction</span>
+<span class="sd">    :type ncy: Optional[float]</span>
+<span class="sd">    :param ncz: Number of coarse mesh bins in z/theta/phi direction</span>
+<span class="sd">    :type ncz: Optional[float]</span>
+<span class="sd">    :param nwg: Geometry type (1=cartesian, 2=cylindrical, 3=spherical)</span>
+<span class="sd">    :type nwg: Optional[float]</span>
+<span class="sd">    :param x1: X-component of first reference vector</span>
+<span class="sd">    :type x1: Optional[float]</span>
+<span class="sd">    :param y1: Y-component of first reference vector</span>
+<span class="sd">    :type y1: Optional[float]</span>
+<span class="sd">    :param z1: Z-component of first reference vector</span>
+<span class="sd">    :type z1: Optional[float]</span>
+<span class="sd">    :param x2: X-component of second reference vector</span>
+<span class="sd">    :type x2: Optional[float]</span>
+<span class="sd">    :param y2: Y-component of second reference vector</span>
+<span class="sd">    :type y2: Optional[float]</span>
+<span class="sd">    :param z2: Z-component of second reference vector</span>
+<span class="sd">    :type z2: Optional[float]</span>
+
+<span class="sd">    :ivar has_time_dependency: Indicates if the window weights are time-dependent</span>
+<span class="sd">    :vartype has_time_dependency: bool</span>
+<span class="sd">    :ivar type_of_mesh: Returns the type of mesh geometry being used</span>
+<span class="sd">    :vartype type_of_mesh: Optional[str]</span>
+<span class="sd">    :ivar number_of_time_bins: List of time bins for each particle type</span>
+<span class="sd">    :vartype number_of_time_bins: List[int]</span>
+<span class="sd">    :ivar number_of_energy_bins: List of energy bins for each particle type</span>
+<span class="sd">    :vartype number_of_energy_bins: List[int]</span>
+<span class="sd">    :ivar number_of_particle_types: Total number of particle types</span>
+<span class="sd">    :vartype number_of_particle_types: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">if_</span><span class="p">:</span> <span class="nb">int</span>            <span class="c1"># File type. Only 1 is supported.</span>
+    <span class="n">iv</span><span class="p">:</span> <span class="nb">int</span>             <span class="c1"># Time-dependent windows flag (1 / 2 = no / yes)</span>
+    <span class="n">ni</span><span class="p">:</span> <span class="nb">int</span>             <span class="c1"># Number of particle types   </span>
+    <span class="n">nr</span><span class="p">:</span> <span class="nb">int</span>             <span class="c1"># = 10 / 16 / 16 - rectangular / cylindrical / spherical</span>
+    <span class="n">probid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>    <span class="c1"># Made optional with default empty string</span>
+
+    <span class="c1"># Optional arrays that might appear depending on &#39;iv&#39; or &#39;nr&#39;</span>
+    <span class="n">nt</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>     <span class="c1"># Number of time bins per particle type in ni</span>
+    <span class="n">ne</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>     <span class="c1"># Number of energy bins per particle type in ni</span>
+
+    <span class="c1"># Additional geometry specs</span>
+    <span class="n">nfx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># Total number of fine mesh bins in x(cartesian) or r(cylindrical) or r(spherical)</span>
+    <span class="n">nfy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># Total number of fine mesh bins in y(cartesian) or z(cylindrical) or theta(spherical)</span>
+    <span class="n">nfz</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># Total number of fine mesh bins in z(cartesian) or theta(cylindrical) or phi(spherical)</span>
+    <span class="n">x0</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># x0,y0,z0: Corner of (x,y,z) in cartesian or </span>
+    <span class="n">y0</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># bottom center of (r,z,theta) in cylindrical or </span>
+    <span class="n">z0</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># center of (r,theta,phi) in spherical</span>
+
+    <span class="n">ncx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># Number of coarse mesh bins in x(cartesian) or r(cylindrical) or r(spherical)</span>
+    <span class="n">ncy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># Number of coarse mesh bins in y(cartesian) or z(cylindrical) or theta(spherical)</span>
+    <span class="n">ncz</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># Number of coarse mesh bins in z(cartesian) or theta(cylindrical) or phi(spherical)</span>
+    <span class="n">nwg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># Geometry type (1=cartesian, 2=cylindrical, 3=spherical)</span>
+
+    <span class="c1"># Optional for nr = 16</span>
+    <span class="n">x1</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># Vector from (x0,y0,z0) to (x1,y1,z1)</span>
+    <span class="n">y1</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># defines (r,z,theta) cylinder or</span>
+    <span class="n">z1</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># (r,theta,phi) polar axis</span>
+    <span class="n">x2</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># Vector from (x0,y0,z0) to (x2,y2,z2)</span>
+    <span class="n">y2</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># defines (r,z,theta) cylinder or</span>
+    <span class="n">z2</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># (r,theta,phi) azimuthal axis</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_time_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the window weights have time dependency.</span>
+
+<span class="sd">        :return: True if window weights are time-dependent (iv=2), False otherwise</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">iv</span> <span class="o">==</span> <span class="mi">2</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">type_of_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the type of mesh geometry being used.</span>
+
+<span class="sd">        :return: String indicating mesh type (&#39;cartesian&#39;, &#39;cylindrical&#39;, &#39;spherical&#39;),</span>
+<span class="sd">                &#39;unknown&#39; for invalid values, or None if nwg is not set</span>
+<span class="sd">        :rtype: Optional[str]</span>
+
+<span class="sd">        :Example:</span>
+<span class="sd">            &gt;&gt;&gt; header = Header(...)</span>
+<span class="sd">            &gt;&gt;&gt; header.nwg = 1</span>
+<span class="sd">            &gt;&gt;&gt; header.type_of_mesh</span>
+<span class="sd">            &#39;cartesian&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mesh_types</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;cartesian&quot;</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;cylindrical&quot;</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;spherical&quot;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nwg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nwg_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nwg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">mesh_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">nwg_int</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;unknown&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">number_of_time_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of time bins for each particle type.</span>
+
+<span class="sd">        :return: List containing the number of time bins for each particle type</span>
+<span class="sd">        :rtype: List[int]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nt</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">number_of_energy_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of energy bins for each particle type.</span>
+
+<span class="sd">        :return: List containing the number of energy bins for each particle type</span>
+<span class="sd">        :rtype: List[int]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ne</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">number_of_particle_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the total number of particle types.</span>
+
+<span class="sd">        :return: Number of particle types defined in the window weights</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ni</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Juan Antonio Monleon de la Lluvia.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
