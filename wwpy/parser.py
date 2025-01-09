@@ -7,9 +7,8 @@ Contains optimized parsing functions for handling large data files efficiently.
 
 from typing import Iterator
 import itertools
-
-from wwpy.utils import verify_and_correct
-from wwpy.exceptions import WWINPFormatError
+from wwpy._utils import verify_and_correct
+from wwpy._exceptions import WWINPFormatError
 from wwpy.header import Header
 from wwpy.ww_data import WWData
 from wwpy.mesh import Mesh
@@ -127,7 +126,8 @@ def from_file(file_path: str, verbose: bool = False) -> WWData:
         ni=header.ni,
         nt=header.nt if iv == 2 else None,
         ne=header.ne,
-        iv=iv
+        iv=iv,
+        verbose=verbose
     )
 
     header.ni = updated_ni

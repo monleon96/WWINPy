@@ -2,7 +2,7 @@
 
 import pytest
 from wwpy.parser import from_file
-from wwpy.exceptions import WWINPFormatError
+from wwpy._exceptions import WWINPFormatError
 
 def test_from_file_minimal(tmp_path):
     """

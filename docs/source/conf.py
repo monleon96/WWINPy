@@ -3,15 +3,18 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import datetime
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
+from wwpy._config import LIBRARY_VERSION, AUTHOR
+
 # -- Project information -----------------------------------------------------
 project = 'WWPy'
-copyright = '2025, Juan Antonio Monleon de la Lluvia'
-author = 'Juan Antonio Monleon de la Lluvia'
-release = '0.1.0'
+copyright = f"{datetime.datetime.now().year}, {AUTHOR}"
+author = AUTHOR
+release = LIBRARY_VERSION
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -98,3 +101,8 @@ autodoc_typehints = 'description'
 autodoc_member_order = 'bysource'
 add_module_names = False
 
+
+# -- Global variables for .rst files -------------------------------------------
+rst_prolog = f"""
+.. |version| replace:: {LIBRARY_VERSION}
+"""

@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from wwpy.utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
+from wwpy._utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
 
 @pytest.fixture
 def grid1():

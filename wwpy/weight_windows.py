@@ -10,8 +10,8 @@ import pandas as pd
 from wwpy.header import Header
 from wwpy.mesh import Mesh
 from wwpy.query import QueryResult
-from wwpy.utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
-from wwpy.ratios import calculate_max_ratio_array
+from wwpy._utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
+from wwpy._ratios import calculate_max_ratio_array
 
 
 @dataclass
