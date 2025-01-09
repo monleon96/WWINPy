@@ -2,7 +2,9 @@
 __pycache__/
 *.pyc
 dist/
-build/
+docs/build/
+examples/*.ipynb
+examples/*.py
 
 # VSCODE
 .vscode/

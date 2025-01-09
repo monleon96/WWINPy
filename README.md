@@ -6,7 +6,7 @@ WWPy is a Python library designed for working with Weight Window files (WWINP fo
 
 ## Documentation
 
-Full documentation is available at [Read the Docs](https://wwpy.readthedocs.io/).
+Full documentation is available at [WWPy Documentation](https://wwpy.readthedocs.io/en/latest/#).
 
 ## Installation
 
@@ -34,6 +34,8 @@ print(ww.header.ne)
 print(ww.mesh.energy_mesh)
 print(ww.values.ww_values)
 ```
+
+Visit [Getting Started](https://wwpy.readthedocs.io/en/latest/getting_started.html) section from [WWPy Documentation](https://wwpy.readthedocs.io/en/latest/#) for more.
 
 ## Contributing
 
