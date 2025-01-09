@@ -41,12 +41,25 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../wwpy.html">API Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../wwpy.html#core-modules">Core Modules</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../welcome.html">Welcome to WWPy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../features.html">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#import-the-library">1. <strong>Import the Library</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#read-a-wwinp-file-and-access-its-data">2. <strong>Read a WWINP File and access its data</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#query-weight-windows">3. <strong>Query Weight Windows</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#optimize-weight-windows-for-simulation-efficiency">4. <strong>Optimize Weight Windows for simulation efficiency</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#write-modified-weight-windows">5. <strong>Write modified Weight Windows</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../wwpy.html">Core Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ww_data">ww_data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.header">header</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.mesh">mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ww_data">ww_data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#weight-windows">weight_windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.weight_windows">weight_windows</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.parser">parser</a></li>
 </ul>
 </li>
@@ -56,11 +69,12 @@
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ratios">ratios</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.utils">utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.plotter">plotter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#exceptions">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.exceptions">exceptions</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
         </div>
@@ -98,9 +112,9 @@
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">wwpy.header</span> <span class="kn">import</span> <span class="n">Header</span>
-<span class="kn">from</span> <span class="nn">wwpy.geometry</span> <span class="kn">import</span> <span class="n">GeometryAxis</span>
 <span class="kn">from</span> <span class="nn">wwpy.mesh</span> <span class="kn">import</span> <span class="n">Mesh</span>
 <span class="kn">from</span> <span class="nn">wwpy.weight_windows</span> <span class="kn">import</span> <span class="n">WeightWindowValues</span>
+<span class="kn">from</span> <span class="nn">wwpy.geometry</span> <span class="kn">import</span> <span class="n">GeometryAxis</span>
 <span class="kn">from</span> <span class="nn">wwpy.query</span> <span class="kn">import</span> <span class="n">QueryResult</span>
 
 
@@ -119,6 +133,9 @@
 <span class="sd">    :ivar values: Weight window values container</span>
 <span class="sd">    :vartype values: WeightWindowValues</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">header</span><span class="p">:</span> <span class="n">Header</span>
+    <span class="n">mesh</span><span class="p">:</span> <span class="n">Mesh</span>
+    <span class="n">values</span><span class="p">:</span> <span class="n">WeightWindowValues</span>
 
 <div class="viewcode-block" id="WWData.multiply">
 <a class="viewcode-back" href="../../wwpy.html#wwpy.ww_data.WWData.multiply">[docs]</a>

@@ -1,13 +1,13 @@
 WWPy Documentation
-================
-
-WWPy is a Python library for handling MCNP weight window files (WWINP format).
+===================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   wwpy
+   welcome
+   modules
+   license
 
 Indices and tables
 ==================

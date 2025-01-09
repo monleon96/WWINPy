@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; WWPy Documentation</title>
+  <title>Core Modules &mdash; WWPy Documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -19,7 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="WWPy Documentation" href="index.html" /> 
+    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="API Documentation" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,12 +44,25 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#core-modules">Core Modules</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="welcome.html">Welcome to WWPy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#import-the-library">1. <strong>Import the Library</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#read-a-wwinp-file-and-access-its-data">2. <strong>Read a WWINP File and access its data</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#query-weight-windows">3. <strong>Query Weight Windows</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#optimize-weight-windows-for-simulation-efficiency">4. <strong>Optimize Weight Windows for simulation efficiency</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#write-modified-weight-windows">5. <strong>Write modified Weight Windows</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Core Modules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.ww_data">ww_data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.header">header</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.mesh">mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#weight-windows">weight_windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-wwpy.weight_windows">weight_windows</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.parser">parser</a></li>
 </ul>
 </li>
@@ -58,11 +72,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.ratios">ratios</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.utils">utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.plotter">plotter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#exceptions">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-wwpy.exceptions">exceptions</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
         </div>
@@ -79,7 +94,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">API Documentation</li>
+          <li class="breadcrumb-item"><a href="modules.html">API Documentation</a></li>
+      <li class="breadcrumb-item active">Core Modules</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/wwpy.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -89,17 +105,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="api-documentation">
-<h1>API Documentation<a class="headerlink" href="#api-documentation" title="Link to this heading"></a></h1>
-<section id="core-modules">
-<h2>Core Modules<a class="headerlink" href="#core-modules" title="Link to this heading"></a></h2>
+  <section id="core-modules">
+<h1>Core Modules<a class="headerlink" href="#core-modules" title="Link to this heading"></a></h1>
 <section id="module-wwpy.ww_data">
-<span id="ww-data"></span><h3>ww_data<a class="headerlink" href="#module-wwpy.ww_data" title="Link to this heading"></a></h3>
+<span id="ww-data"></span><h2>ww_data<a class="headerlink" href="#module-wwpy.ww_data" title="Link to this heading"></a></h2>
 <p>Main interface module for WWINP file manipulation.
 Provides the WWData class for high-level operations on weight window data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="wwpy.ww_data.WWData">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WWData</span></span><a class="reference internal" href="_modules/wwpy/ww_data.html#WWData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.ww_data.WWData" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WWData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/ww_data.html#WWData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.ww_data.WWData" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Main interface for WWINP file manipulation.</p>
 <p>High-level interface for manipulating weight window data from WWINP files.</p>
@@ -111,7 +125,29 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <li><p><strong>values</strong> (<a class="reference internal" href="#wwpy.weight_windows.WeightWindowValues" title="wwpy.weight_windows.WeightWindowValues"><em>WeightWindowValues</em></a>) – Weight window values container</p></li>
 </ul>
 </dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>header</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a></span>)</p></li>
+<li><p><strong>mesh</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.mesh.Mesh" title="wwpy.mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a></span>)</p></li>
+<li><p><strong>values</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.weight_windows.WeightWindowValues" title="wwpy.weight_windows.WeightWindowValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightWindowValues</span></code></a></span>)</p></li>
+</ul>
+</dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wwpy.ww_data.WWData.header">
+<span class="sig-name descname"><span class="pre">header</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a></em><a class="headerlink" href="#wwpy.ww_data.WWData.header" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wwpy.ww_data.WWData.mesh">
+<span class="sig-name descname"><span class="pre">mesh</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#wwpy.mesh.Mesh" title="wwpy.mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a></em><a class="headerlink" href="#wwpy.ww_data.WWData.mesh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wwpy.ww_data.WWData.values">
+<span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#wwpy.weight_windows.WeightWindowValues" title="wwpy.weight_windows.WeightWindowValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightWindowValues</span></code></a></em><a class="headerlink" href="#wwpy.ww_data.WWData.values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="wwpy.ww_data.WWData.multiply">
 <span class="sig-name descname"><span class="pre">multiply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/ww_data.html#WWData.multiply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.ww_data.WWData.multiply" title="Link to this definition"></a></dt>
@@ -225,10 +261,17 @@ Provides the WWData class for high-level operations on weight window data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="wwpy.ww_data.WWData.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wwpy.ww_data.WWData.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wwpy.ww_data.WWData.__init__" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>header</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a></span>)</p></li>
+<li><p><strong>mesh</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.mesh.Mesh" title="wwpy.mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a></span>)</p></li>
+<li><p><strong>values</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.weight_windows.WeightWindowValues" title="wwpy.weight_windows.WeightWindowValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightWindowValues</span></code></a></span>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -237,7 +280,7 @@ Provides the WWData class for high-level operations on weight window data.</p>
 
 </section>
 <section id="module-wwpy.header">
-<span id="header"></span><h3>header<a class="headerlink" href="#module-wwpy.header" title="Link to this heading"></a></h3>
+<span id="header"></span><h2>header<a class="headerlink" href="#module-wwpy.header" title="Link to this heading"></a></h2>
 <p>This module contains the Header class for Window Weight (WW) file handling.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="wwpy.header.Header">
@@ -520,7 +563,7 @@ and particle properties for radiation transport calculations.</p>
 
 </section>
 <section id="module-wwpy.mesh">
-<span id="mesh"></span><h3>mesh<a class="headerlink" href="#module-wwpy.mesh" title="Link to this heading"></a></h3>
+<span id="mesh"></span><h2>mesh<a class="headerlink" href="#module-wwpy.mesh" title="Link to this heading"></a></h2>
 <p>This module provides the Mesh class for handling geometric, time, and energy meshes in Monte Carlo simulations.
 The module implements data structures for managing multi-dimensional mesh configurations and their properties.</p>
 <dl class="py class">
@@ -646,9 +689,9 @@ different aspects of the mesh configuration.</p>
 </dd></dl>
 
 </section>
-<section id="weight-windows">
-<h3>weight_windows<a class="headerlink" href="#weight-windows" title="Link to this heading"></a></h3>
-<p id="module-wwpy.weight_windows">Weight window operations module.
+<section id="module-wwpy.weight_windows">
+<span id="weight-windows"></span><h2>weight_windows<a class="headerlink" href="#module-wwpy.weight_windows" title="Link to this heading"></a></h2>
+<p>Weight window operations module.
 Handles storage and manipulation of weight window values through the WeightWindowValues class.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="wwpy.weight_windows.WeightWindowValues">
@@ -812,7 +855,7 @@ Handles storage and manipulation of weight window values through the WeightWindo
 
 </section>
 <section id="module-wwpy.parser">
-<span id="parser"></span><h3>parser<a class="headerlink" href="#module-wwpy.parser" title="Link to this heading"></a></h3>
+<span id="parser"></span><h2>parser<a class="headerlink" href="#module-wwpy.parser" title="Link to this heading"></a></h2>
 <p>WWINP file parser module.</p>
 <p>This module provides functionality for reading and parsing MCNP weight window input (WWINP) files.
 Contains optimized parsing functions for handling large data files efficiently.</p>
@@ -849,9 +892,9 @@ Contains optimized parsing functions for handling large data files efficiently.<
 </section>
 </section>
 <section id="utility-modules">
-<h2>Utility Modules<a class="headerlink" href="#utility-modules" title="Link to this heading"></a></h2>
+<h1>Utility Modules<a class="headerlink" href="#utility-modules" title="Link to this heading"></a></h1>
 <section id="module-wwpy.geometry">
-<span id="geometry"></span><h3>geometry<a class="headerlink" href="#module-wwpy.geometry" title="Link to this heading"></a></h3>
+<span id="geometry"></span><h2>geometry<a class="headerlink" href="#module-wwpy.geometry" title="Link to this heading"></a></h2>
 <p>This module handles geometric data structures and operations for Cartesian, Cylindrical, and Spherical coordinate systems.
 Provides classes for managing geometry axes and mesh generation in various coordinate systems.</p>
 <dl class="py class">
@@ -1057,7 +1100,7 @@ The index at position (x,y,z) is calculated as z*(nfx*nfy) + y*nfx + x.</p>
 
 </section>
 <section id="module-wwpy.query">
-<span id="query"></span><h3>query<a class="headerlink" href="#module-wwpy.query" title="Link to this heading"></a></h3>
+<span id="query"></span><h2>query<a class="headerlink" href="#module-wwpy.query" title="Link to this heading"></a></h2>
 <p>Query module for weight window data retrieval.
 Provides the QueryResult class for structured access to weight window query results.</p>
 <dl class="py class">
@@ -1173,7 +1216,7 @@ corresponding spatial, energy, and time intervals for different particle types.<
 
 </section>
 <section id="module-wwpy.ratios">
-<span id="ratios"></span><h3>ratios<a class="headerlink" href="#module-wwpy.ratios" title="Link to this heading"></a></h3>
+<span id="ratios"></span><h2>ratios<a class="headerlink" href="#module-wwpy.ratios" title="Link to this heading"></a></h2>
 <p>Performance-optimized functions for ratio calculations in weight window meshes.</p>
 <p>This module uses Numba for improved computational performance when calculating
 ratios between neighboring cells in 3D arrays.</p>
@@ -1208,7 +1251,7 @@ of each cell.</p>
 
 </section>
 <section id="module-wwpy.utils">
-<span id="utils"></span><h3>utils<a class="headerlink" href="#module-wwpy.utils" title="Link to this heading"></a></h3>
+<span id="utils"></span><h2>utils<a class="headerlink" href="#module-wwpy.utils" title="Link to this heading"></a></h2>
 <p>Utility functions for WWINP file processing.
 Provides helper functions for data verification, grid operations, and index calculations.</p>
 <dl class="py function">
@@ -1332,7 +1375,7 @@ consistency between number of particles, time groups, and energy groups.</p>
 
 </section>
 <section id="module-wwpy.plotter">
-<span id="plotter"></span><h3>plotter<a class="headerlink" href="#module-wwpy.plotter" title="Link to this heading"></a></h3>
+<span id="plotter"></span><h2>plotter<a class="headerlink" href="#module-wwpy.plotter" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="wwpy.plotter.WWPlotter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WWPlotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wwinp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/plotter.html#WWPlotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.plotter.WWPlotter" title="Link to this definition"></a></dt>
@@ -1407,9 +1450,9 @@ consistency between number of particles, time groups, and energy groups.</p>
 </dd></dl>
 
 </section>
-<section id="exceptions">
-<h3>exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h3>
-<p id="module-wwpy.exceptions">Custom exceptions for the WWPy package, providing specific error types for WWINP file handling and parsing.
+<section id="module-wwpy.exceptions">
+<span id="exceptions"></span><h2>exceptions<a class="headerlink" href="#module-wwpy.exceptions" title="Link to this heading"></a></h2>
+<p>Custom exceptions for the WWPy package, providing specific error types for WWINP file handling and parsing.
 These exceptions help in better error handling and debugging of weight window input files.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="wwpy.exceptions.WWINPFormatError">
@@ -1427,13 +1470,13 @@ These exceptions help in better error handling and debugging of weight window in
 
 </section>
 </section>
-</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="WWPy Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="API Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

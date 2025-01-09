@@ -1,8 +1,9 @@
 # Python
 __pycache__/
 *.pyc
+dist/
+build/
 
 # VSCODE
 .vscode/
 *.code-workspace
-

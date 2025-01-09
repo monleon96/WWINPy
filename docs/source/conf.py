@@ -3,25 +3,29 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../..'))
 
+# -- Project information -----------------------------------------------------
 project = 'WWPy'
 copyright = '2025, Juan Antonio Monleon de la Lluvia'
 author = 'Juan Antonio Monleon de la Lluvia'
 release = '0.1.0'
 
 # -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
 extensions = [
-    'sphinx.ext.autodoc',       # For automatic documentation from docstrings
-    'sphinx.ext.napoleon',      # For NumPy and Google style docstrings
-    'sphinx_autodoc_typehints', # For type hints support
-    'myst_parser',              # For Markdown support
-    'sphinx.ext.viewcode',      # Add links to source code
-    'sphinx.ext.intersphinx',   # Link to other project's documentation
-    'sphinx.ext.autosummary',   # Generate summary tables
+    # Documentation generation
+    'sphinx.ext.autodoc',       
+    'sphinx.ext.napoleon',      
+    'sphinx_autodoc_typehints',
+
+    # Markdown support
+    'myst_parser',              
+
+    # Additional features
+    'sphinx.ext.viewcode',      
+    'sphinx.ext.intersphinx',   
 ]
 
 templates_path = ['_templates']
@@ -41,26 +45,8 @@ intersphinx_mapping = {
 }
 
 # -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
 html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
 
-# HTML theme options
-html_theme_options = {
-    'display_version': True,
-    'titles_only': False,
-    'navigation_depth': 4,           
-    'collapse_navigation': True,
-    'sticky_navigation': True,
-    'includehidden': True
-}
-
-# Document title
-html_title = "WWPy"
-
-# Theme configuration
-html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     'navigation_depth': 3,          # Max depth of the Table of Contents
     'titles_only': False,
@@ -68,31 +54,34 @@ html_theme_options = {
     'sticky_navigation': True,
     'navigation_with_keys': True,
     'logo_only': False,
-    'display_version': True,
     'style_external_links': True,
-    'titles_only': False
+    'includehidden': True,
 }
 
-# General options
-html_title = 'WWPy Documentation'
-html_short_title = 'WWPy'
+html_static_path = ['_static']
+
+# Document title
+html_title = "WWPy Documentation"
+html_short_title = "WWPy"
 
 # Sidebar customization
 html_sidebars = {
     '**': [
-        'globaltoc.html',
-        'localtoc.html',
-        'searchbox.html',
-        'relations.html',
+        'globaltoc.html',  # Global Table of Contents
+        'searchbox.html',  # Search Box
+        'relations.html',  # Next/Previous Links
     ]
 }
 
-# -- Path setup --------------------------------------------------------------
-import os
-import sys
-sys.path.insert(0, os.path.abspath('../..'))
-
 # -- Extension configuration -------------------------------------------------
+autodoc_default_options = {
+    'members': True,
+    'undoc-members': True,
+    'show-inheritance': True,
+    'special-members': '__init__',
+}
+
+# -- Autodoc Configuration ----------------------------------------------------
 autodoc_default_options = {
     'members': True,
     'undoc-members': True,
@@ -104,7 +93,8 @@ autodoc_default_options = {
 always_document_param_types = True
 typehints_document_rtype = True
 
-# Make sure type hints are processed
+# Autodoc settings
 autodoc_typehints = 'description'
 autodoc_member_order = 'bysource'
 add_module_names = False
+

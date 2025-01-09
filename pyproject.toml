@@ -24,6 +24,7 @@ sphinx-rtd-theme = "^3.0.2"
 myst-parser = "^4.0.0"
 sphinx-autobuild = "^2024.10.3"
 ipykernel = "^6.29.5"
+twine = "^6.0.1"
 
 [build-system]
 requires = ["poetry-core"]

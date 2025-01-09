@@ -8,9 +8,9 @@ Provides the WWData class for high-level operations on weight window data.
 from dataclasses import dataclass
 import numpy as np
 from wwpy.header import Header
-from wwpy.geometry import GeometryAxis
 from wwpy.mesh import Mesh
 from wwpy.weight_windows import WeightWindowValues
+from wwpy.geometry import GeometryAxis
 from wwpy.query import QueryResult
 
 
@@ -27,6 +27,9 @@ class WWData:
     :ivar values: Weight window values container
     :vartype values: WeightWindowValues
     """
+    header: Header
+    mesh: Mesh
+    values: WeightWindowValues
 
     def multiply(self, factor: float = 2.0) -> None:
         """Multiply all weight window values by a specified factor.
