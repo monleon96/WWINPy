@@ -13,8 +13,7 @@ from wwpy.header import Header
 
 @dataclass
 class Mesh:
-    """
-    A class that encapsulates geometry, time, and energy mesh data for Monte Carlo simulations.
+    """A class that encapsulates geometry, time, and energy mesh data for Monte Carlo simulations.
 
     This class serves as a container for all mesh-related data, including geometric meshes
     (both coarse and fine), time meshes, and energy meshes. It provides properties to access
@@ -28,11 +27,6 @@ class Mesh:
     :type time_mesh: dict[int, np.ndarray]
     :param energy_mesh: Dictionary mapping particle types to energy mesh arrays
     :type energy_mesh: dict[int, np.ndarray]
-
-    :ivar header: Header object containing mesh configuration
-    :ivar geometry: GeometryData object containing geometric mesh data
-    :ivar time_mesh: Dictionary of time meshes by particle type
-    :ivar energy_mesh: Dictionary of energy meshes by particle type
     """
     header: Header
     geometry: GeometryData

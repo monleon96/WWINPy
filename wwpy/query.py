@@ -13,25 +13,22 @@ from wwpy.header import Header
 class QueryResult:
     """Store the results of a weight window query.
 
-    A data class that holds all relevant information about weight window values and their
-    corresponding spatial, energy, and time intervals for different particle types.
-
-    :ivar header: Weight window file header information
-    :vartype header: Header
-    :ivar particle_types: List of particle type identifiers
-    :vartype particle_types: List[int]
-    :ivar ww_values: List of weight window values arrays, one per particle type
-    :vartype ww_values: List[np.ndarray]
-    :ivar energy_intervals: List of energy interval pairs (starts, ends) for each particle type
-    :vartype energy_intervals: List[Tuple[np.ndarray, np.ndarray]]
-    :ivar time_intervals: List of time interval pairs (starts, ends) for each particle type
-    :vartype time_intervals: List[Tuple[np.ndarray, np.ndarray]]
-    :ivar x_intervals: Spatial interval pairs (starts, ends) for x-direction
-    :vartype x_intervals: Tuple[np.ndarray, np.ndarray]
-    :ivar y_intervals: Spatial interval pairs (starts, ends) for y-direction
-    :vartype y_intervals: Tuple[np.ndarray, np.ndarray]
-    :ivar z_intervals: Spatial interval pairs (starts, ends) for z-direction
-    :vartype z_intervals: Tuple[np.ndarray, np.ndarray]
+    :param header: Weight window file header information
+    :type header: Header
+    :param particle_types: List of particle type identifiers
+    :type particle_types: List[int]
+    :param ww_values: List of weight window values arrays, one per particle type
+    :type ww_values: List[np.ndarray]
+    :param energy_intervals: List of energy interval pairs (starts, ends) for each particle type
+    :type energy_intervals: List[Tuple[np.ndarray, np.ndarray]]
+    :param time_intervals: List of time interval pairs (starts, ends) for each particle type
+    :type time_intervals: List[Tuple[np.ndarray, np.ndarray]]
+    :param x_intervals: Spatial interval pairs (starts, ends) for x-direction
+    :type x_intervals: Tuple[np.ndarray, np.ndarray]
+    :param y_intervals: Spatial interval pairs (starts, ends) for y-direction
+    :type y_intervals: Tuple[np.ndarray, np.ndarray]
+    :param z_intervals: Spatial interval pairs (starts, ends) for z-direction
+    :type z_intervals: Tuple[np.ndarray, np.ndarray]
     """
 
     header: Header
@@ -46,7 +43,8 @@ class QueryResult:
     def to_dataframe(self) -> pd.DataFrame:
         """Convert query results to a pandas DataFrame.
 
-        :return: DataFrame containing all weight window data
+        :return: DataFrame containing weight window data with particle type, spatial,
+                energy, and time information
         :rtype: pd.DataFrame
         """
         data_rows = []

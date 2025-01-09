@@ -7,8 +7,7 @@ from typing import List, Optional
 
 @dataclass
 class Header:
-    """
-    A class representing the header information for a Window Weight (WW) file.
+    """A class representing the header information for a Window Weight (WW) file.
 
     This class stores and manages various parameters that define the geometric mesh
     and particle properties for radiation transport calculations.
@@ -21,55 +20,44 @@ class Header:
     :type ni: int
     :param nr: Mesh type indicator (10=rectangular, 16=cylindrical/spherical)
     :type nr: int
-    :param probid: Problem identification string, defaults to ""
-    :type probid: str
+    :param probid: Problem identification string
+    :type probid: str, optional
     :param nt: Number of time bins per particle type
     :type nt: List[int]
     :param ne: Number of energy bins per particle type
     :type ne: List[int]
     :param nfx: Total number of fine mesh bins in x/r direction
-    :type nfx: Optional[float]
+    :type nfx: float, optional
     :param nfy: Total number of fine mesh bins in y/z/theta direction
-    :type nfy: Optional[float]
+    :type nfy: float, optional
     :param nfz: Total number of fine mesh bins in z/theta/phi direction
-    :type nfz: Optional[float]
+    :type nfz: float, optional
     :param x0: Origin x-coordinate or radial reference point
-    :type x0: Optional[float]
+    :type x0: float, optional
     :param y0: Origin y-coordinate or axial reference point
-    :type y0: Optional[float]
+    :type y0: float, optional
     :param z0: Origin z-coordinate or angular reference point
-    :type z0: Optional[float]
+    :type z0: float, optional
     :param ncx: Number of coarse mesh bins in x/r direction
-    :type ncx: Optional[float]
+    :type ncx: float, optional
     :param ncy: Number of coarse mesh bins in y/z/theta direction
-    :type ncy: Optional[float]
+    :type ncy: float, optional
     :param ncz: Number of coarse mesh bins in z/theta/phi direction
-    :type ncz: Optional[float]
+    :type ncz: float, optional
     :param nwg: Geometry type (1=cartesian, 2=cylindrical, 3=spherical)
-    :type nwg: Optional[float]
+    :type nwg: float, optional
     :param x1: X-component of first reference vector
-    :type x1: Optional[float]
+    :type x1: float, optional
     :param y1: Y-component of first reference vector
-    :type y1: Optional[float]
+    :type y1: float, optional
     :param z1: Z-component of first reference vector
-    :type z1: Optional[float]
+    :type z1: float, optional
     :param x2: X-component of second reference vector
-    :type x2: Optional[float]
+    :type x2: float, optional
     :param y2: Y-component of second reference vector
-    :type y2: Optional[float]
+    :type y2: float, optional
     :param z2: Z-component of second reference vector
-    :type z2: Optional[float]
-
-    :ivar has_time_dependency: Indicates if the window weights are time-dependent
-    :vartype has_time_dependency: bool
-    :ivar type_of_mesh: Returns the type of mesh geometry being used
-    :vartype type_of_mesh: Optional[str]
-    :ivar number_of_time_bins: List of time bins for each particle type
-    :vartype number_of_time_bins: List[int]
-    :ivar number_of_energy_bins: List of energy bins for each particle type
-    :vartype number_of_energy_bins: List[int]
-    :ivar number_of_particle_types: Total number of particle types
-    :vartype number_of_particle_types: int
+    :type z2: float, optional
     """
     if_: int            # File type. Only 1 is supported.
     iv: int             # Time-dependent windows flag (1 / 2 = no / yes)
@@ -104,8 +92,7 @@ class Header:
 
     @property
     def has_time_dependency(self) -> bool:
-        """
-        Check if the window weights have time dependency.
+        """Check if the window weights have time dependency.
 
         :return: True if window weights are time-dependent (iv=2), False otherwise
         :rtype: bool
@@ -114,18 +101,11 @@ class Header:
 
     @property
     def type_of_mesh(self) -> Optional[str]:
-        """
-        Get the type of mesh geometry being used.
+        """Get the type of mesh geometry being used.
 
         :return: String indicating mesh type ('cartesian', 'cylindrical', 'spherical'),
                 'unknown' for invalid values, or None if nwg is not set
         :rtype: Optional[str]
-
-        :Example:
-            >>> header = Header(...)
-            >>> header.nwg = 1
-            >>> header.type_of_mesh
-            'cartesian'
         """
         mesh_types = {
             1: "cartesian",
@@ -142,8 +122,7 @@ class Header:
 
     @property
     def number_of_time_bins(self) -> List[int]:
-        """
-        Get the list of time bins for each particle type.
+        """Get the list of time bins for each particle type.
 
         :return: List containing the number of time bins for each particle type
         :rtype: List[int]
@@ -152,8 +131,7 @@ class Header:
 
     @property
     def number_of_energy_bins(self) -> List[int]:
-        """
-        Get the list of energy bins for each particle type.
+        """Get the list of energy bins for each particle type.
 
         :return: List containing the number of energy bins for each particle type
         :rtype: List[int]
@@ -162,8 +140,7 @@ class Header:
 
     @property
     def number_of_particle_types(self) -> int:
-        """
-        Get the total number of particle types.
+        """Get the total number of particle types.
 
         :return: Number of particle types defined in the window weights
         :rtype: int

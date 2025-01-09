@@ -17,12 +17,11 @@ from wwpy.weight_windows import WeightWindowValues
 import numpy as np
 
 def _tokenize_file(file_path: str) -> Iterator[str]:
-    """
-    Generate tokens from a WWINP file line by line.
+    """Generate tokens from a WWINP file line by line.
 
     :param file_path: Path to the WWINP file
     :type file_path: str
-    :return: Iterator yielding tokens from the file
+    :return: Iterator over tokens in the file
     :rtype: Iterator[str]
     :raises WWINPFormatError: If an empty line is encountered
     """
@@ -35,21 +34,15 @@ def _tokenize_file(file_path: str) -> Iterator[str]:
                 yield token
 
 def from_file(file_path: str, verbose: bool = False) -> WWData:
-    """
-    Parse a WWINP file and return a WWData object containing all the parsed information.
-
-    Reads and parses the WWINP file in three main blocks:
-    1. Header block - containing basic configuration
-    2. Geometry block - containing mesh specifications
-    3. Values block - containing time bins, energy bins, and weight window values
+    """Parse a WWINP file and create a WWData object.
 
     :param file_path: Path to the WWINP file to parse
     :type file_path: str
     :param verbose: If True, print detailed parsing information
     :type verbose: bool
-    :return: Object containing all parsed WWINP data
+    :return: Parsed WWINP data object
     :rtype: WWData
-    :raises WWINPFormatError: If the file format is invalid or incomplete
+    :raises WWINPFormatError: If the file format is invalid
     :raises WWINPParsingError: If there are errors during parsing
     """
     token_gen = _tokenize_file(file_path)

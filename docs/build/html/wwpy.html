@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=38b66d78"></script>
+      <script src="_static/documentation_options.js?v=1807f793"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -69,10 +69,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#utility-modules">Utility Modules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.geometry">geometry</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.query">query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-wwpy.ratios">ratios</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-wwpy.utils">utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ratios">ratios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils">utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-wwpy.plotter">plotter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-wwpy.exceptions">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exceptions">exceptions</a></li>
 </ul>
 </li>
 </ul>
@@ -882,8 +882,8 @@ Contains optimized parsing functions for handling large data files efficiently.<
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#wwpy.exceptions.WWINPFormatError" title="wwpy.exceptions.WWINPFormatError"><strong>WWINPFormatError</strong></a> – If the file format is invalid or incomplete</p></li>
-<li><p><a class="reference internal" href="#wwpy.exceptions.WWINPParsingError" title="wwpy.exceptions.WWINPParsingError"><strong>WWINPParsingError</strong></a> – If there are errors during parsing</p></li>
+<li><p><strong>WWINPFormatError</strong> – If the file format is invalid or incomplete</p></li>
+<li><p><strong>WWINPParsingError</strong> – If there are errors during parsing</p></li>
 </ul>
 </dd>
 </dl>
@@ -1215,164 +1215,11 @@ corresponding spatial, energy, and time intervals for different particle types.<
 </dd></dl>
 
 </section>
-<section id="module-wwpy.ratios">
-<span id="ratios"></span><h2>ratios<a class="headerlink" href="#module-wwpy.ratios" title="Link to this heading"></a></h2>
-<p>Performance-optimized functions for ratio calculations in weight window meshes.</p>
-<p>This module uses Numba for improved computational performance when calculating
-ratios between neighboring cells in 3D arrays.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="wwpy.ratios.calculate_max_ratio_array">
-<span class="sig-name descname"><span class="pre">calculate_max_ratio_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/ratios.html#calculate_max_ratio_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.ratios.calculate_max_ratio_array" title="Link to this definition"></a></dt>
-<dd><p>Calculate the maximum ratio between each cell and its neighbors in a 3D array.</p>
-<p>Uses Numba acceleration to efficiently compute ratios between neighboring cells
-in a three-dimensional mesh. Only considers the six direct neighbors (faces)
-of each cell.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>array</strong> (<em>np.ndarray</em>) – 3D input array of weight window values</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>3D array containing maximum neighbor ratios for each cell</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-<dt class="field-even">Note<span class="colon">:</span></dt>
-<dd class="field-even"><p>Border cells are assigned a ratio of 1.0</p>
-</dd>
-<dt class="field-odd">Note<span class="colon">:</span></dt>
-<dd class="field-odd"><p>If a cell has value 0, its ratio is set to 1.0</p>
-</dd>
-<dt class="field-even">Note<span class="colon">:</span></dt>
-<dd class="field-even"><p>Uses &#64;njit for performance optimization</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="ratios">
+<h2>ratios<a class="headerlink" href="#ratios" title="Link to this heading"></a></h2>
 </section>
-<section id="module-wwpy.utils">
-<span id="utils"></span><h2>utils<a class="headerlink" href="#module-wwpy.utils" title="Link to this heading"></a></h2>
-<p>Utility functions for WWINP file processing.
-Provides helper functions for data verification, grid operations, and index calculations.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="wwpy.utils.verify_and_correct">
-<span class="sig-name descname"><span class="pre">verify_and_correct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ni</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ne</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/utils.html#verify_and_correct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.utils.verify_and_correct" title="Link to this definition"></a></dt>
-<dd><p>Verify and correct the ni, nt, and ne parameters based on specified rules.</p>
-<p>Performs validation and correction of weight window input parameters to ensure
-consistency between number of particles, time groups, and energy groups.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ni</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of initial particles</p></li>
-<li><p><strong>nt</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>]</em>) – List of time groups per particle type (only if iv == 2)</p></li>
-<li><p><strong>ne</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – List of energy groups per particle type</p></li>
-<li><p><strong>iv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Indicator if time groups exist (iv=2 means nt exists)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Tuple containing (updated ni, updated nt, updated ne)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>, Optional[List[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>]], List[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>]]</p>
-</dd>
-<dt class="field-even">Note<span class="colon">:</span></dt>
-<dd class="field-even"><p>The function performs the following checks:
-1. Verifies lengths of nt and ne match
-2. Ensures lengths match ni
-3. Removes entries with zero energy groups
-4. Removes entries with zero time groups (if iv==2)
-5. Performs final length checks</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="wwpy.utils.get_closest_indices">
-<span class="sig-name descname"><span class="pre">get_closest_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/utils.html#get_closest_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.utils.get_closest_indices" title="Link to this definition"></a></dt>
-<dd><p>Return the indices bounding a value in a grid array.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>grid</strong> (<em>np.ndarray</em>) – Sorted array of grid points</p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Value to find bounding indices for</p></li>
-<li><p><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Absolute tolerance for comparing float values</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Array of two indices that bound the given value</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-<dt class="field-even">Note<span class="colon">:</span></dt>
-<dd class="field-even"><p>Special cases:
-- For single-point grids, returns [0, inf]
-- For values below grid minimum, returns [0, 1]
-- For values above grid maximum, returns [n-2, n-1]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="wwpy.utils.get_range_indices">
-<span class="sig-name descname"><span class="pre">get_range_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/utils.html#get_range_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.utils.get_range_indices" title="Link to this definition"></a></dt>
-<dd><p>Find all grid indices within a specified range.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>grid</strong> (<em>np.ndarray</em>) – Sorted array of grid points</p></li>
-<li><p><strong>range_tuple</strong> (<em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – (min, max) range to find indices for</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Array of indices for grid points within the specified range</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the range minimum is greater than the maximum</p>
-</dd>
-<dt class="field-odd">Note<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p>Includes all grid points within the interval</p></li>
-<li><p>Extends to nearest grid points outside interval if bounds don’t match exactly</p></li>
-<li><p>Handles out-of-bounds cases by using grid endpoints</p></li>
-<li><p>Issues warnings for out-of-bounds range values</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="wwpy.utils.get_bin_intervals_from_indices">
-<span class="sig-name descname"><span class="pre">get_bin_intervals_from_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/utils.html#get_bin_intervals_from_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.utils.get_bin_intervals_from_indices" title="Link to this definition"></a></dt>
-<dd><p>Extract bin interval boundaries from a bins array using specified indices.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bins</strong> (<em>np.ndarray</em>) – Array of bin edges or centers</p></li>
-<li><p><strong>indices</strong> (<em>np.ndarray</em>) – Array with two indices [start_index, end_index]</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Tuple containing (bin_starts, bin_ends) arrays</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[np.ndarray, np.ndarray]</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If bins is None or empty</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If indices define an invalid range</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Note<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Special case: If indices are [0, inf] or [0, 0], returns (0.0, float(‘inf’))</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="utils">
+<h2>utils<a class="headerlink" href="#utils" title="Link to this heading"></a></h2>
 </section>
 <section id="module-wwpy.plotter">
 <span id="plotter"></span><h2>plotter<a class="headerlink" href="#module-wwpy.plotter" title="Link to this heading"></a></h2>
@@ -1450,24 +1297,8 @@ consistency between number of particles, time groups, and energy groups.</p>
 </dd></dl>
 
 </section>
-<section id="module-wwpy.exceptions">
-<span id="exceptions"></span><h2>exceptions<a class="headerlink" href="#module-wwpy.exceptions" title="Link to this heading"></a></h2>
-<p>Custom exceptions for the WWPy package, providing specific error types for WWINP file handling and parsing.
-These exceptions help in better error handling and debugging of weight window input files.</p>
-<dl class="py exception">
-<dt class="sig sig-object py" id="wwpy.exceptions.WWINPFormatError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WWINPFormatError</span></span><a class="reference internal" href="_modules/wwpy/exceptions.html#WWINPFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.exceptions.WWINPFormatError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
-<p>Raised when the WWINP file is incorrectly formatted.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="wwpy.exceptions.WWINPParsingError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WWINPParsingError</span></span><a class="reference internal" href="_modules/wwpy/exceptions.html#WWINPParsingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.exceptions.WWINPParsingError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
-<p>Raised for general parsing errors in the WWINP file.</p>
-</dd></dl>
-
+<section id="exceptions">
+<h2>exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h2>
 </section>
 </section>
 

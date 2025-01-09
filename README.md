@@ -14,6 +14,13 @@ Full documentation is available at [Read the Docs](https://wwpy.readthedocs.io/)
 pip install wwpy
 ```
 
+## Features
+
+- Read WWINP format files
+- Query weight window data
+- Modify weight windows
+- Write modified data back to WWINP format
+
 ## Quick Start
 
 ```python
@@ -27,13 +34,6 @@ print(ww.header.ne)
 print(ww.mesh.energy_mesh)
 print(ww.values.ww_values)
 ```
-
-## Features
-
-- Read WWINP format files
-- Query weight window data
-- Modify weight windows
-- Write modified data back to WWINP format
 
 ## Contributing
 

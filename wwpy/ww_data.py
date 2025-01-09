@@ -20,12 +20,12 @@ class WWData:
 
     High-level interface for manipulating weight window data from WWINP files.
 
-    :ivar header: Weight window file header information
-    :vartype header: Header
-    :ivar mesh: Mesh geometry and binning information
-    :vartype mesh: Mesh
-    :ivar values: Weight window values container
-    :vartype values: WeightWindowValues
+    :param header: Weight window file header information
+    :type header: Header
+    :param mesh: Mesh geometry and binning information
+    :type mesh: Mesh
+    :param values: Weight window values container
+    :type values: WeightWindowValues
     """
     header: Header
     mesh: Mesh
@@ -34,8 +34,9 @@ class WWData:
     def multiply(self, factor: float = 2.0) -> None:
         """Multiply all weight window values by a specified factor.
 
-        :param factor: Multiplication factor to apply
+        :param factor: Multiplication factor to apply to all weight window values
         :type factor: float
+        :return: None
 
         :Example:
 
@@ -48,8 +49,9 @@ class WWData:
     def soften(self, power: float = 0.6) -> None:
         """Adjust weight window values by applying a power transformation.
 
-        :param power: Exponent to apply (< 1 softens, > 1 hardens)
+        :param power: Exponent to apply to weight window values (< 1 softens, > 1 hardens)
         :type power: float
+        :return: None
 
         :Example:
 
@@ -62,7 +64,8 @@ class WWData:
     def query_ww(self, **kwargs) -> QueryResult:
         """Query weight window values based on specified criteria.
 
-        :param kwargs: Query parameters passed to WeightWindowValues.query_ww()
+        :param kwargs: Query parameters for filtering weight windows
+                     Valid keys: particle_type, time, energy, x, y, z
         :type kwargs: dict
         :return: Object containing queried values and metadata
         :rtype: QueryResult
@@ -75,7 +78,7 @@ class WWData:
             ...     particle_type=0,
             ...     energy=(1.0, 10.0),
             ...     x=(0, 10),
-            ...     y=(0, 10),
+            ...     y=0,
             ...     z=(0, 10)
             ... )
         """
@@ -84,8 +87,10 @@ class WWData:
     def apply_ratio_threshold(self, **kwargs) -> None:
         """Apply a ratio threshold to weight window values.
 
-        :param kwargs: Parameters passed to WeightWindowValues.apply_ratio_threshold()
+        :param kwargs: Parameters for threshold application
+                     Valid keys: threshold, particle_types, verbose
         :type kwargs: dict
+        :return: None
 
         :Example:
 
@@ -104,6 +109,7 @@ class WWData:
 
         :param filename: Path where the output file will be written
         :type filename: str
+        :return: None
         """
         with open(filename, 'w') as f:
             # First line: if iv ni nr probid (4i10, 20x, a19)
@@ -182,6 +188,7 @@ class WWData:
         :type values: np.ndarray
         :param add_newline: Whether to add a newline after the block
         :type add_newline: bool
+        :return: None
         """
         for i in range(0, len(values), 6):
             chunk = values[i:i+6]
@@ -195,6 +202,7 @@ class WWData:
         :type f: TextIO
         :param array: Array of values to write
         :type array: np.ndarray
+        :return: None
         """
         values = array.flatten()
         for i in range(0, len(values), 6):
@@ -212,6 +220,7 @@ class WWData:
         :type f: TextIO
         :param axis: Geometry axis object containing the data to write
         :type axis: GeometryAxis
+        :return: None
         """
         values = [axis.origin]  # Start with origin
         

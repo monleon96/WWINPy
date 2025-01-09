@@ -20,12 +20,12 @@ class WeightWindowValues:
 
     Internal container class for managing weight window values and operations.
 
-    :ivar header: WWINP file header information
-    :vartype header: Header
-    :ivar mesh: Mesh geometry and binning information
-    :vartype mesh: Mesh
-    :ivar ww_values: Dictionary mapping particle types to weight window arrays
-    :vartype ww_values: Dict[int, np.ndarray]
+    :param header: WWINP file header information
+    :type header: Header
+    :param mesh: Mesh geometry and binning information
+    :type mesh: Mesh
+    :param ww_values: Dictionary mapping particle types to weight window arrays
+    :type ww_values: Dict[int, np.ndarray]
     """
     header: Header
     mesh: Mesh
@@ -56,25 +56,18 @@ class WeightWindowValues:
 
         :param threshold: Maximum allowed ratio between neighboring cells
         :type threshold: float
-        :param particle_types: Particle types to process (-1 for all)
+        :param particle_types: Particle type(s) to process. Use -1 for all types, or specify
+                           individual types as an integer or list of integers
         :type particle_types: Union[int, List[int]]
-        :param verbose: Whether to print detailed modification info
+        :param verbose: If True, prints detailed information about modifications
         :type verbose: bool
+        :return: None
         :raises ValueError: If an invalid particle type is specified
 
-        :Example:
-
-            >>> ww = WeightWindowValues(header, mesh)
-            >>> ww.apply_ratio_threshold(
-            ...     threshold=10.0,
-            ...     particle_types=[0, 1],
-            ...     verbose=True
-            ... )
-
-        :note: When verbose=True, outputs include:
-               - Time and energy bin information
-               - Modified voxel positions and values
-               - Summary statistics of changes
+        When verbose=True, the following information is printed:
+        - Time and energy bin information
+        - Modified voxel positions and values
+        - Summary statistics of changes
         """
         # Handle particle type selection
         if isinstance(particle_types, int):
@@ -196,17 +189,17 @@ class WeightWindowValues:
             z: Optional[Union[float, Tuple[int, int]]] = None) -> QueryResult:
         """Query weight window values based on specified criteria.
 
-        :param particle_type: Specific particle type to query
+        :param particle_type: Specific particle type to query (None for all types)
         :type particle_type: Optional[int]
-        :param time: Time value or (min, max) range
+        :param time: Time value or (min, max) range for time-dependent data
         :type time: Optional[Union[float, Tuple[float, float]]]
         :param energy: Energy value or (min, max) range in MeV
         :type energy: Optional[Union[float, Tuple[float, float]]]
-        :param x: X coordinate value or (min, max) range
+        :param x: X coordinate value or (min, max) range in geometry units
         :type x: Optional[Union[float, Tuple[float, float]]]
-        :param y: Y coordinate value or (min, max) range
+        :param y: Y coordinate value or (min, max) range in geometry units
         :type y: Optional[Union[float, Tuple[float, float]]]
-        :param z: Z coordinate value or (min, max) range
+        :param z: Z coordinate value or (min, max) range in geometry units
         :type z: Optional[Union[float, Tuple[int, int]]]
         :return: Object containing queried values and metadata
         :rtype: QueryResult
@@ -214,14 +207,14 @@ class WeightWindowValues:
 
         :Example:
 
-            >>> ww = WeightWindowValues(header, mesh)
+            >>> ww = wwpy.from_file(path/to/wwinp)
             >>> result = ww.query_ww(
             ...     particle_type=0,
             ...     energy=(1.0, 10.0),
             ...     x=(0, 10),
             ...     y=(0, 10),
             ...     z=(0, 10)
-            ... )
+            ... ).to_dataframe()
         """
         # Handle particle type selection
         if particle_type is not None:

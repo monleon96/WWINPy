@@ -11,11 +11,7 @@ import numpy as np
 
 @dataclass
 class GeometryAxis:
-    """
-    A class representing a geometric axis with coarse and fine mesh information.
-
-    This class stores the origin point and arrays for mesh ratios (q), coordinates (p),
-    and number of fine meshes (s) that define the geometric discretization along an axis.
+    """A class representing a geometric axis with coarse and fine mesh information.
 
     :param origin: The starting coordinate of the axis
     :type origin: float
@@ -50,26 +46,21 @@ class GeometryAxis:
 
 @dataclass
 class GeometryData:
-    """
-    A class managing geometric mesh data for different coordinate systems.
-
-    Handles the creation and management of mesh data for Cartesian, Cylindrical,
-    and Spherical coordinate systems. Provides methods to generate both coarse
-    and fine meshes for each coordinate system.
+    """A class managing geometric mesh data for different coordinate systems.
 
     :param header: Configuration header containing mesh type and dimensions
     :type header: Header
-    :param x_axis: X-axis data for Cartesian coordinates, defaults to None
+    :param x_axis: X-axis data for Cartesian coordinates
     :type x_axis: Optional[GeometryAxis]
-    :param y_axis: Y-axis data for Cartesian coordinates, defaults to None
+    :param y_axis: Y-axis data for Cartesian coordinates
     :type y_axis: Optional[GeometryAxis]
-    :param z_axis: Z-axis data for Cartesian/Cylindrical coordinates, defaults to None
+    :param z_axis: Z-axis data for Cartesian/Cylindrical coordinates
     :type z_axis: Optional[GeometryAxis]
-    :param r_axis: Radial axis data for Cylindrical/Spherical coordinates, defaults to None
+    :param r_axis: Radial axis data for Cylindrical/Spherical coordinates
     :type r_axis: Optional[GeometryAxis]
-    :param theta_axis: Angular axis data for Cylindrical/Spherical coordinates, defaults to None
+    :param theta_axis: Angular axis data for Cylindrical/Spherical coordinates
     :type theta_axis: Optional[GeometryAxis]
-    :param phi_axis: Azimuthal axis data for Spherical coordinates, defaults to None
+    :param phi_axis: Azimuthal axis data for Spherical coordinates
     :type phi_axis: Optional[GeometryAxis]
     """
 

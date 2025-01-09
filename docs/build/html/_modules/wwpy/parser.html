@@ -12,7 +12,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+      <script src="../../_static/documentation_options.js?v=1807f793"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -66,10 +66,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../wwpy.html#utility-modules">Utility Modules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.geometry">geometry</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.query">query</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.ratios">ratios</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.utils">utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#ratios">ratios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#utils">utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.plotter">plotter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#module-wwpy.exceptions">exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../wwpy.html#exceptions">exceptions</a></li>
 </ul>
 </li>
 </ul>
@@ -111,9 +111,8 @@
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-
-<span class="kn">from</span> <span class="nn">wwpy.utils</span> <span class="kn">import</span> <span class="n">verify_and_correct</span>
-<span class="kn">from</span> <span class="nn">wwpy.exceptions</span> <span class="kn">import</span> <span class="n">WWINPFormatError</span>
+<span class="kn">from</span> <span class="nn">wwpy._utils</span> <span class="kn">import</span> <span class="n">verify_and_correct</span>
+<span class="kn">from</span> <span class="nn">wwpy._exceptions</span> <span class="kn">import</span> <span class="n">WWINPFormatError</span>
 <span class="kn">from</span> <span class="nn">wwpy.header</span> <span class="kn">import</span> <span class="n">Header</span>
 <span class="kn">from</span> <span class="nn">wwpy.ww_data</span> <span class="kn">import</span> <span class="n">WWData</span>
 <span class="kn">from</span> <span class="nn">wwpy.mesh</span> <span class="kn">import</span> <span class="n">Mesh</span>
@@ -233,7 +232,8 @@
         <span class="n">ni</span><span class="o">=</span><span class="n">header</span><span class="o">.</span><span class="n">ni</span><span class="p">,</span>
         <span class="n">nt</span><span class="o">=</span><span class="n">header</span><span class="o">.</span><span class="n">nt</span> <span class="k">if</span> <span class="n">iv</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ne</span><span class="o">=</span><span class="n">header</span><span class="o">.</span><span class="n">ne</span><span class="p">,</span>
-        <span class="n">iv</span><span class="o">=</span><span class="n">iv</span>
+        <span class="n">iv</span><span class="o">=</span><span class="n">iv</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
     <span class="p">)</span>
 
     <span class="n">header</span><span class="o">.</span><span class="n">ni</span> <span class="o">=</span> <span class="n">updated_ni</span>

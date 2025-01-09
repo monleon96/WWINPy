@@ -1,6 +1,6 @@
-"""
-Utility functions for WWINP file processing.
-Provides helper functions for data verification, grid operations, and index calculations.
+"""Utility functions for WWINP file processing.
+
+Provides helper functions for data verification and grid operations.
 """
 
 # utils.py
@@ -8,36 +8,23 @@ Provides helper functions for data verification, grid operations, and index calc
 from typing import List, Optional, Tuple
 import numpy as np
 
-def verify_and_correct(
-    ni: int,
-    nt: Optional[List[int]],
-    ne: List[int],
-    iv: int,
-    verbose: bool = False
-) -> Tuple[int, Optional[List[int]], List[int]]:
-    """Verify and correct the ni, nt, and ne parameters based on specified rules.
+def verify_and_correct(ni: int, nt: Optional[List[int]], ne: List[int],
+                      iv: int, verbose: bool = False) -> Tuple[int, Optional[List[int]], List[int]]:
+    """Verify and correct weight window input parameters.
 
-    Performs validation and correction of weight window input parameters to ensure
-    consistency between number of particles, time groups, and energy groups.
-
-    :param ni: Number of initial particles
+    :param ni: Number of particle types
     :type ni: int
-    :param nt: List of time groups per particle type (only if iv == 2)
+    :param nt: Time groups per particle type (None if iv != 2)
     :type nt: Optional[List[int]]
-    :param ne: List of energy groups per particle type
+    :param ne: Energy groups per particle type
     :type ne: List[int]
-    :param iv: Indicator if time groups exist (iv=2 means nt exists)
+    :param iv: Time dependency flag (2 for time-dependent)
     :type iv: int
-    :param verbose: Flag to enable verbose output
+    :param verbose: Enable detailed output
     :type verbose: bool
-    :return: Tuple containing (updated ni, updated nt, updated ne)
+    :return: Tuple of (corrected ni, corrected nt, corrected ne)
     :rtype: Tuple[int, Optional[List[int]], List[int]]
-    :note: The function performs the following checks:
-           1. Verifies lengths of nt and ne match
-           2. Ensures lengths match ni
-           3. Removes entries with zero energy groups
-           4. Removes entries with zero time groups (if iv==2)
-           5. Performs final length checks
+    :raises ValueError: If input parameters are inconsistent
     """
     changes_made = False
 
@@ -147,20 +134,16 @@ def verify_and_correct(
     
 
 def get_closest_indices(grid: np.ndarray, value: float, atol: float = 1e-9) -> np.ndarray:
-    """Return the indices bounding a value in a grid array.
+    """Find indices bounding a value in a grid.
 
-    :param grid: Sorted array of grid points
+    :param grid: Sorted grid points array
     :type grid: np.ndarray
-    :param value: Value to find bounding indices for
+    :param value: Target value
     :type value: float
-    :param atol: Absolute tolerance for comparing float values
-    :type atol: float
-    :return: Array of two indices that bound the given value
+    :param atol: Absolute tolerance for float comparison
+    :type atol: float, optional
+    :return: Array of two bounding indices
     :rtype: np.ndarray
-    :note: Special cases:
-           - For single-point grids, returns [0, inf]
-           - For values below grid minimum, returns [0, 1]
-           - For values above grid maximum, returns [n-2, n-1]
     """
     if len(grid) == 1:
         return np.array([0, np.inf])
@@ -189,19 +172,15 @@ def get_closest_indices(grid: np.ndarray, value: float, atol: float = 1e-9) -> n
 
 
 def get_range_indices(grid: np.ndarray, range_tuple: Tuple[float, float]) -> np.ndarray:
-    """Find all grid indices within a specified range.
+    """Find grid indices within a range.
 
-    :param grid: Sorted array of grid points
+    :param grid: Sorted grid points array
     :type grid: np.ndarray
-    :param range_tuple: (min, max) range to find indices for
+    :param range_tuple: (min, max) range values
     :type range_tuple: Tuple[float, float]
-    :return: Array of indices for grid points within the specified range
+    :return: Array of indices within range
     :rtype: np.ndarray
-    :raises ValueError: If the range minimum is greater than the maximum
-    :note: - Includes all grid points within the interval
-           - Extends to nearest grid points outside interval if bounds don't match exactly
-           - Handles out-of-bounds cases by using grid endpoints
-           - Issues warnings for out-of-bounds range values
+    :raises ValueError: If range_tuple[0] > range_tuple[1]
     """
     v_min, v_max = range_tuple
 
@@ -251,17 +230,15 @@ def get_range_indices(grid: np.ndarray, range_tuple: Tuple[float, float]) -> np.
 
 
 def get_bin_intervals_from_indices(bins: np.ndarray, indices: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    """Extract bin interval boundaries from a bins array using specified indices.
+    """Get bin interval boundaries for given indices.
 
-    :param bins: Array of bin edges or centers
+    :param bins: Array of bin boundaries
     :type bins: np.ndarray
-    :param indices: Array with two indices [start_index, end_index]
+    :param indices: Array of [start, end] indices
     :type indices: np.ndarray
-    :return: Tuple containing (bin_starts, bin_ends) arrays
+    :return: Tuple of (bin_starts, bin_ends) arrays
     :rtype: Tuple[np.ndarray, np.ndarray]
-    :raises ValueError: If bins is None or empty
-    :raises ValueError: If indices define an invalid range
-    :note: Special case: If indices are [0, inf] or [0, 0], returns (0.0, float('inf'))
+    :raises ValueError: If bins is None/empty or indices invalid
     """
     if bins is None:
         raise ValueError("Bins must have at least one value.")
