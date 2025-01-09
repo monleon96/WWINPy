@@ -126,12 +126,12 @@
 
 <span class="sd">    Internal container class for managing weight window values and operations.</span>
 
-<span class="sd">    :ivar header: WWINP file header information</span>
-<span class="sd">    :vartype header: Header</span>
-<span class="sd">    :ivar mesh: Mesh geometry and binning information</span>
-<span class="sd">    :vartype mesh: Mesh</span>
-<span class="sd">    :ivar ww_values: Dictionary mapping particle types to weight window arrays</span>
-<span class="sd">    :vartype ww_values: Dict[int, np.ndarray]</span>
+<span class="sd">    :param header: WWINP file header information</span>
+<span class="sd">    :type header: Header</span>
+<span class="sd">    :param mesh: Mesh geometry and binning information</span>
+<span class="sd">    :type mesh: Mesh</span>
+<span class="sd">    :param ww_values: Dictionary mapping particle types to weight window arrays</span>
+<span class="sd">    :type ww_values: Dict[int, np.ndarray]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">header</span><span class="p">:</span> <span class="n">Header</span>
     <span class="n">mesh</span><span class="p">:</span> <span class="n">Mesh</span>
@@ -170,25 +170,18 @@
 
 <span class="sd">        :param threshold: Maximum allowed ratio between neighboring cells</span>
 <span class="sd">        :type threshold: float</span>
-<span class="sd">        :param particle_types: Particle types to process (-1 for all)</span>
+<span class="sd">        :param particle_types: Particle type(s) to process. Use -1 for all types, or specify</span>
+<span class="sd">                           individual types as an integer or list of integers</span>
 <span class="sd">        :type particle_types: Union[int, List[int]]</span>
-<span class="sd">        :param verbose: Whether to print detailed modification info</span>
+<span class="sd">        :param verbose: If True, prints detailed information about modifications</span>
 <span class="sd">        :type verbose: bool</span>
+<span class="sd">        :return: None</span>
 <span class="sd">        :raises ValueError: If an invalid particle type is specified</span>
 
-<span class="sd">        :Example:</span>
-
-<span class="sd">            &gt;&gt;&gt; ww = WeightWindowValues(header, mesh)</span>
-<span class="sd">            &gt;&gt;&gt; ww.apply_ratio_threshold(</span>
-<span class="sd">            ...     threshold=10.0,</span>
-<span class="sd">            ...     particle_types=[0, 1],</span>
-<span class="sd">            ...     verbose=True</span>
-<span class="sd">            ... )</span>
-
-<span class="sd">        :note: When verbose=True, outputs include:</span>
-<span class="sd">               - Time and energy bin information</span>
-<span class="sd">               - Modified voxel positions and values</span>
-<span class="sd">               - Summary statistics of changes</span>
+<span class="sd">        When verbose=True, the following information is printed:</span>
+<span class="sd">        - Time and energy bin information</span>
+<span class="sd">        - Modified voxel positions and values</span>
+<span class="sd">        - Summary statistics of changes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Handle particle type selection</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">particle_types</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -313,17 +306,17 @@
             <span class="n">z</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryResult</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query weight window values based on specified criteria.</span>
 
-<span class="sd">        :param particle_type: Specific particle type to query</span>
+<span class="sd">        :param particle_type: Specific particle type to query (None for all types)</span>
 <span class="sd">        :type particle_type: Optional[int]</span>
-<span class="sd">        :param time: Time value or (min, max) range</span>
+<span class="sd">        :param time: Time value or (min, max) range for time-dependent data</span>
 <span class="sd">        :type time: Optional[Union[float, Tuple[float, float]]]</span>
 <span class="sd">        :param energy: Energy value or (min, max) range in MeV</span>
 <span class="sd">        :type energy: Optional[Union[float, Tuple[float, float]]]</span>
-<span class="sd">        :param x: X coordinate value or (min, max) range</span>
+<span class="sd">        :param x: X coordinate value or (min, max) range in geometry units</span>
 <span class="sd">        :type x: Optional[Union[float, Tuple[float, float]]]</span>
-<span class="sd">        :param y: Y coordinate value or (min, max) range</span>
+<span class="sd">        :param y: Y coordinate value or (min, max) range in geometry units</span>
 <span class="sd">        :type y: Optional[Union[float, Tuple[float, float]]]</span>
-<span class="sd">        :param z: Z coordinate value or (min, max) range</span>
+<span class="sd">        :param z: Z coordinate value or (min, max) range in geometry units</span>
 <span class="sd">        :type z: Optional[Union[float, Tuple[int, int]]]</span>
 <span class="sd">        :return: Object containing queried values and metadata</span>
 <span class="sd">        :rtype: QueryResult</span>
@@ -331,14 +324,14 @@
 
 <span class="sd">        :Example:</span>
 
-<span class="sd">            &gt;&gt;&gt; ww = WeightWindowValues(header, mesh)</span>
+<span class="sd">            &gt;&gt;&gt; ww = wwpy.from_file(path/to/wwinp)</span>
 <span class="sd">            &gt;&gt;&gt; result = ww.query_ww(</span>
 <span class="sd">            ...     particle_type=0,</span>
 <span class="sd">            ...     energy=(1.0, 10.0),</span>
 <span class="sd">            ...     x=(0, 10),</span>
 <span class="sd">            ...     y=(0, 10),</span>
 <span class="sd">            ...     z=(0, 10)</span>
-<span class="sd">            ... )</span>
+<span class="sd">            ... ).to_dataframe()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Handle particle type selection</span>
         <span class="k">if</span> <span class="n">particle_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

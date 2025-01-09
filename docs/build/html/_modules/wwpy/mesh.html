@@ -119,8 +119,7 @@
 <a class="viewcode-back" href="../../wwpy.html#wwpy.mesh.Mesh">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Mesh</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class that encapsulates geometry, time, and energy mesh data for Monte Carlo simulations.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that encapsulates geometry, time, and energy mesh data for Monte Carlo simulations.</span>
 
 <span class="sd">    This class serves as a container for all mesh-related data, including geometric meshes</span>
 <span class="sd">    (both coarse and fine), time meshes, and energy meshes. It provides properties to access</span>
@@ -134,11 +133,6 @@
 <span class="sd">    :type time_mesh: dict[int, np.ndarray]</span>
 <span class="sd">    :param energy_mesh: Dictionary mapping particle types to energy mesh arrays</span>
 <span class="sd">    :type energy_mesh: dict[int, np.ndarray]</span>
-
-<span class="sd">    :ivar header: Header object containing mesh configuration</span>
-<span class="sd">    :ivar geometry: GeometryData object containing geometric mesh data</span>
-<span class="sd">    :ivar time_mesh: Dictionary of time meshes by particle type</span>
-<span class="sd">    :ivar energy_mesh: Dictionary of energy meshes by particle type</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">header</span><span class="p">:</span> <span class="n">Header</span>
     <span class="n">geometry</span><span class="p">:</span> <span class="n">GeometryData</span>

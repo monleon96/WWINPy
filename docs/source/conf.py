@@ -21,7 +21,7 @@ extensions = [
     # Documentation generation
     'sphinx.ext.autodoc',       
     'sphinx.ext.napoleon',      
-    #'sphinx_autodoc_typehints',        # Autohints didnt work with ReadTheDocs
+    'sphinx_autodoc_typehints',        # Autohints didnt work with ReadTheDocs
 
     # Markdown support
     'myst_parser',              
@@ -93,11 +93,11 @@ autodoc_default_options = {
 }
 
 # Type hints settings
-#always_document_param_types = True         # Autohints didnt work with ReadTheDocs
-#typehints_document_rtype = True            # Autohints didnt work with ReadTheDocs
+always_document_param_types = True         # Autohints didnt work with ReadTheDocs
+typehints_document_rtype = True            # Autohints didnt work with ReadTheDocs
 
 # Autodoc settings
-#autodoc_typehints = 'description'          # Autohints didnt work with ReadTheDocs
+autodoc_typehints = 'description'          # Autohints didnt work with ReadTheDocs
 autodoc_member_order = 'bysource'
 add_module_names = False
 

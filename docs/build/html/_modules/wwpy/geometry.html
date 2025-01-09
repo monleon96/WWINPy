@@ -117,11 +117,7 @@
 <a class="viewcode-back" href="../../wwpy.html#wwpy.geometry.GeometryAxis">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">GeometryAxis</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class representing a geometric axis with coarse and fine mesh information.</span>
-
-<span class="sd">    This class stores the origin point and arrays for mesh ratios (q), coordinates (p),</span>
-<span class="sd">    and number of fine meshes (s) that define the geometric discretization along an axis.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class representing a geometric axis with coarse and fine mesh information.</span>
 
 <span class="sd">    :param origin: The starting coordinate of the axis</span>
 <span class="sd">    :type origin: float</span>
@@ -162,26 +158,21 @@
 <a class="viewcode-back" href="../../wwpy.html#wwpy.geometry.GeometryData">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">GeometryData</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class managing geometric mesh data for different coordinate systems.</span>
-
-<span class="sd">    Handles the creation and management of mesh data for Cartesian, Cylindrical,</span>
-<span class="sd">    and Spherical coordinate systems. Provides methods to generate both coarse</span>
-<span class="sd">    and fine meshes for each coordinate system.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class managing geometric mesh data for different coordinate systems.</span>
 
 <span class="sd">    :param header: Configuration header containing mesh type and dimensions</span>
 <span class="sd">    :type header: Header</span>
-<span class="sd">    :param x_axis: X-axis data for Cartesian coordinates, defaults to None</span>
+<span class="sd">    :param x_axis: X-axis data for Cartesian coordinates</span>
 <span class="sd">    :type x_axis: Optional[GeometryAxis]</span>
-<span class="sd">    :param y_axis: Y-axis data for Cartesian coordinates, defaults to None</span>
+<span class="sd">    :param y_axis: Y-axis data for Cartesian coordinates</span>
 <span class="sd">    :type y_axis: Optional[GeometryAxis]</span>
-<span class="sd">    :param z_axis: Z-axis data for Cartesian/Cylindrical coordinates, defaults to None</span>
+<span class="sd">    :param z_axis: Z-axis data for Cartesian/Cylindrical coordinates</span>
 <span class="sd">    :type z_axis: Optional[GeometryAxis]</span>
-<span class="sd">    :param r_axis: Radial axis data for Cylindrical/Spherical coordinates, defaults to None</span>
+<span class="sd">    :param r_axis: Radial axis data for Cylindrical/Spherical coordinates</span>
 <span class="sd">    :type r_axis: Optional[GeometryAxis]</span>
-<span class="sd">    :param theta_axis: Angular axis data for Cylindrical/Spherical coordinates, defaults to None</span>
+<span class="sd">    :param theta_axis: Angular axis data for Cylindrical/Spherical coordinates</span>
 <span class="sd">    :type theta_axis: Optional[GeometryAxis]</span>
-<span class="sd">    :param phi_axis: Azimuthal axis data for Spherical coordinates, defaults to None</span>
+<span class="sd">    :param phi_axis: Azimuthal axis data for Spherical coordinates</span>
 <span class="sd">    :type phi_axis: Optional[GeometryAxis]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

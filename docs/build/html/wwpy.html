@@ -118,18 +118,11 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <p>Main interface for WWINP file manipulation.</p>
 <p>High-level interface for manipulating weight window data from WWINP files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><em>Header</em></a>) – Weight window file header information</p></li>
 <li><p><strong>mesh</strong> (<a class="reference internal" href="#wwpy.mesh.Mesh" title="wwpy.mesh.Mesh"><em>Mesh</em></a>) – Mesh geometry and binning information</p></li>
 <li><p><strong>values</strong> (<a class="reference internal" href="#wwpy.weight_windows.WeightWindowValues" title="wwpy.weight_windows.WeightWindowValues"><em>WeightWindowValues</em></a>) – Weight window values container</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>header</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a></span>)</p></li>
-<li><p><strong>mesh</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.mesh.Mesh" title="wwpy.mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a></span>)</p></li>
-<li><p><strong>values</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.weight_windows.WeightWindowValues" title="wwpy.weight_windows.WeightWindowValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightWindowValues</span></code></a></span>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -154,7 +147,13 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <dd><p>Multiply all weight window values by a specified factor.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Multiplication factor to apply</p>
+<dd class="field-odd"><p><strong>factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Multiplication factor to apply to all weight window values</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 <dt class="field-even">Example<span class="colon">:</span></dt>
 <dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wwpy</span> <span class="kn">import</span> <span class="n">parser</span>
@@ -162,9 +161,6 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wwinp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># Double all weight window values</span>
 </pre></div>
 </div>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -175,7 +171,13 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <dd><p>Adjust weight window values by applying a power transformation.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Exponent to apply (&lt; 1 softens, &gt; 1 hardens)</p>
+<dd class="field-odd"><p><strong>power</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Exponent to apply to weight window values (&lt; 1 softens, &gt; 1 hardens)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 <dt class="field-even">Example<span class="colon">:</span></dt>
 <dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wwpy</span> <span class="kn">import</span> <span class="n">parser</span>
@@ -183,9 +185,6 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wwinp</span><span class="o">.</span><span class="n">soften</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>  <span class="c1"># Soften weight windows</span>
 </pre></div>
 </div>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -196,7 +195,8 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <dd><p>Query weight window values based on specified criteria.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Query parameters passed to WeightWindowValues.query_ww()</p>
+<dd class="field-odd"><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Query parameters for filtering weight windows
+Valid keys: particle_type, time, energy, x, y, z</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Object containing queried values and metadata</p>
@@ -211,7 +211,7 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <span class="gp">... </span>    <span class="n">particle_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">energy</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
-<span class="gp">... </span>    <span class="n">y</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">z</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
@@ -226,7 +226,14 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <dd><p>Apply a ratio threshold to weight window values.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Parameters passed to WeightWindowValues.apply_ratio_threshold()</p>
+<dd class="field-odd"><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Parameters for threshold application
+Valid keys: threshold, particle_types, verbose</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 <dt class="field-even">Example<span class="colon">:</span></dt>
 <dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wwpy</span> <span class="kn">import</span> <span class="n">parser</span>
@@ -238,9 +245,6 @@ Provides the WWData class for high-level operations on weight window data.</p>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -255,6 +259,9 @@ Provides the WWData class for high-level operations on weight window data.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -296,35 +303,26 @@ and particle properties for radiation transport calculations.</p>
 <li><p><strong>iv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Time-dependent windows flag (1=no, 2=yes)</p></li>
 <li><p><strong>ni</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of particle types</p></li>
 <li><p><strong>nr</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Mesh type indicator (10=rectangular, 16=cylindrical/spherical)</p></li>
-<li><p><strong>probid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Problem identification string, defaults to “”</p></li>
+<li><p><strong>probid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Problem identification string</p></li>
 <li><p><strong>nt</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – Number of time bins per particle type</p></li>
 <li><p><strong>ne</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – Number of energy bins per particle type</p></li>
-<li><p><strong>nfx</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Total number of fine mesh bins in x/r direction</p></li>
-<li><p><strong>nfy</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Total number of fine mesh bins in y/z/theta direction</p></li>
-<li><p><strong>nfz</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Total number of fine mesh bins in z/theta/phi direction</p></li>
-<li><p><strong>x0</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Origin x-coordinate or radial reference point</p></li>
-<li><p><strong>y0</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Origin y-coordinate or axial reference point</p></li>
-<li><p><strong>z0</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Origin z-coordinate or angular reference point</p></li>
-<li><p><strong>ncx</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Number of coarse mesh bins in x/r direction</p></li>
-<li><p><strong>ncy</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Number of coarse mesh bins in y/z/theta direction</p></li>
-<li><p><strong>ncz</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Number of coarse mesh bins in z/theta/phi direction</p></li>
-<li><p><strong>nwg</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Geometry type (1=cartesian, 2=cylindrical, 3=spherical)</p></li>
-<li><p><strong>x1</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – X-component of first reference vector</p></li>
-<li><p><strong>y1</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Y-component of first reference vector</p></li>
-<li><p><strong>z1</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Z-component of first reference vector</p></li>
-<li><p><strong>x2</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – X-component of second reference vector</p></li>
-<li><p><strong>y2</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Y-component of second reference vector</p></li>
-<li><p><strong>z2</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Z-component of second reference vector</p></li>
+<li><p><strong>nfx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Total number of fine mesh bins in x/r direction</p></li>
+<li><p><strong>nfy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Total number of fine mesh bins in y/z/theta direction</p></li>
+<li><p><strong>nfz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Total number of fine mesh bins in z/theta/phi direction</p></li>
+<li><p><strong>x0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Origin x-coordinate or radial reference point</p></li>
+<li><p><strong>y0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Origin y-coordinate or axial reference point</p></li>
+<li><p><strong>z0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Origin z-coordinate or angular reference point</p></li>
+<li><p><strong>ncx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Number of coarse mesh bins in x/r direction</p></li>
+<li><p><strong>ncy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Number of coarse mesh bins in y/z/theta direction</p></li>
+<li><p><strong>ncz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Number of coarse mesh bins in z/theta/phi direction</p></li>
+<li><p><strong>nwg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Geometry type (1=cartesian, 2=cylindrical, 3=spherical)</p></li>
+<li><p><strong>x1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – X-component of first reference vector</p></li>
+<li><p><strong>y1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Y-component of first reference vector</p></li>
+<li><p><strong>z1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Z-component of first reference vector</p></li>
+<li><p><strong>x2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – X-component of second reference vector</p></li>
+<li><p><strong>y2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Y-component of second reference vector</p></li>
+<li><p><strong>z2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Z-component of second reference vector</p></li>
 <li><p><strong>if_</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Variables<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>has_time_dependency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Indicates if the window weights are time-dependent</p></li>
-<li><p><strong>type_of_mesh</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – Returns the type of mesh geometry being used</p></li>
-<li><p><strong>number_of_time_bins</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – List of time bins for each particle type</p></li>
-<li><p><strong>number_of_energy_bins</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – List of energy bins for each particle type</p></li>
-<li><p><strong>number_of_particle_types</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Total number of particle types</p></li>
 </ul>
 </dd>
 </dl>
@@ -461,21 +459,13 @@ and particle properties for radiation transport calculations.</p>
 <dt class="sig sig-object py" id="wwpy.header.Header.type_of_mesh">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_of_mesh</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#wwpy.header.Header.type_of_mesh" title="Link to this definition"></a></dt>
 <dd><p>Get the type of mesh geometry being used.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>String indicating mesh type (‘cartesian’, ‘cylindrical’, ‘spherical’),
 ‘unknown’ for invalid values, or None if nwg is not set</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Optional[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>]</p>
-</dd>
-<dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">nwg</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">type_of_mesh</span>
-<span class="go">&#39;cartesian&#39;</span>
-</pre></div>
-</div>
 </dd>
 </dl>
 </dd></dl>
@@ -581,14 +571,6 @@ different aspects of the mesh configuration.</p>
 <li><p><strong>geometry</strong> (<a class="reference internal" href="#wwpy.geometry.GeometryData" title="wwpy.geometry.GeometryData"><em>GeometryData</em></a>) – Geometric data containing mesh coordinates and properties</p></li>
 <li><p><strong>time_mesh</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>np.ndarray</em><em>]</em>) – Dictionary mapping particle types to time mesh arrays</p></li>
 <li><p><strong>energy_mesh</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>np.ndarray</em><em>]</em>) – Dictionary mapping particle types to energy mesh arrays</p></li>
-</ul>
-</dd>
-<dt class="field-even">Variables<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>header</strong> – Header object containing mesh configuration</p></li>
-<li><p><strong>geometry</strong> – GeometryData object containing geometric mesh data</p></li>
-<li><p><strong>time_mesh</strong> – Dictionary of time meshes by particle type</p></li>
-<li><p><strong>energy_mesh</strong> – Dictionary of energy meshes by particle type</p></li>
 </ul>
 </dd>
 </dl>
@@ -700,18 +682,11 @@ Handles storage and manipulation of weight window values through the WeightWindo
 <p>Weight window values container class.</p>
 <p>Internal container class for managing weight window values and operations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><em>Header</em></a>) – WWINP file header information</p></li>
 <li><p><strong>mesh</strong> (<a class="reference internal" href="#wwpy.mesh.Mesh" title="wwpy.mesh.Mesh"><em>Mesh</em></a>) – Mesh geometry and binning information</p></li>
 <li><p><strong>ww_values</strong> (<em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>np.ndarray</em><em>]</em>) – Dictionary mapping particle types to weight window arrays</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>header</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a></span>)</p></li>
-<li><p><strong>mesh</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.mesh.Mesh" title="wwpy.mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a></span>)</p></li>
-<li><p><strong>ww_values</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</span>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -762,37 +737,29 @@ Handles storage and manipulation of weight window values through the WeightWindo
 <dt class="sig sig-object py" id="wwpy.weight_windows.WeightWindowValues.apply_ratio_threshold">
 <span class="sig-name descname"><span class="pre">apply_ratio_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/weight_windows.html#WeightWindowValues.apply_ratio_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.weight_windows.WeightWindowValues.apply_ratio_threshold" title="Link to this definition"></a></dt>
 <dd><p>Apply a ratio threshold to identify and modify extreme weight window differences.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Maximum allowed ratio between neighboring cells</p></li>
-<li><p><strong>particle_types</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>]</em>) – Particle types to process (-1 for all)</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print detailed modification info</p></li>
+<li><p><strong>particle_types</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>]</em>) – Particle type(s) to process. Use -1 for all types, or specify
+individual types as an integer or list of integers</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, prints detailed information about modifications</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If an invalid particle type is specified</p>
 </dd>
-<dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ww</span> <span class="o">=</span> <span class="n">WeightWindowValues</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ww</span><span class="o">.</span><span class="n">apply_ratio_threshold</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">particle_types</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">... </span>    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
-<span class="gp">... </span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-<dt class="field-even">Note<span class="colon">:</span></dt>
-<dd class="field-even"><p>When verbose=True, outputs include:
+</dl>
+<p>When verbose=True, the following information is printed:
 - Time and energy bin information
 - Modified voxel positions and values
 - Summary statistics of changes</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -802,12 +769,12 @@ Handles storage and manipulation of weight window values through the WeightWindo
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>particle_type</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – Specific particle type to query</p></li>
-<li><p><strong>time</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>]</em><em>]</em>) – Time value or (min, max) range</p></li>
+<li><p><strong>particle_type</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – Specific particle type to query (None for all types)</p></li>
+<li><p><strong>time</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>]</em><em>]</em>) – Time value or (min, max) range for time-dependent data</p></li>
 <li><p><strong>energy</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>]</em><em>]</em>) – Energy value or (min, max) range in MeV</p></li>
-<li><p><strong>x</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>]</em><em>]</em>) – X coordinate value or (min, max) range</p></li>
-<li><p><strong>y</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>]</em><em>]</em>) – Y coordinate value or (min, max) range</p></li>
-<li><p><strong>z</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>]</em><em>]</em>) – Z coordinate value or (min, max) range</p></li>
+<li><p><strong>x</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>]</em><em>]</em>) – X coordinate value or (min, max) range in geometry units</p></li>
+<li><p><strong>y</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em><em>]</em><em>]</em>) – Y coordinate value or (min, max) range in geometry units</p></li>
+<li><p><strong>z</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em><em>]</em><em>]</em>) – Z coordinate value or (min, max) range in geometry units</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -820,14 +787,14 @@ Handles storage and manipulation of weight window values through the WeightWindo
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If an invalid particle type is specified</p>
 </dd>
 <dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ww</span> <span class="o">=</span> <span class="n">WeightWindowValues</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ww</span> <span class="o">=</span> <span class="n">wwpy</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">wwinp</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">query_ww</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">particle_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">energy</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">y</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="n">z</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="gp">... </span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd>
@@ -862,11 +829,7 @@ Contains optimized parsing functions for handling large data files efficiently.<
 <dl class="py function">
 <dt class="sig sig-object py" id="wwpy.parser.from_file">
 <span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/parser.html#from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.parser.from_file" title="Link to this definition"></a></dt>
-<dd><p>Parse a WWINP file and return a WWData object containing all the parsed information.</p>
-<p>Reads and parses the WWINP file in three main blocks:
-1. Header block - containing basic configuration
-2. Geometry block - containing mesh specifications
-3. Values block - containing time bins, energy bins, and weight window values</p>
+<dd><p>Parse a WWINP file and create a WWData object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -875,14 +838,14 @@ Contains optimized parsing functions for handling large data files efficiently.<
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Object containing all parsed WWINP data</p>
+<dd class="field-even"><p>Parsed WWINP data object</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#wwpy.ww_data.WWData" title="wwpy.ww_data.WWData">WWData</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>WWINPFormatError</strong> – If the file format is invalid or incomplete</p></li>
+<li><p><strong>WWINPFormatError</strong> – If the file format is invalid</p></li>
 <li><p><strong>WWINPParsingError</strong> – If there are errors during parsing</p></li>
 </ul>
 </dd>
@@ -902,8 +865,6 @@ Provides classes for managing geometry axes and mesh generation in various coord
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GeometryAxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/geometry.html#GeometryAxis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.geometry.GeometryAxis" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class representing a geometric axis with coarse and fine mesh information.</p>
-<p>This class stores the origin point and arrays for mesh ratios (q), coordinates (p),
-and number of fine meshes (s) that define the geometric discretization along an axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -974,19 +935,16 @@ and number of fine meshes (s) that define the geometric discretization along an 
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GeometryData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/geometry.html#GeometryData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.geometry.GeometryData" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class managing geometric mesh data for different coordinate systems.</p>
-<p>Handles the creation and management of mesh data for Cartesian, Cylindrical,
-and Spherical coordinate systems. Provides methods to generate both coarse
-and fine meshes for each coordinate system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><em>Header</em></a>) – Configuration header containing mesh type and dimensions</p></li>
-<li><p><strong>x_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – X-axis data for Cartesian coordinates, defaults to None</p></li>
-<li><p><strong>y_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Y-axis data for Cartesian coordinates, defaults to None</p></li>
-<li><p><strong>z_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Z-axis data for Cartesian/Cylindrical coordinates, defaults to None</p></li>
-<li><p><strong>r_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Radial axis data for Cylindrical/Spherical coordinates, defaults to None</p></li>
-<li><p><strong>theta_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Angular axis data for Cylindrical/Spherical coordinates, defaults to None</p></li>
-<li><p><strong>phi_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Azimuthal axis data for Spherical coordinates, defaults to None</p></li>
+<li><p><strong>x_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – X-axis data for Cartesian coordinates</p></li>
+<li><p><strong>y_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Y-axis data for Cartesian coordinates</p></li>
+<li><p><strong>z_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Z-axis data for Cartesian/Cylindrical coordinates</p></li>
+<li><p><strong>r_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Radial axis data for Cylindrical/Spherical coordinates</p></li>
+<li><p><strong>theta_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Angular axis data for Cylindrical/Spherical coordinates</p></li>
+<li><p><strong>phi_axis</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#wwpy.geometry.GeometryAxis" title="wwpy.geometry.GeometryAxis"><em>GeometryAxis</em></a><em>]</em>) – Azimuthal axis data for Spherical coordinates</p></li>
 </ul>
 </dd>
 </dl>
@@ -1108,10 +1066,8 @@ Provides the QueryResult class for structured access to weight window query resu
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QueryResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ww_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_intervals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wwpy/query.html#QueryResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wwpy.query.QueryResult" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Store the results of a weight window query.</p>
-<p>A data class that holds all relevant information about weight window values and their
-corresponding spatial, energy, and time intervals for different particle types.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><em>Header</em></a>) – Weight window file header information</p></li>
 <li><p><strong>particle_types</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – List of particle type identifiers</p></li>
@@ -1121,18 +1077,6 @@ corresponding spatial, energy, and time intervals for different particle types.<
 <li><p><strong>x_intervals</strong> (<em>Tuple</em><em>[</em><em>np.ndarray</em><em>, </em><em>np.ndarray</em><em>]</em>) – Spatial interval pairs (starts, ends) for x-direction</p></li>
 <li><p><strong>y_intervals</strong> (<em>Tuple</em><em>[</em><em>np.ndarray</em><em>, </em><em>np.ndarray</em><em>]</em>) – Spatial interval pairs (starts, ends) for y-direction</p></li>
 <li><p><strong>z_intervals</strong> (<em>Tuple</em><em>[</em><em>np.ndarray</em><em>, </em><em>np.ndarray</em><em>]</em>) – Spatial interval pairs (starts, ends) for z-direction</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>header</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#wwpy.header.Header" title="wwpy.header.Header"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a></span>)</p></li>
-<li><p><strong>particle_types</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
-<li><p><strong>ww_values</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</span>)</p></li>
-<li><p><strong>energy_intervals</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]]</span>)</p></li>
-<li><p><strong>time_intervals</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]]</span>)</p></li>
-<li><p><strong>x_intervals</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</span>)</p></li>
-<li><p><strong>y_intervals</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</span>)</p></li>
-<li><p><strong>z_intervals</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</span>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1182,7 +1126,8 @@ corresponding spatial, energy, and time intervals for different particle types.<
 <dd><p>Convert query results to a pandas DataFrame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>DataFrame containing all weight window data</p>
+<dd class="field-odd"><p>DataFrame containing weight window data with particle type, spatial,
+energy, and time information</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame</p>

@@ -126,12 +126,12 @@
 
 <span class="sd">    High-level interface for manipulating weight window data from WWINP files.</span>
 
-<span class="sd">    :ivar header: Weight window file header information</span>
-<span class="sd">    :vartype header: Header</span>
-<span class="sd">    :ivar mesh: Mesh geometry and binning information</span>
-<span class="sd">    :vartype mesh: Mesh</span>
-<span class="sd">    :ivar values: Weight window values container</span>
-<span class="sd">    :vartype values: WeightWindowValues</span>
+<span class="sd">    :param header: Weight window file header information</span>
+<span class="sd">    :type header: Header</span>
+<span class="sd">    :param mesh: Mesh geometry and binning information</span>
+<span class="sd">    :type mesh: Mesh</span>
+<span class="sd">    :param values: Weight window values container</span>
+<span class="sd">    :type values: WeightWindowValues</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">header</span><span class="p">:</span> <span class="n">Header</span>
     <span class="n">mesh</span><span class="p">:</span> <span class="n">Mesh</span>
@@ -142,8 +142,9 @@
     <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Multiply all weight window values by a specified factor.</span>
 
-<span class="sd">        :param factor: Multiplication factor to apply</span>
+<span class="sd">        :param factor: Multiplication factor to apply to all weight window values</span>
 <span class="sd">        :type factor: float</span>
+<span class="sd">        :return: None</span>
 
 <span class="sd">        :Example:</span>
 
@@ -159,8 +160,9 @@
     <span class="k">def</span> <span class="nf">soften</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adjust weight window values by applying a power transformation.</span>
 
-<span class="sd">        :param power: Exponent to apply (&lt; 1 softens, &gt; 1 hardens)</span>
+<span class="sd">        :param power: Exponent to apply to weight window values (&lt; 1 softens, &gt; 1 hardens)</span>
 <span class="sd">        :type power: float</span>
+<span class="sd">        :return: None</span>
 
 <span class="sd">        :Example:</span>
 
@@ -176,7 +178,8 @@
     <span class="k">def</span> <span class="nf">query_ww</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryResult</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query weight window values based on specified criteria.</span>
 
-<span class="sd">        :param kwargs: Query parameters passed to WeightWindowValues.query_ww()</span>
+<span class="sd">        :param kwargs: Query parameters for filtering weight windows</span>
+<span class="sd">                     Valid keys: particle_type, time, energy, x, y, z</span>
 <span class="sd">        :type kwargs: dict</span>
 <span class="sd">        :return: Object containing queried values and metadata</span>
 <span class="sd">        :rtype: QueryResult</span>
@@ -189,7 +192,7 @@
 <span class="sd">            ...     particle_type=0,</span>
 <span class="sd">            ...     energy=(1.0, 10.0),</span>
 <span class="sd">            ...     x=(0, 10),</span>
-<span class="sd">            ...     y=(0, 10),</span>
+<span class="sd">            ...     y=0,</span>
 <span class="sd">            ...     z=(0, 10)</span>
 <span class="sd">            ... )</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -201,8 +204,10 @@
     <span class="k">def</span> <span class="nf">apply_ratio_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a ratio threshold to weight window values.</span>
 
-<span class="sd">        :param kwargs: Parameters passed to WeightWindowValues.apply_ratio_threshold()</span>
+<span class="sd">        :param kwargs: Parameters for threshold application</span>
+<span class="sd">                     Valid keys: threshold, particle_types, verbose</span>
 <span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :return: None</span>
 
 <span class="sd">        :Example:</span>
 
@@ -224,6 +229,7 @@
 
 <span class="sd">        :param filename: Path where the output file will be written</span>
 <span class="sd">        :type filename: str</span>
+<span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="c1"># First line: if iv ni nr probid (4i10, 20x, a19)</span>
@@ -303,6 +309,7 @@
 <span class="sd">        :type values: np.ndarray</span>
 <span class="sd">        :param add_newline: Whether to add a newline after the block</span>
 <span class="sd">        :type add_newline: bool</span>
+<span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="mi">6</span><span class="p">):</span>
             <span class="n">chunk</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">6</span><span class="p">]</span>
@@ -316,6 +323,7 @@
 <span class="sd">        :type f: TextIO</span>
 <span class="sd">        :param array: Array of values to write</span>
 <span class="sd">        :type array: np.ndarray</span>
+<span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="mi">6</span><span class="p">):</span>
@@ -333,6 +341,7 @@
 <span class="sd">        :type f: TextIO</span>
 <span class="sd">        :param axis: Geometry axis object containing the data to write</span>
 <span class="sd">        :type axis: GeometryAxis</span>
+<span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="o">.</span><span class="n">origin</span><span class="p">]</span>  <span class="c1"># Start with origin</span>
         

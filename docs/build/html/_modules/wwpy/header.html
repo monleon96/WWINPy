@@ -113,8 +113,7 @@
 <a class="viewcode-back" href="../../wwpy.html#wwpy.header.Header">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Header</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class representing the header information for a Window Weight (WW) file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class representing the header information for a Window Weight (WW) file.</span>
 
 <span class="sd">    This class stores and manages various parameters that define the geometric mesh</span>
 <span class="sd">    and particle properties for radiation transport calculations.</span>
@@ -127,55 +126,44 @@
 <span class="sd">    :type ni: int</span>
 <span class="sd">    :param nr: Mesh type indicator (10=rectangular, 16=cylindrical/spherical)</span>
 <span class="sd">    :type nr: int</span>
-<span class="sd">    :param probid: Problem identification string, defaults to &quot;&quot;</span>
-<span class="sd">    :type probid: str</span>
+<span class="sd">    :param probid: Problem identification string</span>
+<span class="sd">    :type probid: str, optional</span>
 <span class="sd">    :param nt: Number of time bins per particle type</span>
 <span class="sd">    :type nt: List[int]</span>
 <span class="sd">    :param ne: Number of energy bins per particle type</span>
 <span class="sd">    :type ne: List[int]</span>
 <span class="sd">    :param nfx: Total number of fine mesh bins in x/r direction</span>
-<span class="sd">    :type nfx: Optional[float]</span>
+<span class="sd">    :type nfx: float, optional</span>
 <span class="sd">    :param nfy: Total number of fine mesh bins in y/z/theta direction</span>
-<span class="sd">    :type nfy: Optional[float]</span>
+<span class="sd">    :type nfy: float, optional</span>
 <span class="sd">    :param nfz: Total number of fine mesh bins in z/theta/phi direction</span>
-<span class="sd">    :type nfz: Optional[float]</span>
+<span class="sd">    :type nfz: float, optional</span>
 <span class="sd">    :param x0: Origin x-coordinate or radial reference point</span>
-<span class="sd">    :type x0: Optional[float]</span>
+<span class="sd">    :type x0: float, optional</span>
 <span class="sd">    :param y0: Origin y-coordinate or axial reference point</span>
-<span class="sd">    :type y0: Optional[float]</span>
+<span class="sd">    :type y0: float, optional</span>
 <span class="sd">    :param z0: Origin z-coordinate or angular reference point</span>
-<span class="sd">    :type z0: Optional[float]</span>
+<span class="sd">    :type z0: float, optional</span>
 <span class="sd">    :param ncx: Number of coarse mesh bins in x/r direction</span>
-<span class="sd">    :type ncx: Optional[float]</span>
+<span class="sd">    :type ncx: float, optional</span>
 <span class="sd">    :param ncy: Number of coarse mesh bins in y/z/theta direction</span>
-<span class="sd">    :type ncy: Optional[float]</span>
+<span class="sd">    :type ncy: float, optional</span>
 <span class="sd">    :param ncz: Number of coarse mesh bins in z/theta/phi direction</span>
-<span class="sd">    :type ncz: Optional[float]</span>
+<span class="sd">    :type ncz: float, optional</span>
 <span class="sd">    :param nwg: Geometry type (1=cartesian, 2=cylindrical, 3=spherical)</span>
-<span class="sd">    :type nwg: Optional[float]</span>
+<span class="sd">    :type nwg: float, optional</span>
 <span class="sd">    :param x1: X-component of first reference vector</span>
-<span class="sd">    :type x1: Optional[float]</span>
+<span class="sd">    :type x1: float, optional</span>
 <span class="sd">    :param y1: Y-component of first reference vector</span>
-<span class="sd">    :type y1: Optional[float]</span>
+<span class="sd">    :type y1: float, optional</span>
 <span class="sd">    :param z1: Z-component of first reference vector</span>
-<span class="sd">    :type z1: Optional[float]</span>
+<span class="sd">    :type z1: float, optional</span>
 <span class="sd">    :param x2: X-component of second reference vector</span>
-<span class="sd">    :type x2: Optional[float]</span>
+<span class="sd">    :type x2: float, optional</span>
 <span class="sd">    :param y2: Y-component of second reference vector</span>
-<span class="sd">    :type y2: Optional[float]</span>
+<span class="sd">    :type y2: float, optional</span>
 <span class="sd">    :param z2: Z-component of second reference vector</span>
-<span class="sd">    :type z2: Optional[float]</span>
-
-<span class="sd">    :ivar has_time_dependency: Indicates if the window weights are time-dependent</span>
-<span class="sd">    :vartype has_time_dependency: bool</span>
-<span class="sd">    :ivar type_of_mesh: Returns the type of mesh geometry being used</span>
-<span class="sd">    :vartype type_of_mesh: Optional[str]</span>
-<span class="sd">    :ivar number_of_time_bins: List of time bins for each particle type</span>
-<span class="sd">    :vartype number_of_time_bins: List[int]</span>
-<span class="sd">    :ivar number_of_energy_bins: List of energy bins for each particle type</span>
-<span class="sd">    :vartype number_of_energy_bins: List[int]</span>
-<span class="sd">    :ivar number_of_particle_types: Total number of particle types</span>
-<span class="sd">    :vartype number_of_particle_types: int</span>
+<span class="sd">    :type z2: float, optional</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">if_</span><span class="p">:</span> <span class="nb">int</span>            <span class="c1"># File type. Only 1 is supported.</span>
     <span class="n">iv</span><span class="p">:</span> <span class="nb">int</span>             <span class="c1"># Time-dependent windows flag (1 / 2 = no / yes)</span>
@@ -210,8 +198,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">has_time_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if the window weights have time dependency.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the window weights have time dependency.</span>
 
 <span class="sd">        :return: True if window weights are time-dependent (iv=2), False otherwise</span>
 <span class="sd">        :rtype: bool</span>
@@ -220,18 +207,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">type_of_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the type of mesh geometry being used.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the type of mesh geometry being used.</span>
 
 <span class="sd">        :return: String indicating mesh type (&#39;cartesian&#39;, &#39;cylindrical&#39;, &#39;spherical&#39;),</span>
 <span class="sd">                &#39;unknown&#39; for invalid values, or None if nwg is not set</span>
 <span class="sd">        :rtype: Optional[str]</span>
-
-<span class="sd">        :Example:</span>
-<span class="sd">            &gt;&gt;&gt; header = Header(...)</span>
-<span class="sd">            &gt;&gt;&gt; header.nwg = 1</span>
-<span class="sd">            &gt;&gt;&gt; header.type_of_mesh</span>
-<span class="sd">            &#39;cartesian&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mesh_types</span> <span class="o">=</span> <span class="p">{</span>
             <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;cartesian&quot;</span><span class="p">,</span>
@@ -248,8 +228,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">number_of_time_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the list of time bins for each particle type.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the list of time bins for each particle type.</span>
 
 <span class="sd">        :return: List containing the number of time bins for each particle type</span>
 <span class="sd">        :rtype: List[int]</span>
@@ -258,8 +237,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">number_of_energy_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the list of energy bins for each particle type.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the list of energy bins for each particle type.</span>
 
 <span class="sd">        :return: List containing the number of energy bins for each particle type</span>
 <span class="sd">        :rtype: List[int]</span>
@@ -268,8 +246,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">number_of_particle_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the total number of particle types.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the total number of particle types.</span>
 
 <span class="sd">        :return: Number of particle types defined in the window weights</span>
 <span class="sd">        :rtype: int</span>
