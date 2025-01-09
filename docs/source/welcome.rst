@@ -1,9 +1,9 @@
-Welcome to WWPy
+Welcome to WWINPy
 =================
 
-WWPy |version| is a Python library for handling MCNP weight window files (WWINP format).
+WWINPy |version| is a Python library for handling MCNP weight window files (WWINP format).
 
-The source code is available on `GitHub <https://github.com/monleon96/WWPy.git>`_.
+The source code is available on `GitHub <https://github.com/monleon96/WWINPy.git>`_.
 
 .. toctree::
    :maxdepth: 1

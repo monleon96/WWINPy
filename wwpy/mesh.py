@@ -3,13 +3,13 @@ This module provides the Mesh class for handling geometric, time, and energy mes
 The module implements data structures for managing multi-dimensional mesh configurations and their properties.
 """
 
-# wwpy/mesh.py
+# wwinpy/mesh.py
 
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 import numpy as np
-from wwpy.geometry import GeometryData
-from wwpy.header import Header
+from wwinpy.geometry import GeometryData
+from wwinpy.header import Header
 
 @dataclass
 class Mesh:

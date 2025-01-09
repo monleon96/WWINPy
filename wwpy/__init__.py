@@ -1,5 +1,5 @@
 """
-WWPy - Weight Window Python Library
+WWINPy - Weight Window Python Library
 
 A library for handling MCNP weight window input (WWINP) files.
 """

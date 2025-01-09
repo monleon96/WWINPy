@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 import numpy as np
 import pandas as pd
-from wwpy.header import Header
+from wwinpy.header import Header
 
 @dataclass
 class QueryResult:

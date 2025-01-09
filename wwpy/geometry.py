@@ -4,7 +4,7 @@ Provides classes for managing geometry axes and mesh generation in various coord
 """
 
 from dataclasses import dataclass, field
-from wwpy.header import Header
+from wwinpy.header import Header
 from typing import List, Optional, Dict
 import numpy as np
 

@@ -1,8 +1,8 @@
 # test_parser.py
 
 import pytest
-from wwpy.parser import from_file
-from wwpy._exceptions import WWINPFormatError
+from wwinpy.parser import from_file
+from wwinpy._exceptions import WWINPFormatError
 
 def test_from_file_minimal(tmp_path):
     """

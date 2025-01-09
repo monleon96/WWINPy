@@ -3,35 +3,35 @@ Core Modules
 
 ww_data
 -------
-.. automodule:: wwpy.ww_data
+.. automodule:: wwinpy.ww_data
    :members:
    :undoc-members:
    :show-inheritance:
 
 header
 ------
-.. automodule:: wwpy.header
+.. automodule:: wwinpy.header
    :members:
    :undoc-members:
    :show-inheritance:
 
 mesh
 ----
-.. automodule:: wwpy.mesh
+.. automodule:: wwinpy.mesh
    :members:
    :undoc-members:
    :show-inheritance:
 
 weight_windows
 --------------
-.. automodule:: wwpy.weight_windows
+.. automodule:: wwinpy.weight_windows
    :members:
    :undoc-members:
    :show-inheritance:
 
 parser
 ------
-.. automodule:: wwpy.parser
+.. automodule:: wwinpy.parser
    :members:
    :undoc-members:
    :show-inheritance:
@@ -41,42 +41,42 @@ Utility Modules
 
 geometry
 --------
-.. automodule:: wwpy.geometry
+.. automodule:: wwinpy.geometry
    :members:
    :undoc-members:
    :show-inheritance:
 
 query
 -----
-.. automodule:: wwpy.query
+.. automodule:: wwinpy.query
    :members:
    :undoc-members:
    :show-inheritance:
 
 ratios
 ------
-.. automodule:: wwpy.ratios
+.. automodule:: wwinpy.ratios
    :members:
    :undoc-members:
    :show-inheritance:
 
 utils
 -----
-.. automodule:: wwpy.utils
+.. automodule:: wwinpy.utils
    :members:
    :undoc-members:
    :show-inheritance:
 
 plotter
 -------
-.. automodule:: wwpy.plotter
+.. automodule:: wwinpy.plotter
    :members:
    :undoc-members:
    :show-inheritance:
 
 exceptions
 ----------
-.. automodule:: wwpy.exceptions
+.. automodule:: wwinpy.exceptions
    :members:
    :undoc-members:
    :show-inheritance:

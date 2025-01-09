@@ -3,15 +3,15 @@ Main interface module for WWINP file manipulation.
 Provides the WWData class for high-level operations on weight window data.
 """
 
-# wwpy/ww_data.py
+# wwinpy/ww_data.py
 
 from dataclasses import dataclass
 import numpy as np
-from wwpy.header import Header
-from wwpy.mesh import Mesh
-from wwpy.weight_windows import WeightWindowValues
-from wwpy.geometry import GeometryAxis
-from wwpy.query import QueryResult
+from wwinpy.header import Header
+from wwinpy.mesh import Mesh
+from wwinpy.weight_windows import WeightWindowValues
+from wwinpy.geometry import GeometryAxis
+from wwinpy.query import QueryResult
 
 
 @dataclass
@@ -40,7 +40,7 @@ class WWData:
 
         :Example:
 
-            >>> from wwpy import parser
+            >>> from wwinpy import parser
             >>> wwinp = parser.from_file("input.wwinp")
             >>> wwinp.multiply(2.0)  # Double all weight window values
         """
@@ -55,7 +55,7 @@ class WWData:
 
         :Example:
 
-            >>> from wwpy import parser
+            >>> from wwinpy import parser
             >>> wwinp = parser.from_file("input.wwinp")
             >>> wwinp.soften(0.6)  # Soften weight windows
         """
@@ -72,7 +72,7 @@ class WWData:
 
         :Example:
 
-            >>> from wwpy import parser
+            >>> from wwinpy import parser
             >>> wwinp = parser.from_file("input.wwinp")
             >>> result = wwinp.query_ww(
             ...     particle_type=0,
@@ -94,7 +94,7 @@ class WWData:
 
         :Example:
 
-            >>> from wwpy import parser
+            >>> from wwinpy import parser
             >>> wwinp = parser.from_file("input.wwinp")
             >>> wwinp.apply_ratio_threshold(
             ...     threshold=10.0,

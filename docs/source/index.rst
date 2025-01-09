@@ -1,4 +1,4 @@
-WWPy Documentation
+WWINPy Documentation
 ===================
 
 .. toctree::

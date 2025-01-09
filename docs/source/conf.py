@@ -8,10 +8,10 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
-from wwpy._config import LIBRARY_VERSION, AUTHOR
+from wwinpy._config import LIBRARY_VERSION, AUTHOR
 
 # -- Project information -----------------------------------------------------
-project = 'WWPy'
+project = 'WWINPy'
 copyright = f"{datetime.datetime.now().year}, {AUTHOR}"
 author = AUTHOR
 release = LIBRARY_VERSION
@@ -64,8 +64,8 @@ html_theme_options = {
 html_static_path = ['_static']
 
 # Document title
-html_title = "WWPy Documentation"
-html_short_title = "WWPy"
+html_title = "WWINPy Documentation"
+html_short_title = "WWINPy"
 
 # Sidebar customization
 html_sidebars = {

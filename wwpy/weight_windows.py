@@ -7,11 +7,11 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Tuple, Union, Dict
 import numpy as np
 import pandas as pd
-from wwpy.header import Header
-from wwpy.mesh import Mesh
-from wwpy.query import QueryResult
-from wwpy._utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
-from wwpy._ratios import calculate_max_ratio_array
+from wwinpy.header import Header
+from wwinpy.mesh import Mesh
+from wwinpy.query import QueryResult
+from wwinpy._utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
+from wwinpy._ratios import calculate_max_ratio_array
 
 
 @dataclass
@@ -207,7 +207,7 @@ class WeightWindowValues:
 
         :Example:
 
-            >>> ww = wwpy.from_file(path/to/wwinp)
+            >>> ww = wwinpy.from_file(path/to/wwinp)
             >>> result = ww.query_ww(
             ...     particle_type=0,
             ...     energy=(1.0, 10.0),

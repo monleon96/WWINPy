@@ -3,7 +3,7 @@
 Defines specific exception types for format and parsing errors.
 """
 
-# wwpy/exceptions.py
+# wwinpy/exceptions.py
 
 class WWINPFormatError(Exception):
     """Exception raised for WWINP file format errors.

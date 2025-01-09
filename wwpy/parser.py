@@ -7,13 +7,13 @@ Contains optimized parsing functions for handling large data files efficiently.
 
 from typing import Iterator
 import itertools
-from wwpy._utils import verify_and_correct
-from wwpy._exceptions import WWINPFormatError
-from wwpy.header import Header
-from wwpy.ww_data import WWData
-from wwpy.mesh import Mesh
-from wwpy.geometry import GeometryData, GeometryAxis
-from wwpy.weight_windows import WeightWindowValues
+from wwinpy._utils import verify_and_correct
+from wwinpy._exceptions import WWINPFormatError
+from wwinpy.header import Header
+from wwinpy.ww_data import WWData
+from wwinpy.mesh import Mesh
+from wwinpy.geometry import GeometryData, GeometryAxis
+from wwinpy.weight_windows import WeightWindowValues
 import numpy as np
 
 def _tokenize_file(file_path: str) -> Iterator[str]:

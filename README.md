@@ -1,17 +1,17 @@
-# WWPy - Weight Window Python Library
+# WWINPy - Weight Window Python Library
 
-[![Version](https://img.shields.io/badge/version-0.1.3-blue.svg)](https://github.com/monleon96/WWPy)
+[![Version](https://img.shields.io/badge/version-0.1.3-blue.svg)](https://github.com/monleon96/WWINPy)
 
-WWPy is a Python library designed for working with Weight Window files (WWINP format). The library enables you to read, query, modify, and rewrite these files efficiently.
+WWINPy is a Python library designed for working with Weight Window files (WWINP format). The library enables you to read, query, modify, and rewrite these files efficiently.
 
 ## Documentation
 
-Full documentation is available at [WWPy Documentation](https://wwpy.readthedocs.io/en/latest/#).
+Full documentation is available at [WWINPy Documentation](https://wwinpy.readthedocs.io/en/latest/#).
 
 ## Installation
 
 ```bash
-pip install wwpy
+pip install wwinpy
 ```
 
 ## Features
@@ -24,10 +24,10 @@ pip install wwpy
 ## Quick Start
 
 ```python
-import wwpy
+import wwinpy
 
 # Read a weight window file
-ww = wwpy.from_file("path/to/your/wwinp")
+ww = wwinpy.from_file("path/to/your/wwinp")
 
 # Access weight window data
 print(ww.header.ne)
@@ -35,7 +35,7 @@ print(ww.mesh.energy_mesh)
 print(ww.values.ww_values)
 ```
 
-Visit [Getting Started](https://wwpy.readthedocs.io/en/latest/getting_started.html) section from [WWPy Documentation](https://wwpy.readthedocs.io/en/latest/#) for more.
+Visit [Getting Started](https://wwinpy.readthedocs.io/en/latest/getting_started.html) section from [WWINPy Documentation](https://wwinpy.readthedocs.io/en/latest/#) for more.
 
 ## Contributing
 

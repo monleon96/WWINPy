@@ -1,14 +1,14 @@
 Getting Started
 ---------------
 
-Here's a quick start guide to help you begin using WWPy:
+Here's a quick start guide to help you begin using WWINPy:
 
 1. **Import the Library**
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
    .. code-block:: python
 
-      import wwpy
+      import wwinpy
 
 2. **Read a WWINP File and access its data**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,7 +17,7 @@ Read the WWINP file.
 
    .. code-block:: python
 
-      ww = wwpy.parser.from_file('path/to/wwinp_file')
+      ww = wwinpy.parser.from_file('path/to/wwinp_file')
 
 Access the data in the header, the mesh data or de weight windows values directly.
 
@@ -72,7 +72,7 @@ Access the data in the header, the mesh data or de weight windows values directl
 3. **Query Weight Windows**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Query weight windows by specifying parameters such as particle type, time, energy, and position coordinates. You can define each parameter as a single value or a range. Exact matches are not required—WWPy will automatically find the closest match for you.
+Query weight windows by specifying parameters such as particle type, time, energy, and position coordinates. You can define each parameter as a single value or a range. Exact matches are not required—WWINPy will automatically find the closest match for you.
 
    .. code-block:: python
 
