@@ -4,7 +4,7 @@ Handles storage and manipulation of weight window values through the WeightWindo
 """
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple, Union, Dict
+from typing import Optional, Tuple, Union, Dict
 import numpy as np
 import pandas as pd
 from wwinpy.header import Header
@@ -31,35 +31,69 @@ class WeightWindowValues:
     mesh: Mesh
     ww_values: Dict[int, np.ndarray] = field(default_factory=dict)
 
-    def multiply(self, factor: float = 2.0) -> None:
-        """Multiply all weight window values by a factor.
+    def multiply(self, factor: float = 2.0, 
+            particle_types: int | list[int] = -1) -> None:
+        """Multiply weight window values by a factor.
 
         :param factor: Multiplication factor to apply
         :type factor: float
+        :param particle_types: Particle type(s) to process. Use -1 for all types, or specify
+                           individual types as an integer or list of integers
+        :type particle_types: Union[int, List[int]]
+        :raises ValueError: If an invalid particle type is specified
         """
-        for particle_idx in self.ww_values:
+        # Handle particle type selection
+        if isinstance(particle_types, int):
+            if particle_types == -1:
+                particle_types = list(range(self.header.ni))
+            else:
+                particle_types = [particle_types]
+        
+        # Validate particle types
+        for p_type in particle_types:
+            if not 0 <= p_type < self.header.ni:
+                raise ValueError(f"Invalid particle type {p_type}. Must be between 0 and {self.header.ni-1}")
+                
+        for particle_idx in particle_types:
             self.ww_values[particle_idx] *= factor
 
-    def soften(self, power: float = 0.6) -> None:
+    def soften(self, power: float = 0.6,
+           particle_types: int | list[int] = -1) -> None:
         """Modify weight window boundaries by raising values to a power.
 
         :param power: Exponent to apply to values (< 1 softens, > 1 hardens)
         :type power: float
+        :param particle_types: Particle type(s) to process. Use -1 for all types, or specify
+                           individual types as an integer or list of integers
+        :type particle_types: Union[int, List[int]]
+        :raises ValueError: If an invalid particle type is specified
         """
-        for particle_idx in self.ww_values:
+        # Handle particle type selection
+        if isinstance(particle_types, int):
+            if particle_types == -1:
+                particle_types = list(range(self.header.ni))
+            else:
+                particle_types = [particle_types]
+        
+        # Validate particle types
+        for p_type in particle_types:
+            if not 0 <= p_type < self.header.ni:
+                raise ValueError(f"Invalid particle type {p_type}. Must be between 0 and {self.header.ni-1}")
+                
+        for particle_idx in particle_types:
             self.ww_values[particle_idx] = np.power(self.ww_values[particle_idx], power)
 
     def apply_ratio_threshold(self, threshold: float = 10.0,
-            particle_types: Union[int, List[int]] = 0,
+            particle_types: int | list[int] = -1,
             verbose: bool = False) -> None:
-        """Apply a ratio threshold to identify and modify extreme weight window differences.
+        """Apply a ratio threshold to identify and modify extreme weight window differences bewteen neighbor cells.
 
         :param threshold: Maximum allowed ratio between neighboring cells
         :type threshold: float
         :param particle_types: Particle type(s) to process. Use -1 for all types, or specify
                            individual types as an integer or list of integers
         :type particle_types: Union[int, List[int]]
-        :param verbose: If True, prints detailed information about modifications
+        :param verbose: If True, prints detailed detailed detailed information about modifications
         :type verbose: bool
         :return: None
         :raises ValueError: If an invalid particle type is specified
@@ -167,21 +201,22 @@ class WeightWindowValues:
                 total_changes += time_changes
                 total_cells += time_cells  # This now has the correct count
 
-        # Summary statistics
-        if total_changes > 0:
-            summary_data = {
-                'Total Cells': [total_cells],
-                'Modified Cells': [total_changes],
-                'Percentage': [f"{total_changes/total_cells*100:.2f}%"]
-            }
-            summary_df = pd.DataFrame(summary_data)
-            print("\nSummary:")
-            print(summary_df.to_string(index=False))
-        else:
-            print("\nNo modifications were needed - all ratios are within threshold")
+        if verbose:
+            # Summary statistics
+            if total_changes > 0:
+                summary_data = {
+                    'Total Cells': [total_cells],
+                    'Modified Cells': [total_changes],
+                    'Percentage': [f"{total_changes/total_cells*100:.2f}%"]
+                }
+                summary_df = pd.DataFrame(summary_data)
+                print("\nSummary:")
+                print(summary_df.to_string(index=False))
+            else:
+                print("\nNo modifications were needed - all ratios are within threshold")
 
 
-    def query_ww(self, particle_type: Optional[int] = None,
+    def query_ww(self, particle_type: int | None = None,
             time: Optional[Union[float, Tuple[float, float]]] = None,
             energy: Optional[Union[float, Tuple[float, float]]] = None,
             x: Optional[Union[float, Tuple[float, float]]] = None,

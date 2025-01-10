@@ -6,6 +6,7 @@ Provides the WWData class for high-level operations on weight window data.
 # wwinpy/ww_data.py
 
 from dataclasses import dataclass
+from typing import Union, List
 from copy import deepcopy
 import numpy as np
 from wwinpy.header import Header
@@ -46,55 +47,70 @@ class WWData:
         """
         return deepcopy(self)
 
-    def multiply(self, factor: float = 2.0) -> None:
-        """Multiply all weight window values by a specified factor.
+    def multiply(self, factor: float = 2.0,
+                particle_types: Union[int, List[int]] = -1) -> None:
+        """Multiply weight window values by a specified factor.
 
-        :param factor: Multiplication factor to apply to all weight window values
+        :param factor: Multiplication factor to apply
         :type factor: float
+        :param particle_types: Particle type(s) to process. Use -1 for all types
+        :type particle_types: Union[int, List[int]]
         :return: None
 
         :Example:
 
             >>> import wwinpy
             >>> ww = wwinpy.from_file("path/to/wwinp_file")
-            >>> ww.multiply(2.0)  # Double all weight window values
+            >>> ww.multiply(2.0)  # Apply to all particle types
+            >>> ww.multiply(2.0, particle_types=0)  # Apply only to particle type 0
         """
-        self.values.multiply(factor)
+        self.values.multiply(factor, particle_types)
 
-    def soften(self, power: float = 0.6) -> None:
+    def soften(self, power: float = 0.6,
+            particle_types: Union[int, List[int]] = -1) -> None:
         """Adjust weight window values by applying a power transformation.
 
-        :param power: Exponent to apply to weight window values (< 1 softens, > 1 hardens)
+        :param power: Exponent to apply to values (< 1 softens, > 1 hardens)
         :type power: float
+        :param particle_types: Particle type(s) to process. Use -1 for all types
+        :type particle_types: Union[int, List[int]]
         :return: None
 
         :Example:
 
             >>> import wwinpy
             >>> ww = wwinpy.from_file("path/to/wwinp_file")
-            >>> ww.soften(0.6)  # Soften weight windows
+            >>> ww.soften(0.6)  # Apply to all particle types
+            >>> ww.soften(0.6, particle_types=0)  # Apply only to particle type 0
         """
-        self.values.soften(power)
+        self.values.soften(power, particle_types)
 
-    def apply_ratio_threshold(self, **kwargs) -> None:
+    def apply_ratio_threshold(self, threshold: float = 10.0,
+                         particle_types: Union[int, List[int]] = -1,
+                         verbose: bool = False) -> None:
         """Apply a ratio threshold to weight window values.
 
-        :param kwargs: Parameters for threshold application
-                     Valid keys: threshold, particle_types, verbose
-        :type kwargs: dict
+        :param threshold: Maximum allowed ratio between neighboring cells
+        :type threshold: float
+        :param particle_types: Particle type(s) to process. Use -1 for all types
+        :type particle_types: Union[int, List[int]]
+        :param verbose: If True, prints detailed information
+        :type verbose: bool
         :return: None
 
         :Example:
 
             >>> import wwinpy
             >>> ww = wwinpy.from_file("path/to/wwinp_file")
-            >>> ww.apply_ratio_threshold(
-            ...     threshold=10.0,
-            ...     particle_types=[0],
-            ...     verbose=True
-            ... )
+            >>> ww.apply_ratio_threshold(10.0)  # Apply to all particle types
+            >>> ww.apply_ratio_threshold(threshold=10.0, particle_types=0)  # Apply only to particle type 0
+            >>> ww.apply_ratio_threshold(threshold=10.0, particle_types=[0, 1]) 
         """
-        return self.values.apply_ratio_threshold(**kwargs)
+        return self.values.apply_ratio_threshold(
+            threshold=threshold,
+            particle_types=particle_types,
+            verbose=verbose
+        )
 
     def query_ww(self, **kwargs) -> QueryResult:
         """Query weight window values based on specified criteria.
