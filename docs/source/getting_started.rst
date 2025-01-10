@@ -17,9 +17,9 @@ Read the WWINP file.
 
    .. code-block:: python
 
-      ww = wwinpy.parser.from_file('path/to/wwinp_file')
+      ww = wwinpy.from_file('path/to/wwinp_file')
 
-Access the data in the header, the mesh data or de weight windows values directly.
+Access the data in the header, the mesh data or the weight windows values directly.
 
    .. code-block:: python
 

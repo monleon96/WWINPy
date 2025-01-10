@@ -55,14 +55,14 @@ query
 
 ratios
 ------
-.. automodule:: wwinpy.ratios
+.. automodule:: wwinpy._ratios
    :members:
    :undoc-members:
    :show-inheritance:
 
 utils
 -----
-.. automodule:: wwinpy.utils
+.. automodule:: wwinpy._utils
    :members:
    :undoc-members:
    :show-inheritance:
@@ -76,7 +76,7 @@ plotter
 
 exceptions
 ----------
-.. automodule:: wwinpy.exceptions
+.. automodule:: wwinpy._exceptions
    :members:
    :undoc-members:
    :show-inheritance:
