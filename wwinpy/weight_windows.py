@@ -31,7 +31,7 @@ class WeightWindowValues:
     mesh: Mesh
     ww_values: Dict[int, np.ndarray] = field(default_factory=dict)
 
-    def multiply(self, factor: float = 2.0, 
+    def multiply(self, factor: float = 1.2, 
             particle_types: int | list[int] = -1) -> None:
         """Multiply weight window values by a factor.
 

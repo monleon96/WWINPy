@@ -16,6 +16,12 @@ from wwinpy.geometry import GeometryAxis
 from wwinpy.query import QueryResult
 
 
+import cProfile
+import pstats
+import io
+
+
+
 @dataclass
 class WWData:
     """Main interface for WWINP file manipulation.
@@ -47,7 +53,7 @@ class WWData:
         """
         return deepcopy(self)
 
-    def multiply(self, factor: float = 2.0,
+    def multiply(self, factor: float = 1.2,
                 particle_types: Union[int, List[int]] = -1) -> None:
         """Multiply weight window values by a specified factor.
 
@@ -61,8 +67,8 @@ class WWData:
 
             >>> import wwinpy
             >>> ww = wwinpy.from_file("path/to/wwinp_file")
-            >>> ww.multiply(2.0)  # Apply to all particle types
-            >>> ww.multiply(2.0, particle_types=0)  # Apply only to particle type 0
+            >>> ww.multiply(1.2)  # Apply to all particle types
+            >>> ww.multiply(1.2, particle_types=0)  # Apply only to particle type 0
         """
         self.values.multiply(factor, particle_types)
 
@@ -134,8 +140,8 @@ class WWData:
             ... )
         """
         return self.values.query_ww(**kwargs)
-
     
+
     def write_file(self, filename: str) -> None:
         """Write the WWINP data to a file in FORTRAN-compatible format.
 
@@ -143,7 +149,7 @@ class WWData:
         :type filename: str
         :return: None
         """
-        with open(filename, 'w') as f:
+        with open(filename, 'w', buffering=2**20) as f:
             # First line: if iv ni nr probid (4i10, 20x, a19)
             f.write(f"{self.header.if_:10d}{self.header.iv:10d}{self.header.ni:10d}{self.header.nr:10d}" + 
                    " " * 20 + f"{self.header.probid:19s}\n")
@@ -211,6 +217,22 @@ class WWData:
                         values = ww[0, e, :].flatten()
                         self._write_ww_block(f, values, e < ww.shape[1]-1)
 
+    #def _write_ww_block(self, f, values: np.ndarray, add_newline: bool) -> None:
+    #    """Write a block of weight window values in FORTRAN-compatible format.
+#
+    #    :param f: File object to write to
+    #    :type f: TextIO
+    #    :param values: Array of weight window values to write
+    #    :type values: np.ndarray
+    #    :param add_newline: Whether to add a newline after the block
+    #    :type add_newline: bool
+    #    :return: None
+    #    """
+    #    for i in range(0, len(values), 6):
+    #        chunk = values[i:i+6]
+    #        line = "".join(f"{value:13.5e}" for value in chunk)
+    #        f.write(line + "\n")
+
     def _write_ww_block(self, f, values: np.ndarray, add_newline: bool) -> None:
         """Write a block of weight window values in FORTRAN-compatible format.
 
@@ -222,10 +244,23 @@ class WWData:
         :type add_newline: bool
         :return: None
         """
+        lines = []
+        batch_size = 1000  # Example batch size; adjust as needed
+
         for i in range(0, len(values), 6):
             chunk = values[i:i+6]
-            line = "".join(f"{value:13.5e}" for value in chunk)
-            f.write(line + "\n")
+            # Build the line string for these 6 entries
+            line = "".join(f"{value:13.5e}" for value in chunk) + "\n"
+            lines.append(line)
+
+            # Every so often, write out the lines to file
+            if len(lines) >= batch_size:
+                f.writelines(lines)
+                lines.clear()
+
+        # Write any remaining lines
+        if lines:
+            f.writelines(lines)
 
     def _write_array(self, f, array: np.ndarray) -> None:
         """Write a generic array in FORTRAN 6g13.5 format.
