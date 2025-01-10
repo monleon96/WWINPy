@@ -41,7 +41,7 @@ class WWData:
         :Example:
 
             >>> import wwinpy
-            >>> ww = wwinpy.from_file("input.wwinp")
+            >>> ww = wwinpy.from_file("path/to/wwinp_file")
             >>> ww.multiply(2.0)  # Double all weight window values
         """
         self.values.multiply(factor)
@@ -56,7 +56,7 @@ class WWData:
         :Example:
 
             >>> import wwinpy
-            >>> ww = wwinpy.from_file("input.wwinp")
+            >>> ww = wwinpy.from_file("path/to/wwinp_file")
             >>> ww.soften(0.6)  # Soften weight windows
         """
         self.values.soften(power)
@@ -72,7 +72,7 @@ class WWData:
         :Example:
 
             >>> import wwinpy
-            >>> ww = wwinpy.from_file("input.wwinp")
+            >>> ww = wwinpy.from_file("path/to/wwinp_file")
             >>> ww.apply_ratio_threshold(
             ...     threshold=10.0,
             ...     particle_types=[0],
@@ -93,7 +93,7 @@ class WWData:
         :Example:
 
             >>> import wwinpy
-            >>> ww = wwinpy.from_file("input.wwinp")
+            >>> ww = wwinpy.from_file("path/to/wwinp_file")
             >>> result = wwinp.query_ww(
             ...     particle_type=0,
             ...     energy=(1.0, 10.0),
