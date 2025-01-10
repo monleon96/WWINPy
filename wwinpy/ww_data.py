@@ -40,9 +40,9 @@ class WWData:
 
         :Example:
 
-            >>> from wwinpy import parser
-            >>> wwinp = parser.from_file("input.wwinp")
-            >>> wwinp.multiply(2.0)  # Double all weight window values
+            >>> import wwinpy
+            >>> ww = wwinpy.from_file("input.wwinp")
+            >>> ww.multiply(2.0)  # Double all weight window values
         """
         self.values.multiply(factor)
 
@@ -55,11 +55,31 @@ class WWData:
 
         :Example:
 
-            >>> from wwinpy import parser
-            >>> wwinp = parser.from_file("input.wwinp")
-            >>> wwinp.soften(0.6)  # Soften weight windows
+            >>> import wwinpy
+            >>> ww = wwinpy.from_file("input.wwinp")
+            >>> ww.soften(0.6)  # Soften weight windows
         """
         self.values.soften(power)
+
+    def apply_ratio_threshold(self, **kwargs) -> None:
+        """Apply a ratio threshold to weight window values.
+
+        :param kwargs: Parameters for threshold application
+                     Valid keys: threshold, particle_types, verbose
+        :type kwargs: dict
+        :return: None
+
+        :Example:
+
+            >>> import wwinpy
+            >>> ww = wwinpy.from_file("input.wwinp")
+            >>> ww.apply_ratio_threshold(
+            ...     threshold=10.0,
+            ...     particle_types=[0],
+            ...     verbose=True
+            ... )
+        """
+        return self.values.apply_ratio_threshold(**kwargs)
 
     def query_ww(self, **kwargs) -> QueryResult:
         """Query weight window values based on specified criteria.
@@ -72,8 +92,8 @@ class WWData:
 
         :Example:
 
-            >>> from wwinpy import parser
-            >>> wwinp = parser.from_file("input.wwinp")
+            >>> import wwinpy
+            >>> ww = wwinpy.from_file("input.wwinp")
             >>> result = wwinp.query_ww(
             ...     particle_type=0,
             ...     energy=(1.0, 10.0),
@@ -84,25 +104,6 @@ class WWData:
         """
         return self.values.query_ww(**kwargs)
 
-    def apply_ratio_threshold(self, **kwargs) -> None:
-        """Apply a ratio threshold to weight window values.
-
-        :param kwargs: Parameters for threshold application
-                     Valid keys: threshold, particle_types, verbose
-        :type kwargs: dict
-        :return: None
-
-        :Example:
-
-            >>> from wwinpy import parser
-            >>> wwinp = parser.from_file("input.wwinp")
-            >>> wwinp.apply_ratio_threshold(
-            ...     threshold=10.0,
-            ...     particle_types=[0],
-            ...     verbose=True
-            ... )
-        """
-        return self.values.apply_ratio_threshold(**kwargs)
     
     def write_file(self, filename: str) -> None:
         """Write the WWINP data to a file in FORTRAN-compatible format.
