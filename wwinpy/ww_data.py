@@ -6,6 +6,7 @@ Provides the WWData class for high-level operations on weight window data.
 # wwinpy/ww_data.py
 
 from dataclasses import dataclass
+from copy import deepcopy
 import numpy as np
 from wwinpy.header import Header
 from wwinpy.mesh import Mesh
@@ -30,6 +31,20 @@ class WWData:
     header: Header
     mesh: Mesh
     values: WeightWindowValues
+
+    def copy(self) -> 'WWData':
+        """Create a deep copy of the WWData object.
+        
+        :return: A new WWData instance with copied data
+        :rtype: WWData
+        
+        :Example:
+        
+            >>> import wwinpy
+            >>> ww = wwinpy.from_file("path/to/wwinp_file")
+            >>> ww_copy = ww.copy()
+        """
+        return deepcopy(self)
 
     def multiply(self, factor: float = 2.0) -> None:
         """Multiply all weight window values by a specified factor.

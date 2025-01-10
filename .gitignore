@@ -9,3 +9,6 @@ examples/*.py
 # VSCODE
 .vscode/
 *.code-workspace
+
+# Personal docs
+_README.md
