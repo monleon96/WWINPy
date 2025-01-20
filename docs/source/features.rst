@@ -5,8 +5,7 @@ Features
 
 
 - **High-Performance Processing:** 
-    - Read large WWINP files (>1GB) in seconds
-    - Write large weight window files (~1GB) in approximately 5 minutes (hardware dependent)
+    - Read and write large weight window files
 
 
 - **Advanced Querying:** Access specific weight window values filtered by:
@@ -20,9 +19,6 @@ Features
 
 
 - **Data Visualization:** (Coming Soon)
-    - 3D visualization using PyVista
-    - Heat maps
-    - Cross-sectional views
 
 
 - **User-Friendly Interface:** Simple and intuitive API for weight window manipulation

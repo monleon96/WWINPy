@@ -14,6 +14,7 @@ from wwinpy.mesh import Mesh
 from wwinpy.weight_windows import WeightWindowValues
 from wwinpy.geometry import GeometryAxis
 from wwinpy.query import QueryResult
+from wwinpy._ratios import calculate_ratios_stats
 
 
 import cProfile
@@ -217,31 +218,14 @@ class WWData:
                         values = ww[0, e, :].flatten()
                         self._write_ww_block(f, values, e < ww.shape[1]-1)
 
-    #def _write_ww_block(self, f, values: np.ndarray, add_newline: bool) -> None:
-    #    """Write a block of weight window values in FORTRAN-compatible format.
-#
-    #    :param f: File object to write to
-    #    :type f: TextIO
-    #    :param values: Array of weight window values to write
-    #    :type values: np.ndarray
-    #    :param add_newline: Whether to add a newline after the block
-    #    :type add_newline: bool
-    #    :return: None
-    #    """
-    #    for i in range(0, len(values), 6):
-    #        chunk = values[i:i+6]
-    #        line = "".join(f"{value:13.5e}" for value in chunk)
-    #        f.write(line + "\n")
 
-    def _write_ww_block(self, f, values: np.ndarray, add_newline: bool) -> None:
+    def _write_ww_block(self, f, values: np.ndarray) -> None:
         """Write a block of weight window values in FORTRAN-compatible format.
 
         :param f: File object to write to
         :type f: TextIO
         :param values: Array of weight window values to write
         :type values: np.ndarray
-        :param add_newline: Whether to add a newline after the block
-        :type add_newline: bool
         :return: None
         """
         lines = []
@@ -299,5 +283,86 @@ class WWData:
             chunk = values[i:i+6]
             line = "".join(f"{value:13.5e}" for value in chunk)
             f.write(line + "\n")
+
+
+    def __str__(self) -> str:
+        """Return a string representation of the WWData object.
+        
+        :return: Formatted string with object information
+        :rtype: str
+        """
+        # Get geometry info
+        mesh_type = self.header.type_of_mesh.capitalize()
+        x_axis = self.mesh.fine_geometry_mesh['x']
+        y_axis = self.mesh.fine_geometry_mesh['y']
+        z_axis = self.mesh.fine_geometry_mesh['z']
+        n_voxels = (len(x_axis)-1) * (len(y_axis)-1) * (len(z_axis)-1)
+        
+        # Header section
+        header = (
+            "================= WWData Object Information =================\n"
+            f"Mesh Type        : {mesh_type}\n"
+            f"Number of Voxels : {n_voxels}\n\n"
+            "Geometry Details:\n"
+            "-------------------------------------------------------------------\n"
+            f"{'Axis':<5} | {'From':>10} | {'To':>10} | {'No. Bins':>10}\n"
+            "-------------------------------------------------------------------\n"
+            f"{'I':<5} | {x_axis[0]:>10.1f} | {x_axis[-1]:>10.1f} | {len(x_axis)-1:>10d}\n"
+            f"{'J':<5} | {y_axis[0]:>10.1f} | {y_axis[-1]:>10.1f} | {len(y_axis)-1:>10d}\n"
+            f"{'K':<5} | {z_axis[0]:>10.1f} | {z_axis[-1]:>10.1f} | {len(z_axis)-1:>10d}\n"
+            "-------------------------------------------------------------------\n\n"
+            f"The weight window contains {self.header.ni} particle type(s).\n\n"
+        )
+
+        # Initialize particle information list
+        particles_info = []
+        
+        # Process each particle type
+        for i in range(self.header.ni):
+            ww_values = self.values.ww_values[i]
+            non_zero = np.count_nonzero(ww_values)
+            total_elements = ww_values.size
+            percent_non_zero = (non_zero / total_elements) * 100
+
+            # Calculate ratios for each energy level
+            ratios_avg = []
+            ratios_max = []
+            for e in range(ww_values.shape[1]):  # For each energy bin
+                spatial_slice = ww_values[0, e, :]  # Use time=0 if no time dependency
+                reshaped_slice = spatial_slice.reshape(
+                    int(self.header.nfz), int(self.header.nfy), int(self.header.nfx)
+                )
+                avg_ratio, max_ratio = calculate_ratios_stats(reshaped_slice)
+                ratios_avg.append(avg_ratio)
+                ratios_max.append(max_ratio)
+            
+            avg_ratio = float(np.mean(ratios_avg))
+            max_ratio = float(np.max(ratios_max))
+
+            # Convert energy bins to regular Python list with float values
+            energy_bins = [float(e) for e in self.mesh.energy_mesh[i]]
+
+            # Filter positive values for min and max
+            flat_values = ww_values.flatten()
+            positive_values = flat_values[flat_values > 0]
+
+            # Particle information section
+            particle_info = (
+                f"----------------------- Particle Type {i} ---------------------------\n"
+                f"{'Metric':<20} : {'Value'}\n"
+                "-------------------------------------------------------------------\n"
+                f"{'Energy Bins':<20} : {energy_bins}\n"
+                f"{'Min Value':<20} : {np.min(positive_values):.2E}\n"
+                f"{'Max Value':<20} : {np.max(positive_values):.2E}\n"
+                f"{'No. Bins > 0 (%)':<20} : {percent_non_zero:.1f}\n"
+                f"{'Average Ratio':<20} : {avg_ratio:.2E}\n"
+                f"{'Max Ratio':<20} : {max_ratio:.2E}\n"
+                "-------------------------------------------------------------------\n"
+            )
+            particles_info.append(particle_info)
+        
+        # Combine all sections
+        return header + "\n".join(particles_info)
+
 
 

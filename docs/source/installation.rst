@@ -7,8 +7,9 @@ To install WWINPy, ensure you have Python 3.8 or later installed. Then, use pip:
 
    pip install wwinpy
 
-Upgrading to the Latest Version
--------------------------------
+
+.. rubric:: Upgrading to the Latest Version
+
 
 If you already have WWINPy installed and want to upgrade to the latest version, follow these steps:
 

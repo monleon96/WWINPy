@@ -182,7 +182,7 @@ class WeightWindowValues:
                                     'Y Range': f"[{y_grid[y]:.1f}, {y_grid[y+1]:.1f}]",
                                     'Z Range': f"[{z_grid[z]:.1f}, {z_grid[z+1]:.1f}]",
                                     'Ratio': f"{ratios[z,y,x]:.2f}",
-                                    'Value': f"{spatial_view[z,y,x]:.2e}"
+                                    'Value': f"{spatial_view[z,y,x]:.5e}"
                                 })
                             
                             if data:

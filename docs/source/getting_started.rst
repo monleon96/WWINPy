@@ -23,6 +23,36 @@ Access the data in the header, the mesh data or the weight windows values direct
 
    .. code-block:: python
 
+      print(ww)
+
+         ================= WWData Object Information =================
+         Mesh Type        : Cartesian
+         Number of Voxels : 392
+
+         Geometry Details:
+         -------------------------------------------------------------------
+         Axis  |       From |         To |   No. Bins
+         -------------------------------------------------------------------
+         I     |      -25.0 |      112.5 |          8
+         J     |      -40.0 |       40.0 |          7
+         K     |      -40.0 |       40.0 |          7
+         -------------------------------------------------------------------
+
+         The weight window contains 1 particle type(s).
+
+         ----------------------- Particle Type 0 ---------------------------
+         Metric               : Value
+         -------------------------------------------------------------------
+         Energy Bins          : [1e-08, 3e-08, 5e-08, 1e-07, 2.25e-07, 3.25e-07, 4.1399e-07, 8e-07, 1e-06, 1.1253e-06, 1.3e-06, 1.8554e-06, 3.059e-06, 1.0677e-05, 2.9023e-05, 0.0001013, 0.00058295, 0.0030354, 0.015034, 0.11109, 0.40762, 0.90718, 1.4227, 1.8268, 3.0119, 6.3763, 20.0]
+         Min Value            : 1.95E+04
+         Max Value            : 6.72E+12
+         No. Bins > 0 (%)     : 100.0
+         Average Ratio        : 3.53E+00
+         Max Ratio            : 7.11E+01
+         -------------------------------------------------------------------
+
+   .. code-block:: python
+
       ww.header.number_of_energy_bins   # Same as ww.header.ne
 
          [27]
@@ -270,7 +300,7 @@ Modify weight windows to improve simulation efficiency. The recommended workflow
 
    .. code-block:: python
 
-      ww.multiply(2)
+      ww.multiply(1.2)
       ww.soften(0.6)
       ww.apply_ratio_threshold(10)
 
