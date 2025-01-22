@@ -69,6 +69,29 @@ class QueryResult:
                         for y_idx, (y_start, y_end) in enumerate(zip(y_starts, y_ends)):
                             for x_idx, (x_start, x_end) in enumerate(zip(x_starts, x_ends)):
                                 t_index = t_idx if time_dim > 1 else 0
+                                
+                                # Determine the appropriate energy index
+                                if ww_vals.shape[1] == 1:
+                                    # Only one energy bin available, use e_idx=0
+                                    effective_e_idx = 0
+                                else:
+                                    # Multiple energy bins available
+                                    effective_e_idx = e_idx
+                                    
+                                    # Additional safety check
+                                    if e_idx >= ww_vals.shape[1]:
+                                        raise IndexError(
+                                            f"Energy index {e_idx} out of bounds for ww_values with shape {ww_vals.shape}"
+                                        )
+                                
+                                try:
+                                    ww_value = float(ww_vals[t_index, effective_e_idx, z_idx, y_idx, x_idx])
+                                except IndexError as ie:
+                                    raise IndexError(
+                                        f"Error accessing ww_values at indices "
+                                        f"(t={t_index}, e={effective_e_idx}, z={z_idx}, y={y_idx}, x={x_idx}): {ie}"
+                                    )
+                                
                                 data_rows.append({
                                     'particle_type': p_type,
                                     'time_start': t_start,
@@ -81,7 +104,7 @@ class QueryResult:
                                     'y_end': y_end,
                                     'z_start': z_start,
                                     'z_end': z_end,
-                                    'ww_value': float(ww_vals[t_index, e_idx, z_idx, y_idx, x_idx])
+                                    'ww_value': ww_value
                                 })
         
         return pd.DataFrame(data_rows)
