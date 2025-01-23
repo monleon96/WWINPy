@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wwinpy"
-version = "0.1.7"
+version = "0.1.8"
 description = "Python library to parse and work with weight window files"
 authors = ["Juan Antonio Monleon de la Lluvia <juanmonleon96@gmail.com>"]
 license = "GNU General Public License v3.0"

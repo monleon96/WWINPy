@@ -10,7 +10,10 @@ import pandas as pd
 from wwinpy.header import Header
 from wwinpy.mesh import Mesh
 from wwinpy.query import QueryResult
-from wwinpy._utils import get_closest_indices, get_range_indices, get_bin_intervals_from_indices
+from wwinpy._utils import (
+    get_closest_indices, get_closest_energy_indices, get_range_indices, 
+    get_bin_intervals_from_indices, get_energy_intervals_from_indices, get_range_energy_indices
+    )
 from wwinpy._ratios import calculate_max_ratio_array
 
 
@@ -307,33 +310,34 @@ class WeightWindowValues:
         # Process each particle type
         for p_type in particle_types:
             # Get original energy grid and create extended version with 0.0
-            orig_energy_grid = self.mesh.energy_mesh[p_type]
-            energy_grid = np.insert(orig_energy_grid, 0, 0.0)
+            energy_grid = self.mesh.energy_mesh[p_type]
 
             # Handle energy query
             if energy is not None:
                 if isinstance(energy, tuple):
                     # Range query
-                    e_indices = get_range_indices(energy_grid, energy)
+                    e_indices = get_range_energy_indices(energy_grid, energy)
+                    print('e_indices:', e_indices)
                     # Get the actual energy intervals
-                    e_starts, e_ends = get_bin_intervals_from_indices(energy_grid, e_indices)
+                    e_starts, e_ends = get_energy_intervals_from_indices(energy_grid, e_indices)
                     energy_intervals.append((e_starts, e_ends))
                     # Adjust indices for ww_values access (shift left by 1 and remove if negative)
-                    e_indices = e_indices - 1
-                    e_indices = e_indices[e_indices >= 0]
+                    #e_indices = e_indices - 1
+                    #e_indices = e_indices[e_indices >= 0]
+                    print('e_starts:', e_starts)
+                    print('e_ends:', e_ends)
+                    print('e_indices final:', e_indices)
                 else:
                     # Single value query
-                    e_indices = get_closest_indices(energy_grid, energy)
+                    e_indices = get_closest_energy_indices(energy_grid, energy)
                     # Get the actual energy intervals
-                    e_starts, e_ends = get_bin_intervals_from_indices(energy_grid, e_indices)
+                    e_starts, e_ends = get_energy_intervals_from_indices(energy_grid, e_indices)
                     energy_intervals.append((e_starts, e_ends))
-                    # Adjust indices for ww_values access
-                    e_indices = e_indices - 1
-                    e_indices = e_indices[e_indices >= 0]
             else:
-                # If no energy query, use all indices but account for the added 0.0
-                e_indices = np.arange(len(orig_energy_grid))  # Indices for original grid
-                energy_intervals.append((energy_grid[:-1], energy_grid[1:]))  # Use extended grid for intervals
+                # If no energy query, use all indices
+                e_indices = np.arange(len(energy_grid))
+                e_starts, e_ends = energy_grid[:-1], energy_grid[1:]
+                energy_intervals.append((e_starts, e_ends))
 
             # Handle time query
             if self.header.has_time_dependency:
@@ -363,6 +367,8 @@ class WeightWindowValues:
             if self.header.has_time_dependency:
                 selected_ww = particle_ww[t_indices][:, e_indices]
             else:
+                print('particle_ww:', particle_ww)
+                print('e_indices:', e_indices)
                 selected_ww = particle_ww[0:1, e_indices]  # Always use single time index for non-time-dependent
 
             # Reshape the ww values to match the spatial dimensions
@@ -378,6 +384,8 @@ class WeightWindowValues:
 
             results.append(selected_ww)
 
+        print('energy_intervals:', energy_intervals)
+        print('ww_values:', results)
         return QueryResult(
             header=self.header,
             particle_types=particle_types,

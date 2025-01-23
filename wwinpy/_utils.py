@@ -133,6 +133,103 @@ def verify_and_correct(ni: int, nt: Optional[List[int]], ne: List[int],
         return ni, nt, ne
     
 
+def get_closest_energy_indices(energy_grid: np.ndarray, energy_value: float, atol: float = 1e-9) -> np.ndarray:
+    """Find energy indices bounding a value in an energy grid.
+
+    :param energy_grid: Sorted energy grid points array
+    :type energy_grid: np.ndarray
+    :param energy_value: Target energy value
+    :type energy_value: float
+    :param atol: Absolute tolerance for float comparison
+    :type atol: float, optional
+    :return: Array of one or two indices. Two indices only when value exactly matches a grid point
+    :rtype: np.ndarray
+    """
+    if len(energy_grid) == 0:
+        raise ValueError("Energy grid cannot be empty")
+
+    if energy_value > energy_grid[-1]:
+        return np.array([len(energy_grid)-1])
+    
+    # Use side='left' to get the index where the value would be inserted
+    idx = np.searchsorted(energy_grid, energy_value, side='left')
+    
+    # Check if the value exactly matches a grid point
+    if idx < len(energy_grid) and np.isclose(energy_grid[idx], energy_value, atol=atol):
+        if idx == len(energy_grid) - 1:  # Last point in grid
+            return np.array([idx])
+        return np.array([idx, idx + 1])
+    
+    # If we're at the start of the array, return first index
+    if idx == 0:
+        return np.array([0])
+        
+    # Otherwise return the index to the left of where the value would be inserted
+    return np.array([idx])
+
+def get_range_energy_indices(grid: np.ndarray, range_tuple: Tuple[float, float], atol: float = 1e-9) -> np.ndarray:
+    """Find energy indices for a range of values in an energy grid.
+
+    :param grid: Sorted energy grid points array
+    :type grid: np.ndarray
+    :param range_tuple: (min, max) energy range values
+    :type range_tuple: Tuple[float, float]
+    :return: Array of indices covering the range
+    :rtype: np.ndarray
+    :raises ValueError: If grid is empty or range is invalid
+    """
+    if not grid.size:  # More robust empty check
+        raise ValueError("Energy grid cannot be empty")
+
+    v_min, v_max = range_tuple
+    if v_min > v_max:
+        raise ValueError(f"Invalid range: min {v_min} is greater than max {v_max}")
+
+    # Find the starting index
+    start_idx = np.searchsorted(grid, v_min)
+    if start_idx == len(grid) or not np.isclose(grid[start_idx], v_min, atol) and grid[start_idx] < v_min:
+        if start_idx == len(grid):
+            return np.array([], dtype=int)
+        start_idx += 1
+
+    # Find the ending index (Corrected Logic)
+    end_idx = np.searchsorted(grid, v_max)
+    if end_idx > 0 and not np.isclose(grid[end_idx-1], v_max, atol) and grid[end_idx-1] > v_max:
+        end_idx -= 1
+
+    if start_idx > end_idx:
+        return np.array([], dtype=int)
+
+    return np.arange(start_idx, end_idx+1)
+
+def get_energy_intervals_from_indices(bins: np.ndarray, indices: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Get energy interval boundaries for given indices.
+    
+    :param bins: Energy grid boundaries array
+    :type bins: np.ndarray
+    :param indices: Array of indices from get_closest_energy_indices
+    :type indices: np.ndarray
+    :return: Tuple of (starts, ends) arrays for energy intervals
+    :rtype: Tuple[np.ndarray, np.ndarray]
+    """
+    if len(indices) == 0:
+        return np.array([]), np.array([])
+    
+    starts = []
+    ends = []
+    
+    for idx in indices:
+        if idx == 0:
+            # For index 0, use 0.0 as lower bound
+            starts.append(0.0)
+            ends.append(bins[0])
+        else:
+            # For other indices, use previous bin value and current bin value
+            starts.append(bins[idx-1])
+            ends.append(bins[idx])
+            
+    return np.array(starts), np.array(ends)
+
 def get_closest_indices(grid: np.ndarray, value: float, atol: float = 1e-9) -> np.ndarray:
     """Find indices bounding a value in a grid.
 
