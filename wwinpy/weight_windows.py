@@ -317,16 +317,12 @@ class WeightWindowValues:
                 if isinstance(energy, tuple):
                     # Range query
                     e_indices = get_range_energy_indices(energy_grid, energy)
-                    print('e_indices:', e_indices)
                     # Get the actual energy intervals
                     e_starts, e_ends = get_energy_intervals_from_indices(energy_grid, e_indices)
                     energy_intervals.append((e_starts, e_ends))
                     # Adjust indices for ww_values access (shift left by 1 and remove if negative)
                     #e_indices = e_indices - 1
                     #e_indices = e_indices[e_indices >= 0]
-                    print('e_starts:', e_starts)
-                    print('e_ends:', e_ends)
-                    print('e_indices final:', e_indices)
                 else:
                     # Single value query
                     e_indices = get_closest_energy_indices(energy_grid, energy)
@@ -367,8 +363,6 @@ class WeightWindowValues:
             if self.header.has_time_dependency:
                 selected_ww = particle_ww[t_indices][:, e_indices]
             else:
-                print('particle_ww:', particle_ww)
-                print('e_indices:', e_indices)
                 selected_ww = particle_ww[0:1, e_indices]  # Always use single time index for non-time-dependent
 
             # Reshape the ww values to match the spatial dimensions
@@ -384,8 +378,6 @@ class WeightWindowValues:
 
             results.append(selected_ww)
 
-        print('energy_intervals:', energy_intervals)
-        print('ww_values:', results)
         return QueryResult(
             header=self.header,
             particle_types=particle_types,
