@@ -329,7 +329,8 @@ class WeightWindowValues:
             else:
                 # If no energy query, use all indices
                 e_indices = np.arange(len(energy_grid))
-                e_starts, e_ends = energy_grid[:-1], energy_grid[1:]
+                temp_grid = np.concatenate([[0], energy_grid]) 
+                e_starts, e_ends = temp_grid[:-1], temp_grid[1:]
                 energy_intervals.append((e_starts, e_ends))
 
             # Handle time query
