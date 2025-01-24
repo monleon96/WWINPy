@@ -320,9 +320,6 @@ class WeightWindowValues:
                     # Get the actual energy intervals
                     e_starts, e_ends = get_energy_intervals_from_indices(energy_grid, e_indices)
                     energy_intervals.append((e_starts, e_ends))
-                    # Adjust indices for ww_values access (shift left by 1 and remove if negative)
-                    #e_indices = e_indices - 1
-                    #e_indices = e_indices[e_indices >= 0]
                 else:
                     # Single value query
                     e_indices = get_closest_energy_indices(energy_grid, energy)

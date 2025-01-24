@@ -242,8 +242,20 @@ def get_closest_indices(grid: np.ndarray, value: float, atol: float = 1e-9) -> n
     :return: Array of two bounding indices
     :rtype: np.ndarray
     """
-    if len(grid) == 1:
-        return np.array([0, np.inf])
+    
+    if len(grid) == 2:
+        if value < grid[0]: 
+            print(f"Warning: Value {value:.4e} is below the grid range. Using first grid point {grid[0]:.4e}.")
+        if value > grid[-1]: 
+            print(f"Warning: Value {value:.4e} is above the grid range. Using last grid point {grid[-1]:.4e}.") 
+        return np.array([0])
+    
+    if value < grid[0]:
+        print(f"Warning: Value {value:.4e} is below the grid range. Using first grid point {grid[0]:.4e}.")
+        return np.array([0, 1])
+    if value > grid[-1]:
+        print(f"Warning: Value {value:.4e} is above the grid range. Using last grid point {grid[-1]:.4e}.")
+        return np.array([len(grid) - 2, len(grid) - 1])
     
     if value < grid[0]:
         return np.array([0, 1])
@@ -339,6 +351,9 @@ def get_bin_intervals_from_indices(bins: np.ndarray, indices: np.ndarray) -> Tup
     """
     if bins is None:
         raise ValueError("Bins must have at least one value.")
+    
+    if len(indices) == 1 and indices[0] == 0:
+        return np.array([bins[0]]), np.array([bins[1]])
     
     if indices[0] == 0 and (indices[1] == np.inf or indices[1] == 0):
         return 0.0, float('inf')

@@ -107,4 +107,11 @@ class QueryResult:
                                     'ww_value': ww_value
                                 })
         
-        return pd.DataFrame(data_rows)
+        df = pd.DataFrame(data_rows)
+        
+        # Format energy columns to scientific notation with 5 decimal places
+        df['energy_start'] = df['energy_start'].apply(lambda x: '{:.5e}'.format(x))
+        df['energy_end'] = df['energy_end'].apply(lambda x: '{:.5e}'.format(x))
+        df['ww_value'] = df['ww_value'].apply(lambda x: '{:.5e}'.format(x))
+        
+        return df

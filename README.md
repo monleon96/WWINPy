@@ -1,6 +1,6 @@
 # WWINPy - Weight Window Python Library
 
-[![Version](https://img.shields.io/badge/version-0.1.9-blue.svg)](https://github.com/monleon96/WWINPy)
+[![Version](https://img.shields.io/badge/version-0.1.10-blue.svg)](https://github.com/monleon96/WWINPy)
 
 WWINPy is a Python library designed for working with Weight Window files (WWINP format). The library enables you to read, query, modify, and rewrite these files efficiently.
 
